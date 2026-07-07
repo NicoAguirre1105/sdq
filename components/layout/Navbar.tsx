@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BrandCrest } from "@/components/ui/BrandCrest";
+import { BrandLockup } from "@/components/ui/BrandLockup";
 import { Container } from "@/components/ui/Container";
 import { SubscribeModal } from "@/components/layout/SubscribeModal";
 import { NAV_LINKS } from "@/lib/nav-links";
@@ -17,16 +17,8 @@ export function Navbar() {
     <>
       <header className="sticky top-0 z-40 border-b border-white/8 bg-azul-marino">
         <Container className="flex items-center justify-between px-4 py-3.5 md:px-10 md:py-4">
-          <Link href="/" className="flex items-center gap-2.5 md:gap-3.5">
-            <BrandCrest size="sm" />
-            <span className="font-display text-[15px] leading-[0.9] text-blanco-hueso tracking-[0.05em] md:hidden">
-              DEPORTIVO <span className="text-dorado-escudo">QUITO</span>
-            </span>
-            <span className="hidden font-display text-[19px] leading-[0.9] text-blanco-hueso tracking-[0.06em] md:block">
-              DEPORTIVO
-              <br />
-              <span className="text-dorado-escudo">QUITO</span>
-            </span>
+          <Link href="/" className="flex items-center">
+            <BrandLockup magSrc="/img/mag.svg" magWidth={584} magHeight={310} />
           </Link>
 
           <nav className="hidden items-center gap-6.5 font-body text-[13px] font-semibold text-blanco-hueso/70 md:flex">
