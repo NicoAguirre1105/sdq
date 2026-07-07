@@ -3,7 +3,7 @@ import { CanticoList } from "@/components/canticos/CanticoList";
 import { CANTICOS } from "@/lib/canticos";
 
 export const metadata = {
-  title: "Cánticos — Deportivo Quito",
+  title: "Cánticos | Mafia Azul Grana",
   description: "Los cantos que hacen temblar el Atahualpa. Aprende la letra y cántalos con la barra.",
 };
 

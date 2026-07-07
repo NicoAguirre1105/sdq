@@ -26,7 +26,7 @@ const jetbrainsMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Deportivo Quito",
+  title: "Mafia Azul Grana | SD Quito",
   description: "Portal de la hinchada de Sociedad Deportivo Quito",
 };
 
