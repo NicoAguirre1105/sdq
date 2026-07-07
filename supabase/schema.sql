@@ -1,0 +1,204 @@
+-- SD Quito — schema inicial
+-- Correr una sola vez en el SQL Editor de Supabase (o vía `supabase db push` si usas el CLI).
+-- Cubre todo el modelo de data-model.md, aunque Fútbol/Tienda/Admin no tengan UI todavía
+-- (evita migraciones incrementales incómodas más adelante).
+
+-- ============ Editorial ============
+
+create table posts (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  slug text unique not null,
+  excerpt text,
+  content_md text not null,
+  category text check (category in ('noticia', 'cronica', 'aviso')),
+  cover_image text,
+  published_at timestamptz default now()
+);
+
+create index posts_published_at_idx on posts (published_at desc);
+
+-- ============ Fútbol ============
+
+create table teams (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  short_name text,
+  logo_url text,
+  is_own_team boolean default false
+);
+
+create table seasons (
+  id uuid primary key default gen_random_uuid(),
+  label text unique not null,
+  is_current boolean default false
+);
+
+create table competitions (
+  id uuid primary key default gen_random_uuid(),
+  season_id uuid references seasons(id),
+  name text not null,
+  slug text not null
+);
+
+create table stages (
+  id uuid primary key default gen_random_uuid(),
+  competition_id uuid references competitions(id),
+  name text not null,
+  slug text not null,
+  format text check (format in ('liga', 'eliminacion')) not null,
+  order_index int default 0
+);
+
+create table stage_teams (
+  stage_id uuid references stages(id),
+  team_id uuid references teams(id),
+  primary key (stage_id, team_id)
+);
+
+create table matches (
+  id uuid primary key default gen_random_uuid(),
+  stage_id uuid references stages(id),
+  matchday int,
+  round_name text,
+  tie_id uuid,
+  leg int,
+  home_team_id uuid references teams(id),
+  away_team_id uuid references teams(id),
+  match_date timestamptz not null,
+  score_home int,
+  score_away int,
+  status text check (status in ('programado', 'jugado', 'suspendido')) default 'programado'
+);
+
+create index matches_stage_id_idx on matches (stage_id);
+
+create view standings with (security_invoker = true) as
+select
+  s.id as stage_id,
+  t.id as team_id,
+  t.name as team_name,
+  count(m.id) as played,
+  sum(case
+    when (m.home_team_id = t.id and m.score_home > m.score_away)
+      or (m.away_team_id = t.id and m.score_away > m.score_home) then 1 else 0 end) as won,
+  sum(case when m.score_home = m.score_away then 1 else 0 end) as drawn,
+  sum(case
+    when (m.home_team_id = t.id and m.score_home < m.score_away)
+      or (m.away_team_id = t.id and m.score_away < m.score_home) then 1 else 0 end) as lost,
+  sum(case when m.home_team_id = t.id then m.score_home else m.score_away end) as goals_for,
+  sum(case when m.home_team_id = t.id then m.score_away else m.score_home end) as goals_against
+from stage_teams st
+join teams t on t.id = st.team_id
+join stages s on s.id = st.stage_id
+left join matches m on m.stage_id = s.id
+  and (m.home_team_id = t.id or m.away_team_id = t.id)
+  and m.status = 'jugado'
+group by s.id, t.id, t.name;
+
+-- ============ Plantilla ============
+
+create table players (
+  id uuid primary key default gen_random_uuid(),
+  full_name text not null,
+  position text,
+  jersey_number int,
+  photo_url text,
+  bio_md text
+);
+
+-- ============ Tienda ============
+
+create table products (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text unique not null,
+  description_md text,
+  price numeric not null,
+  stock int default 0,
+  images text[],
+  category text
+);
+
+create index products_category_idx on products (category);
+
+create table orders (
+  id uuid primary key default gen_random_uuid(),
+  contact_name text,
+  contact_phone text,
+  status text check (status in ('enviado', 'confirmado', 'entregado', 'cancelado')) default 'enviado',
+  created_at timestamptz default now()
+);
+
+create table order_items (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid references orders(id),
+  product_id uuid references products(id),
+  quantity int not null,
+  unit_price numeric not null
+);
+
+-- ============ Newsletter ============
+
+create table subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text unique not null,
+  topics text[] default '{}',
+  confirmed boolean default false,
+  subscribed_at timestamptz default now()
+);
+
+-- ============ Auth / Admin ============
+
+create table admin_users (
+  id uuid primary key references auth.users(id),
+  full_name text not null,
+  created_at timestamptz default now()
+);
+
+-- ============ RLS ============
+
+alter table posts enable row level security;
+alter table teams enable row level security;
+alter table seasons enable row level security;
+alter table competitions enable row level security;
+alter table stages enable row level security;
+alter table stage_teams enable row level security;
+alter table matches enable row level security;
+alter table players enable row level security;
+alter table products enable row level security;
+alter table orders enable row level security;
+alter table order_items enable row level security;
+alter table subscribers enable row level security;
+alter table admin_users enable row level security;
+
+-- lectura pública donde corresponde
+create policy "public read published posts" on posts for select using (published_at <= now());
+create policy "public read teams" on teams for select using (true);
+create policy "public read seasons" on seasons for select using (true);
+create policy "public read competitions" on competitions for select using (true);
+create policy "public read stages" on stages for select using (true);
+create policy "public read stage_teams" on stage_teams for select using (true);
+create policy "public read matches" on matches for select using (true);
+create policy "public read players" on players for select using (true);
+create policy "public read products" on products for select using (true);
+
+-- alta pública de newsletter: cualquiera puede insertar, nadie lee desde el cliente
+create policy "anyone can subscribe" on subscribers for insert with check (true);
+
+-- escritura solo para admins (allowlist)
+create policy "admins manage posts" on posts for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage teams" on teams for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage seasons" on seasons for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage competitions" on competitions for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage stages" on stages for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage stage_teams" on stage_teams for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage matches" on matches for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage players" on players for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage products" on products for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage orders" on orders for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage order_items" on order_items for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage subscribers" on subscribers for select using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins update subscribers" on subscribers for update using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins delete subscribers" on subscribers for delete using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage admin_users" on admin_users for all using (exists (select 1 from admin_users where id = auth.uid()));
