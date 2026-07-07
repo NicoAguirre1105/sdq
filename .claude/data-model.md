@@ -188,7 +188,8 @@ Mismo patrón se replica en `matches`, `stages`, `competitions`, `teams`, `produ
 create table subscribers (
   id uuid primary key default gen_random_uuid(),
   email text unique not null,
-  confirmed boolean default false,
+  kit_subscriber_id text,          -- id del subscriber en Kit, para referencia cruzada
+  confirmed boolean default false, -- lo actualiza el webhook, no el alta inicial
   subscribed_at timestamptz default now()
 );
 ```

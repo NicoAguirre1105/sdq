@@ -27,5 +27,5 @@ Sitio web para la hinchada de Sociedad Deportivo Quito (club de fútbol ecuatori
 7. **Escribir para escalar sin sobreconstruir hoy.** El proyecto va a crecer (más usuarios, pagos reales, donaciones, categorías formativas) — el código debe dejar puntos de extensión claros (capa de datos centralizada, interfaz de checkout abstracta, separación admin/público) sin implementar esas features todavía. Ver `coding-guidelines.md`.
 
 ## Estado del proyecto
-- Diseño visual (mockups) ya realizado en Claude Design — este repo debe implementarlo con posibles cambios mínimos que mejores la UX, mas no reinterpretarlo.
+- Diseño visual (mockups) ya realizado en Claude Design — este repo debe implementarlo con posibles cambios mínimos que mejores la UX, mas no reinterpretarlo. Fue exportado como .html y están en /public/design. Úsalos como referencia para el desarrollo de las páginas web.
 - Pendiente de definir: número(s) de WhatsApp de destino para pedidos, copy exacto del mensaje pre-armado.

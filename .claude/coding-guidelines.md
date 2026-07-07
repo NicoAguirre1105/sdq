@@ -2,6 +2,19 @@
 
 Este documento define cómo debe escribirse el código del proyecto: estructura, convenciones, y — lo más importante — los puntos donde hay que dejar espacio para crecer sin over-engineering hoy. La regla general es **simple ahora, extensible después**: no construir features que no existen todavía, pero sí elegir patrones que no obliguen a reescribir cuando aparezcan.
 
+## Newsletter — Kit como fuente de verdad
+
+El double opt-in del newsletter **no se construye a mano** (nada de tokens propios ni envío de emails de confirmación desde el servidor) — Kit (antes ConvertKit) ya lo resuelve nativamente y gratis. Supabase (`subscribers`) es un espejo de solo lectura para el admin panel, no la fuente de verdad de si alguien está confirmado.
+
+**Dos rutas serverless necesarias:**
+
+- **`/api/subscribe`** — recibe el alta del formulario, hace upsert en `subscribers`, y llama a `POST https://api.kit.com/v4/subscribers` con el email
+- **`/api/webhooks/kit`** — recibe el evento de Kit cuando el usuario confirma (`subscriber.state === 'active'`) y actualiza `confirmed = true` en Supabase por email
+
+**Antes de implementar `/api/webhooks/kit`:** verificar en `developers.kit.com` el mecanismo de autenticación de webhooks vigente (firma, secreto compartido, etc.) — no aceptar el payload sin validar que viene realmente de Kit, ya que esta ruta escribe en la base de datos.
+
+No usar Resend/nodemailer ni ningún envío propio de email para la confirmación — sería duplicar algo que Kit ya cubre con mejor entregabilidad y sin costo.
+
 ## Futuro a tener en cuenta (no implementar ahora, pero diseñar sin bloquearlo)
 - Más usuarios / cuentas públicas (no solo admins) — ej. perfiles de hincha, favoritos, comentarios
 - Sistema de pago real integrado (hoy es WhatsApp; mañana puede ser Stripe/PayPal para tienda y/o membresías)
