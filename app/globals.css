@@ -1,26 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --azul-marino: #0b2e6b;
+  --rojo-bandera: #c81d25;
+  --rojo-bandera-hover: #e02730;
+  --blanco-hueso: #f7f5f0;
+  --azul-medio: #1e56b0;
+  --tinta: #14171c;
+  --dorado-escudo: #c9a227;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-azul-marino: var(--azul-marino);
+  --color-rojo-bandera: var(--rojo-bandera);
+  --color-rojo-bandera-hover: var(--rojo-bandera-hover);
+  --color-blanco-hueso: var(--blanco-hueso);
+  --color-azul-medio: var(--azul-medio);
+  --color-tinta: var(--tinta);
+  --color-dorado-escudo: var(--dorado-escudo);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-bebas-neue);
+  --font-body: var(--font-ibm-plex-sans);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--blanco-hueso);
+  color: var(--tinta);
+  font-family: var(--font-body);
 }
