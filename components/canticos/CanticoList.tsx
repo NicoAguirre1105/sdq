@@ -1,0 +1,90 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import type { Cantico } from "@/lib/canticos";
+
+function Chevron() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="flex-none"
+    >
+      <path d="M8 4l7 7-7 7" />
+    </svg>
+  );
+}
+
+export function CanticoList({ canticos }: { canticos: Cantico[] }) {
+  const [onlyClassic, setOnlyClassic] = useState(false);
+  const visible = onlyClassic ? canticos.filter((c) => c.classic) : canticos;
+
+  return (
+    <>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="font-display text-[30px] text-tinta">
+          TODOS LOS CÁNTICOS{" "}
+          <span className="font-mono text-xs text-tinta/40">· {visible.length}</span>
+        </h2>
+        <div className="flex gap-1.5 font-mono text-[10px] font-semibold">
+          <button
+            type="button"
+            onClick={() => setOnlyClassic(false)}
+            className={`rounded px-3 py-1.5 transition-colors ${
+              onlyClassic
+                ? "border border-azul-marino/15 bg-white hover:border-azul-marino"
+                : "bg-azul-marino text-white"
+            }`}
+          >
+            TODOS
+          </button>
+          <button
+            type="button"
+            onClick={() => setOnlyClassic(true)}
+            className={`rounded px-3 py-1.5 transition-colors ${
+              onlyClassic
+                ? "bg-azul-marino text-white"
+                : "border border-azul-marino/15 bg-white hover:border-azul-marino"
+            }`}
+          >
+            CLÁSICOS
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {visible.map((c, i) => (
+          <Link
+            key={c.slug}
+            href={`/canticos/${c.slug}`}
+            className="group grid grid-cols-[36px_1fr_28px] items-center gap-3 rounded-lg border border-azul-marino/10 bg-white p-3.5 transition-all hover:border-azul-marino/25 hover:shadow-[0_8px_24px_-12px_rgba(11,46,107,0.4)] md:grid-cols-[44px_1fr_40px] md:gap-4 md:px-4.5"
+          >
+            <span className="text-center font-display text-2xl text-azul-marino/40 md:text-3xl">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span className="flex min-w-0 items-baseline gap-2.5">
+              <span className="truncate font-display text-2xl leading-none text-tinta md:text-3xl">
+                {c.title}
+              </span>
+              {c.classic && (
+                <span className="hidden flex-none rounded-sm bg-dorado-escudo/15 px-1.5 py-0.5 font-mono text-[8px] font-semibold tracking-[0.1em] text-dorado-escudo sm:inline">
+                  CLÁSICO
+                </span>
+              )}
+            </span>
+            <span className="justify-self-end text-azul-marino transition-colors group-hover:text-rojo-bandera">
+              <Chevron />
+            </span>
+          </Link>
+        ))}
+      </div>
+    </>
+  );
+}
