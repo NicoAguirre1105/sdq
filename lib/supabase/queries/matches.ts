@@ -23,3 +23,5 @@ export async function getNextMatch() {
 
   return { ...match, homeTeam, awayTeam };
 }
+
+export type NextMatch = NonNullable<Awaited<ReturnType<typeof getNextMatch>>>;

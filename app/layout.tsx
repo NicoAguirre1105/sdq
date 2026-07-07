@@ -1,22 +1,28 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const bebasNeue = Bebas_Neue({
-  variable: "--font-bebas-neue",
+// Fuentes auto-hospedadas (no dependen de fonts.googleapis.com en build/dev).
+// Archivos originales: Bebas Neue, IBM Plex Sans e JetBrains Mono (Google Fonts, licencia OFL).
+const bebasNeue = localFont({
+  src: "./fonts/bebas-neue-400.woff2",
   weight: "400",
-  subsets: ["latin"],
+  variable: "--font-bebas-neue",
+  display: "swap",
 });
 
-const ibmPlexSans = IBM_Plex_Sans({
+const ibmPlexSans = localFont({
+  src: "./fonts/ibm-plex-sans-variable.woff2",
+  weight: "400 700",
   variable: "--font-ibm-plex-sans",
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
+  display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const jetbrainsMono = localFont({
+  src: "./fonts/jetbrains-mono-variable.woff2",
+  weight: "400 700",
   variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

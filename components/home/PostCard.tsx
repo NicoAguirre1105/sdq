@@ -1,0 +1,44 @@
+import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
+
+type Post = {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  category: "noticia" | "cronica" | "aviso" | null;
+  published_at: string;
+};
+
+const CATEGORY = {
+  cronica: { label: "CRÓNICA", tone: "azul", text: "text-rojo-bandera", photo: "FOTO PARTIDO" },
+  noticia: { label: "NOTICIA", tone: "rojo", text: "text-azul-marino", photo: "FOTO JUGADOR" },
+  aviso: { label: "AVISO", tone: "dorado", text: "text-dorado-escudo", photo: "ARTE AVISO" },
+} as const;
+
+function relativeDays(iso: string) {
+  const days = Math.max(
+    0,
+    Math.floor((Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24))
+  );
+  if (days === 0) return "HOY";
+  if (days === 1) return "HACE 1 DÍA";
+  return `HACE ${days} DÍAS`;
+}
+
+export function PostCard({ post }: { post: Post }) {
+  const meta = CATEGORY[post.category ?? "noticia"];
+
+  return (
+    <article className="cursor-pointer overflow-hidden rounded-lg border border-azul-marino/12 bg-white transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(11,46,107,0.45)]">
+      <PhotoPlaceholder label={meta.photo} tone={meta.tone} className="h-40" />
+      <div className="p-4.5">
+        <p className={`mb-2 font-mono text-[10px] font-bold tracking-[0.1em] ${meta.text}`}>
+          {meta.label} · {relativeDays(post.published_at)}
+        </p>
+        <h3 className="mb-2 font-display text-[27px] leading-[0.95] text-tinta">{post.title}</h3>
+        {post.excerpt && (
+          <p className="font-body text-xs leading-relaxed text-tinta/60">{post.excerpt}</p>
+        )}
+      </div>
+    </article>
+  );
+}

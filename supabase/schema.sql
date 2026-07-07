@@ -201,4 +201,6 @@ create policy "admins manage order_items" on order_items for all using (exists (
 create policy "admins manage subscribers" on subscribers for select using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins update subscribers" on subscribers for update using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins delete subscribers" on subscribers for delete using (exists (select 1 from admin_users where id = auth.uid()));
-create policy "admins manage admin_users" on admin_users for all using (exists (select 1 from admin_users where id = auth.uid()));
+-- comparación directa, sin subconsulta contra admin_users: evita la recursión infinita
+-- que se dispara si esta política intentara comprobarse contra sí misma
+create policy "admins manage own row" on admin_users for all using (id = auth.uid());
