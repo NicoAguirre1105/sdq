@@ -14,12 +14,12 @@
   /tienda/carrito            → Carrito de compras
 /plantilla                 → Plantilla de jugadores
 /suscripcion               → Alta/gestión de newsletter (pública)
-/login                     → Autenticación (Supabase Auth)
-/admin                     → Panel de administración (protegido)
-  /admin/posts
-  /admin/futbol             → gestión de teams, stages, matches
-  /admin/tienda             → gestión de productos + vista de orders
-  /admin/suscriptores
+/login                     → Autenticación (implementado: email+contraseña, Supabase Auth)
+/admin                     → Panel de administración (implementado: protegido por middleware + requireAdmin; solo dashboard placeholder, sin CRUD todavía)
+  /admin/posts               → no implementado
+  /admin/futbol             → gestión de teams, stages, matches — no implementado
+  /admin/tienda             → gestión de productos + vista de orders — no implementado
+  /admin/suscriptores        → no implementado
 /not-found                 → 404 (implementado: app/(public)/not-found.tsx + catch-all [...not-found] para heredar Navbar/Footer)
 ```
 
@@ -37,8 +37,8 @@
 | **Carrito** | Armar pedido y enviarlo por WhatsApp (sin pago en el sitio) | Estado de cliente + registro en `orders`/`order_items` al enviar |
 | **Plantilla** | Jugadores del plantel actual | Semi-estático (Supabase, sin UI) |
 | **Suscripción** | Alta de email a newsletter | CMS ligero (`subscribers`) |
-| **Login** | Acceso de administrador | Supabase Auth |
-| **Admin** | Gestión de todo el contenido dinámico | Ver `admin-cms.md` |
+| **Login** | Acceso de administrador (implementado) | Supabase Auth |
+| **Admin** | Gestión de todo el contenido dinámico (shell + protección implementados, CRUD pendiente) | Ver `admin-cms.md` |
 | **Not found** | 404 (implementado) | Estático |
 
 Ver `data-model.md` para el detalle de tablas y `admin-cms.md` para el flujo de cada panel.

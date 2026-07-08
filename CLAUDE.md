@@ -32,6 +32,7 @@ No hay test runner configurado todavía.
 - **Hay un dev server de preview corriendo** (`.claude/launch.json`). Verificar los cambios observables directamente contra él con las tools `preview_*` (leer estado con `preview_eval`/`preview_snapshot`, inspeccionar estilos con `preview_inspect`, capturar con `preview_screenshot`) en vez de pedirle al usuario que revise a mano. Para páginas con datos de Supabase, `fetch(...)` dentro de `preview_eval` sobre la ruta y revisar el HTML/`status` es la forma rápida de confirmar que la query no rompió.
 - **Errores de datos aparecen como 500** en la ruta (ej. `column ... does not exist` cuando falta correr un `ALTER`). `preview_logs level:error` muestra el error de Postgres exacto; el buffer incluye entradas viejas de compilaciones previas, así que fijarse en la más reciente.
 - **`ponytail:` es el modo por defecto de este repo** — preferir la solución más simple que funcione, reutilizar helpers/patrones existentes antes de escribir nuevos, y marcar simplificaciones deliberadas con un comentario `ponytail:` (ver abajo).
+- **Verificar `/admin` (protegido) en el preview:** `.env.local` tiene una cuenta de staff dedicada a verificación (`DEV_ADMIN_EMAIL` / `DEV_ADMIN_PASSWORD`, sin prefijo `NEXT_PUBLIC_` — no llega al cliente). Para revisar cualquier pantalla del panel, loguear con `preview_fill`/`preview_click` contra el form real de `/login` usando esas credenciales (leídas del `.env.local` con `Read`); la sesión queda en cookies del tab de preview. Es una cuenta de prueba separada de las cuentas reales de administradores.
 
 ### Supabase
 
@@ -53,7 +54,7 @@ Requiere `.env.local` con `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANO
 
 Cambios de schema aplicados a mano hasta ahora (más allá del `schema.sql` original): `matches.match_date` pasó a **nullable** (null = fecha sin confirmar) y se agregó `matches.created_at timestamptz default now()` como desempate de orden para partidos sin fecha (se listan al final, en orden de ingreso).
 
-Los tipos de `lib/types/database.ts` están **tipados a mano**, solo las tablas/vistas que la Fase 1 consulta: `posts`, `players`, `subscribers`, `teams`, `matches`, `seasons`, `competitions`, `stages` y la vista `standings`. Reemplazar por completo con `supabase gen types typescript` en cuanto el CLI esté conectado al proyecto real — no seguir extendiendo el archivo a mano más allá de eso.
+Los tipos de `lib/types/database.ts` están **tipados a mano**, solo las tablas/vistas que Fase 1 y Fase 2 consultan hasta ahora: `posts`, `players`, `subscribers`, `teams`, `matches`, `seasons`, `competitions`, `stages`, `admin_users` y la vista `standings`. Reemplazar por completo con `supabase gen types typescript` en cuanto el CLI esté conectado al proyecto real — no seguir extendiendo el archivo a mano más allá de eso.
 
 ## Documentos de contexto (leer según la tarea)
 
@@ -69,7 +70,7 @@ Diseño visual (mockups) ya realizado en Claude Design — este repo lo implemen
 
 Los mockups son bundles de Claude Design (HTML con manifest embebido en gzip+base64, no HTML plano). Para leerlos, extraer primero el `<script type="__bundler/template">` (contiene el HTML real) — no intentar parsear el `.html` directamente. Cada mockup puede tener varias iteraciones ("turns"); la de mayor número es la dirección final a implementar.
 
-**Fase 1 en curso: solo cliente, sin CMS/admin.** Construido hasta ahora:
+**Fase 1 (cliente, sin CMS/admin): cerrada.** Construido:
 - Fundaciones: tokens de diseño, fuentes auto-hospedadas, schema + seed de Supabase, capa de datos (`lib/supabase/queries/`)
 - Layout global (`app/(public)/layout.tsx`): Navbar + Footer
 - Página Home (`app/(public)/page.tsx`): hero de próximo partido, grilla de crónicas, newsletter (alta funcional)
@@ -82,7 +83,12 @@ Los mockups son bundles de Claude Design (HTML con manifest embebido en gzip+bas
   - `FutbolSubnav` (client, `usePathname`) enlaza Tabla / Calendario / Plantilla en las tres páginas. "Salón de Fama" queda fuera hasta que exista su ruta/datos.
 - Página 404 (`app/(public)/not-found.tsx`): hero azul con textura diagonal, `BrandLockup` (logo Quito + división + MAG, igual que la Navbar), "404" y accesos rápidos. Vive dentro de `(public)` para heredar Navbar/Footer; un catch-all `app/(public)/[...not-found]/page.tsx` enruta las URLs inexistentes al grupo (un `not-found.tsx` suelto solo cubre `notFound()` lanzado dentro del grupo, no las rutas no encontradas). Al construir `/admin`, darle su propio catch-all para que sus rutas inexistentes no caigan en este 404 público.
 
-**No implementado todavía:** Tienda, Login, y todo `/admin`. Fútbol `eliminacion`/bracket (solo hay `liga`). No asumir que estas rutas o sus componentes existen — verificar antes de referenciarlas. El link "Tienda" está comentado en `lib/nav-links.ts` por la misma razón (sección sin construir aún).
+**Fase 2 en curso: login + admin CMS.** Orden: login → admin base (posts/fútbol/plantilla) → QR→PDF → suscriptores/Kit → resto. Construido hasta ahora:
+- **Login** (`app/login/page.tsx` + `components/auth/LoginForm.tsx`): split-panel fiel al mockup (marca a la izquierda/arriba, formulario a la derecha/abajo), email+contraseña vía `signInAction` (`lib/actions/auth.ts`). Sin registro público — cuentas creadas a mano en Supabase + fila en `admin_users`.
+- **Protección de `/admin`**: `middleware.ts` + `lib/supabase/middleware.ts` (`updateSession`) refresca la sesión y redirige `/admin/*` → `/login` sin sesión. `lib/auth.ts` (`requireAdmin`) es el gate de la capa de app: exige sesión **y** estar en la allowlist `admin_users` (vía `lib/supabase/queries/admin.ts`); RLS (`id = auth.uid()`) es la seguridad real, esto solo evita renderizar el panel de más.
+- `app/admin/layout.tsx` (protegido, header propio con logout) + `app/admin/page.tsx` (dashboard placeholder) — el resto del CRUD (posts/fútbol/plantilla) todavía no existe.
+
+**No implementado todavía:** Tienda, y el CRUD real de `/admin` (posts, fútbol, plantilla, QR→PDF, suscriptores). Fútbol `eliminacion`/bracket (solo hay `liga`). No asumir que estas rutas o sus componentes existen — verificar antes de referenciarlas. El link "Tienda" está comentado en `lib/nav-links.ts` por la misma razón (sección sin construir aún).
 
 **Pendiente de definir:** número(s) de WhatsApp de destino para pedidos, copy exacto del mensaje pre-armado.
 
