@@ -16,7 +16,7 @@
 /suscripcion               → Alta/gestión de newsletter (pública)
 /login                     → Autenticación (implementado: email+contraseña, Supabase Auth)
 /admin                     → Panel de administración (implementado: protegido por middleware + requireAdmin; solo dashboard placeholder, sin CRUD todavía)
-  /admin/posts               → no implementado
+  /admin/posts               → implementado (CRUD: listado + /new + /[id]/edit, editor markdown con preview)
   /admin/futbol             → gestión de teams, stages, matches — no implementado
   /admin/tienda             → gestión de productos + vista de orders — no implementado
   /admin/suscriptores        → no implementado

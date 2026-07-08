@@ -205,3 +205,22 @@ create policy "admins delete subscribers" on subscribers for delete using (exist
 -- comparación directa, sin subconsulta contra admin_users: evita la recursión infinita
 -- que se dispara si esta política intentara comprobarse contra sí misma
 create policy "admins manage own row" on admin_users for all using (id = auth.uid());
+
+-- ============ Storage ============
+-- Bucket público para portadas de posts. La lectura es pública por el flag `public`
+-- del bucket (se sirve vía getPublicUrl); solo la escritura pasa por RLS de admins.
+insert into storage.buckets (id, name, public)
+values ('post-images', 'post-images', true)
+on conflict (id) do nothing;
+
+create policy "admins upload post-images" on storage.objects for insert
+  with check (bucket_id = 'post-images' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins update post-images" on storage.objects for update
+  using (bucket_id = 'post-images' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins delete post-images" on storage.objects for delete
+  using (bucket_id = 'post-images' and exists (select 1 from admin_users where id = auth.uid()));
+-- SELECT necesario para que el admin pueda borrar objetos (storage.remove filtra por RLS
+-- de forma silenciosa: sin este policy, remove() no borra nada y no lanza error). La
+-- lectura pública sigue viniendo del flag `public` del bucket vía CDN, no de acá.
+create policy "admins read post-images" on storage.objects for select
+  using (bucket_id = 'post-images' and exists (select 1 from admin_users where id = auth.uid()));

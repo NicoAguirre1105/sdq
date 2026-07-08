@@ -12,7 +12,7 @@ type Post = {
   content_md: string;
   category: "noticia" | "cronica" | "aviso" | null;
   cover_image: string | null;
-  published_at: string;
+  published_at: string | null; // null = borrador (oculto para el público por RLS)
 };
 
 type Player = {

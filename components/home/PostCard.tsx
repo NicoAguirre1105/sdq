@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
 
 type Post = {
@@ -5,7 +6,8 @@ type Post = {
   title: string;
   excerpt: string | null;
   category: "noticia" | "cronica" | "aviso" | null;
-  published_at: string;
+  cover_image: string | null;
+  published_at: string | null;
 };
 
 const CATEGORY = {
@@ -14,7 +16,8 @@ const CATEGORY = {
   aviso: { label: "AVISO", tone: "dorado", text: "text-dorado-escudo", photo: "ARTE AVISO" },
 } as const;
 
-function relativeDays(iso: string) {
+function relativeDays(iso: string | null) {
+  if (!iso) return "";
   const days = Math.max(
     0,
     Math.floor((Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24))
@@ -29,7 +32,19 @@ export function PostCard({ post }: { post: Post }) {
 
   return (
     <article className="cursor-pointer overflow-hidden rounded-lg border border-azul-marino/12 bg-white transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(11,46,107,0.45)]">
-      <PhotoPlaceholder label={meta.photo} tone={meta.tone} className="h-40" />
+      {post.cover_image ? (
+        <div className="relative h-40">
+          <Image
+            src={post.cover_image}
+            alt={post.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover"
+          />
+        </div>
+      ) : (
+        <PhotoPlaceholder label={meta.photo} tone={meta.tone} className="h-40" />
+      )}
       <div className="p-4.5">
         <p className={`mb-2 font-mono text-[10px] font-bold tracking-[0.1em] ${meta.text}`}>
           {meta.label} · {relativeDays(post.published_at)}

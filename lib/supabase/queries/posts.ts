@@ -22,3 +22,26 @@ export async function getPostBySlug(slug: string) {
   if (error) throw error;
   return data;
 }
+
+// Admin: todos los posts, incluidos borradores (published_at null) y programados
+// (published_at futuro). RLS deja ver todo a los admins. Borradores primero.
+export async function getAllPosts() {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*")
+    .order("published_at", { ascending: false, nullsFirst: true });
+  if (error) throw error;
+  return data;
+}
+
+export async function getPostById(id: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}

@@ -29,3 +29,12 @@ body {
   color: var(--tinta);
   font-family: var(--font-body);
 }
+
+/* Tailwind v4 no fuerza cursor:pointer en <button>; lo restauramos para todo botón
+   accionable (los deshabilitados quedan con el cursor por defecto). */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
