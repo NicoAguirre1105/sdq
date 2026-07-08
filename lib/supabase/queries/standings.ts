@@ -1,10 +1,11 @@
 import { createServerSupabaseClient } from "@/lib/supabase/client";
 
-// ponytail: sin filtro de stage — Fase 1 tiene un solo stage liga activo. Pasar
-// stageId (o derivar el stage vigente) cuando exista más de una competición.
-export async function getStandings() {
+export async function getStandings(stageId: string) {
   const supabase = await createServerSupabaseClient();
-  const { data: rows, error } = await supabase.from("standings").select("*");
+  const { data: rows, error } = await supabase
+    .from("standings")
+    .select("*")
+    .eq("stage_id", stageId);
   if (error) throw error;
   if (!rows?.length) return [];
 
@@ -45,11 +46,3 @@ export async function getStandings() {
 }
 
 export type StandingRow = Awaited<ReturnType<typeof getStandings>>[number];
-
-// Etiqueta de la competición vigente para el encabezado (ej. "Serie B 2026").
-export async function getActiveCompetitionName() {
-  const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.from("competitions").select("name").limit(1).maybeSingle();
-  if (error) throw error;
-  return data?.name ?? null;
-}

@@ -40,11 +40,26 @@ type Team = {
   is_own_team: boolean;
 };
 
+type Season = {
+  id: string;
+  label: string;
+  is_current: boolean;
+};
+
 type Competition = {
   id: string;
   season_id: string;
   name: string;
   slug: string;
+};
+
+type Stage = {
+  id: string;
+  competition_id: string;
+  name: string;
+  slug: string;
+  format: "liga" | "eliminacion";
+  order_index: number;
 };
 
 // Fila de la vista calculada `standings` (ver supabase/schema.sql). Los conteos
@@ -110,10 +125,22 @@ export type Database = {
         Update: Partial<Match>;
         Relationships: [];
       };
+      seasons: {
+        Row: Season;
+        Insert: Partial<Season> & Pick<Season, "label">;
+        Update: Partial<Season>;
+        Relationships: [];
+      };
       competitions: {
         Row: Competition;
         Insert: Partial<Competition> & Pick<Competition, "season_id" | "name" | "slug">;
         Update: Partial<Competition>;
+        Relationships: [];
+      };
+      stages: {
+        Row: Stage;
+        Insert: Partial<Stage> & Pick<Stage, "competition_id" | "name" | "slug" | "format">;
+        Update: Partial<Stage>;
         Relationships: [];
       };
     };

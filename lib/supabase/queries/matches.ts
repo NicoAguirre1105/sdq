@@ -26,13 +26,12 @@ export async function getNextMatch() {
 
 export type NextMatch = NonNullable<Awaited<ReturnType<typeof getNextMatch>>>;
 
-// ponytail: sin filtro de stage — Fase 1 tiene un solo stage activo. Filtrar por
-// el stage de la competición vigente cuando haya más de una en simultáneo.
-export async function getUpcomingMatches(limit = 3) {
+export async function getUpcomingMatches(stageId: string, limit = 3) {
   const supabase = await createServerSupabaseClient();
   const { data: matches, error } = await supabase
     .from("matches")
     .select("*")
+    .eq("stage_id", stageId)
     .eq("status", "programado")
     .order("match_date", { ascending: true })
     .limit(limit);
