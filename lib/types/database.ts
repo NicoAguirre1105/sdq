@@ -76,6 +76,12 @@ type Standing = {
   goals_against: number;
 };
 
+type AdminUser = {
+  id: string;
+  full_name: string;
+  created_at: string;
+};
+
 type Match = {
   id: string;
   stage_id: string;
@@ -142,6 +148,12 @@ export type Database = {
         Row: Stage;
         Insert: Partial<Stage> & Pick<Stage, "competition_id" | "name" | "slug" | "format">;
         Update: Partial<Stage>;
+        Relationships: [];
+      };
+      admin_users: {
+        Row: AdminUser;
+        Insert: Partial<AdminUser> & Pick<AdminUser, "id" | "full_name">;
+        Update: Partial<AdminUser>;
         Relationships: [];
       };
     };
