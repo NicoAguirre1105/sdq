@@ -66,9 +66,9 @@ const AMORES_COMO_EL_NUESTRO: CanticoLine[] = [
   { role: "coro", text: "te sigo a todos lados, voy donde juguemos," },
   { role: "llamada", text: "amar a la Academia es cosa de locos," },
   { role: "coro", text: "en la buenas y en la malas, yo no te abandono." },
-  { role: "llamada", text: "Esos giles de rojo," },
+  { role: "llamada", text: "Esos gi*** del rojo," },
   { role: "coro", text: "van desapareciendo," },
-  { role: "llamada", text: "y los putos de Liga," },
+  { role: "llamada", text: "y los pu  *** de Liga," },
   { role: "coro", text: "todavía están corriendo," },
   { role: "llamada", text: "aguante como el nuestro," },
   { role: "coro", text: "nadie lo puede parar." },
@@ -95,7 +95,7 @@ const VAMO_AKD: CanticoLine[] = [
   { role: "coro", text: "Vamo' la AKD, AKD, AKD." },
   { role: "llamada", text: "AKD! AKD! Vamo' vamo la AKD! [x2]" },
   { role: "coro", text: "---" },
-  { role: "coro", text: "Tené' que salir campeones este año," },
+  { role: "coro", text: "Tenés que salir campeón, es este año," },
   { role: "llamada", text: "ustedes poniendo huevos y yo alentando," },
   { role: "coro", text: "porque te quiero tanto," },
   { role: "llamada", text: "otra vuelta yo quiero dar," },
@@ -106,16 +106,13 @@ const QUITO_PONGA_HUEVOS: CanticoLine[] = [
   { role: "llamada", text: "Una banda que no le importa el decenso," },
   { role: "coro", text: "no me importa la mentira de los medios," },
   { role: "llamada", text: "alentamos en las buenas y en las malas," },
-  { role: "coro", text: "vuelvo loco fumando la marihuana." },
+  { role: "coro", text: "vuelvo loco fumando la mar******." },
   { role: "llamada", text: "Vamo' la Academia!" },
   { role: "coro", text: "Quito ponga huevos!" },
-  { role: "llamada", text: "Que este aor por vos es verdadero," },
+  { role: "llamada", text: "Que este amor por vos es verdadero," },
   { role: "coro", text: "voy descontrolado con el Quito a todos lados," },
   { role: "llamada", text: "Quito, yo por vos, estoy llevado." },
 ];
-
-// Video/startSeconds de ejemplo — reemplazar por el oficial de cada cántico.
-const YT = "https://www.youtube.com/watch?v=Ws-J40TX-1c";
 
 export const CANTICOS: Cantico[] = [
   { slug: "se-viene-quito-campeon", title: "Se viene Quito campeón", classic: false, youtubeUrl: "https://www.youtube.com/watch?v=Ws-J40TX-1c", startSeconds: 56, lines: QUITO_CAMPEON },

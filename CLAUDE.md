@@ -58,8 +58,10 @@ Los mockups son bundles de Claude Design (HTML con manifest embebido en gzip+bas
 - Fundaciones: tokens de diseño, fuentes auto-hospedadas, schema + seed de Supabase, capa de datos (`lib/supabase/queries/`)
 - Layout global (`app/(public)/layout.tsx`): Navbar + Footer
 - Página Home (`app/(public)/page.tsx`): hero de próximo partido, grilla de crónicas, newsletter (alta funcional)
+- Página Cánticos (`app/(public)/canticos/`): lista con filtro clásicos/todos + detalle por cántico (letra call/coro, embed de YouTube con minuto de inicio). Contenido en `lib/canticos.ts`, con letras y video de ejemplo — reemplazar por los reales
+- Página Historia (`app/(public)/historia/`): un solo componente cliente (`components/historia/HistoriaContent.tsx`) con tabs "El club" / "Las barras" por estado, no rutas separadas. Contenido en `lib/historia.ts` (vitrina de títulos, línea de tiempo, presidentes — historial real; barras con datos de ejemplo). El tab "Las barras" está comentado en el subnav (no accesible todavía, falta contenido real de cada barra) — no reactivarlo sin confirmar que hay contenido para mostrar.
 
-**No implementado todavía:** Historia, Cánticos, Plantilla, 404, Fútbol/Calendario, Tienda, Login, y todo `/admin`. No asumir que estas rutas o sus componentes existen — verificar antes de referenciarlas.
+**No implementado todavía:** Plantilla, 404, Fútbol/Calendario, Tienda, Login, y todo `/admin`. No asumir que estas rutas o sus componentes existen — verificar antes de referenciarlas. El link "Tienda" está comentado en `lib/nav-links.ts` por la misma razón (sección sin construir aún).
 
 **Pendiente de definir:** número(s) de WhatsApp de destino para pedidos, copy exacto del mensaje pre-armado.
 
@@ -85,7 +87,11 @@ Escrituras desde el cliente (hoy solo el alta de newsletter) pasan por una Serve
 
 ### Placeholders de imágenes
 
-Todavía no hay assets reales de fotos (partidos, jugadores, hinchada). `PhotoPlaceholder` (patrón diagonal + label mono tipo `[ FOTO PARTIDO ]`) es el default hasta que existan. Donde correspondería una imagen real, dejar el uso comentado al lado en vez de inventar una ruta de archivo. Los logos reales sí existen (`public/img/logoSDQ.png`, `mag.svg`, `mag_large.svg`) y ya están integrados vía `BrandLockup`.
+Para fotos de contenido (partidos, jugadores, tienda) todavía no hay assets reales. `PhotoPlaceholder` (patrón diagonal + label mono tipo `[ FOTO PARTIDO ]`) es el default hasta que existan. Donde correspondería una imagen real, dejar el uso comentado al lado en vez de inventar una ruta de archivo. Los logos reales sí existen (`public/img/logoSDQ.png`, `mag.svg`, `mag_large.svg`) y ya están integrados vía `BrandLockup`.
+
+### Patrón de hero con foto
+
+Los hero de sección (Home, Cánticos) sí tienen foto real: `public/img/hero.jpg` (desktop) y `public/img/hero_2.jpg` (mobile), como background-image responsive vía Tailwind (`bg-[url('/img/hero_2.jpg')] ... md:bg-[url('/img/hero.jpg')]`), con una capa sólida encima para oscurecer (`bg-[#081f49]/80`) y legibilidad del texto. Aplicar el mismo patrón a los heroes que falten (Historia, Fútbol, Tienda, etc.) en vez de volver a `PhotoPlaceholder` ahí — son las únicas dos imágenes de foto real que existen hoy en el repo.
 
 ### Fuentes auto-hospedadas
 
@@ -99,7 +105,7 @@ Marcan simplificaciones deliberadas con un techo conocido y el camino para escal
 
 1. **Fútbol/calendario/standings son una sola fuente de datos.** Se registran partidos de TODOS los equipos de cada torneo (no solo SD Quito), para poder calcular la tabla de posiciones automáticamente en vez de ingresarla a mano. Ver `data-model.md`.
 2. **Dos formatos de stage:** `liga` (tabla de posiciones) y `eliminacion` (llaves/bracket, con soporte ida/vuelta vía `tie_id`). La UI y los formularios de admin cambian según el formato.
-3. **No todo necesita CMS.** Historia y Cánticos son contenido estático (MDX en el repo). Plantilla es semi-estático (Supabase, sin UI de admin). Ver criterio completo en `admin-cms.md`.
+3. **No todo necesita CMS.** Historia y Cánticos son contenido estático en el repo (Cánticos como datos tipados en `lib/canticos.ts`, no MDX — la letra es estructurada por línea con rol call/coro, no prosa). Plantilla es semi-estático (Supabase, sin UI de admin). Ver criterio completo en `admin-cms.md`.
 4. **Identidad visual "de hinchada", no "app deportiva genérica".** El elemento de firma es un borde rasgado/deshilachado (SVG) que simula el filo de un trapo de tribuna, usado como transición entre secciones (todavía no implementado — pendiente para Historia/Cánticos). Ver `design-system.md` antes de construir cualquier UI.
 5. **No hay checkout ni pagos en el sitio.** El carrito es estado del cliente (no hay tabla `cart_items`). Al enviar el pedido se crea un registro en `orders`/`order_items` y se redirige a WhatsApp (`wa.me`) con el resumen — el pago y la venta se coordinan ahí, fuera del sitio. El admin actualiza el status del pedido manualmente. La generación del pedido debe abstraerse detrás de una interfaz `CheckoutProvider` (ver `coding-guidelines.md`) para no reescribir el flujo de tienda cuando exista un pago real. Esto también reduce el riesgo de tocar el límite de "uso comercial" del plan Hobby de Vercel, ya que no hay dinero moviéndose a través del sitio.
 6. **Roles de admin:** 10 aprox personas con los mismos permisos (sin roles distintos). Acceso controlado por una allowlist (`admin_users`) sobre Supabase Auth, no por un sistema de roles granular. RLS en Postgres es la capa real de seguridad, no la UI. La política propia de `admin_users` compara `id = auth.uid()` directo — **no** la reescribas como `exists (select ... from admin_users where id = auth.uid())`, provoca recursión infinita de RLS que rompe cualquier query de cualquier tabla que dependa de esa comprobación.
