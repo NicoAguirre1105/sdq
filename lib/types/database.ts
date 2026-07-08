@@ -85,10 +85,11 @@ type Match = {
   leg: number | null;
   home_team_id: string;
   away_team_id: string;
-  match_date: string;
+  match_date: string | null;
   score_home: number | null;
   score_away: number | null;
   status: "programado" | "jugado" | "suspendido";
+  created_at: string;
 };
 
 export type Database = {

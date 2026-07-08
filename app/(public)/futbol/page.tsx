@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import { FutbolSubnav } from "@/components/futbol/FutbolSubnav";
 import { UpcomingMatches } from "@/components/futbol/UpcomingMatches";
 import { StandingsTable } from "@/components/futbol/StandingsTable";
 import { getUpcomingMatches } from "@/lib/supabase/queries/matches";
@@ -41,6 +42,8 @@ export default async function FutbolPage({
           </p>
         </Container>
       </section>
+
+      <FutbolSubnav />
 
       <section className="bg-blanco-hueso">
         <Container className="px-4.5 py-8 md:px-10 md:py-10">

@@ -1,18 +1,5 @@
+import { formatMatchDate } from "@/lib/format";
 import type { UpcomingMatch } from "@/lib/supabase/queries/matches";
-
-function formatMatchDate(iso: string) {
-  const date = new Date(iso);
-  const day = new Intl.DateTimeFormat("es-EC", { weekday: "short", day: "2-digit", month: "short" })
-    .format(date)
-    .replace(/\./g, "")
-    .toUpperCase();
-  const time = new Intl.DateTimeFormat("es-EC", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
-  return { day, time };
-}
 
 export function UpcomingMatches({ matches }: { matches: UpcomingMatch[] }) {
   if (!matches.length) {
@@ -27,15 +14,25 @@ export function UpcomingMatches({ matches }: { matches: UpcomingMatch[] }) {
         const isLocal = m.homeTeam?.is_own_team ?? false;
         const opponent = isLocal ? m.awayTeam : m.homeTeam;
         const opponentName = (opponent?.short_name ?? opponent?.name ?? "Por definir").toUpperCase();
-        const { day, time } = formatMatchDate(m.match_date);
+        const dt = formatMatchDate(m.match_date);
 
         return (
           <li key={m.id} className="flex items-center gap-3 py-3.5 md:gap-5">
             <div className="w-24 shrink-0 md:w-28">
-              <p className="font-mono text-[10px] tracking-[0.08em] text-dorado-escudo md:text-[11px]">
-                {day}
-              </p>
-              <p className="font-display text-xl leading-none text-tinta md:text-2xl">{time}</p>
+              {dt ? (
+                <>
+                  <p className="font-mono text-[10px] tracking-[0.08em] text-dorado-escudo md:text-[11px]">
+                    {dt.day}
+                  </p>
+                  <p className="font-display text-xl leading-none text-tinta md:text-2xl">
+                    {dt.time}
+                  </p>
+                </>
+              ) : (
+                <p className="font-mono text-[11px] leading-tight text-tinta/40 uppercase">
+                  Sin confirmar
+                </p>
+              )}
             </div>
             <span
               className={`flex h-6 w-6 shrink-0 items-center justify-center rounded font-mono text-[11px] font-bold ${

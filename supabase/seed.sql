@@ -77,6 +77,12 @@ insert into matches (stage_id, matchday, home_team_id, away_team_id, match_date,
   ('b0000000-0000-0000-0000-000000000002', 4, 'a0000000-0000-0000-0000-000000000012', 'a0000000-0000-0000-0000-000000000010', '2026-07-13 15:30-05', 'programado'),
   ('b0000000-0000-0000-0000-000000000002', 4, 'a0000000-0000-0000-0000-000000000013', 'a0000000-0000-0000-0000-000000000011', '2026-07-13 18:00-05', 'programado');
 
+-- ============ Partidos con fecha sin confirmar (match_date null) ============
+-- Se listan al final del calendario, en orden de ingreso (created_at). Sin matchday.
+insert into matches (stage_id, home_team_id, away_team_id, status) values
+  ('a0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000010', 'a0000000-0000-0000-0000-000000000013', 'programado'),
+  ('b0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000010', 'a0000000-0000-0000-0000-000000000011', 'programado');
+
 -- ============ Editorial: posts ============
 
 insert into posts (title, slug, excerpt, content_md, category, published_at) values

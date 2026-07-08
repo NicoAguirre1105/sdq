@@ -1,18 +1,7 @@
 import { TeamCrest } from "@/components/ui/TeamCrest";
 import { Container } from "@/components/ui/Container";
+import { formatMatchDate } from "@/lib/format";
 import type { NextMatch } from "@/lib/supabase/queries/matches";
-
-function formatMatchDate(iso: string) {
-  const date = new Date(iso);
-  const day = new Intl.DateTimeFormat("es-EC", { weekday: "short", day: "2-digit", month: "short" })
-    .format(date)
-    .replace(".", "")
-    .toUpperCase();
-  const time = new Intl.DateTimeFormat("es-EC", { hour: "2-digit", minute: "2-digit", hour12: false }).format(
-    date
-  );
-  return { day, time };
-}
 
 export function Hero({ nextMatch }: { nextMatch: NextMatch | null }) {
   if (!nextMatch || !nextMatch.homeTeam || !nextMatch.awayTeam) {
@@ -29,7 +18,7 @@ export function Hero({ nextMatch }: { nextMatch: NextMatch | null }) {
   const opponent = homeTeam.is_own_team ? awayTeam : homeTeam;
   const opponentName = (opponent.short_name ?? opponent.name).toUpperCase();
   const headline = "la akd quiere mantener el liderato";
-  const { day, time } = formatMatchDate(nextMatch.match_date);
+  const dt = formatMatchDate(nextMatch.match_date);
 
   return (
     <div className="relative h-[340px] overflow-hidden bg-[#081f49] md:h-[430px]">
@@ -53,12 +42,20 @@ export function Hero({ nextMatch }: { nextMatch: NextMatch | null }) {
             </span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-mono text-[9px] tracking-[0.1em] text-dorado-escudo md:text-[11px]">
-              {day}
-            </span>
-            <span className="font-display text-[26px] leading-[0.9] text-blanco-hueso md:text-4xl">
-              {time}
-            </span>
+            {dt ? (
+              <>
+                <span className="font-mono text-[9px] tracking-[0.1em] text-dorado-escudo md:text-[11px]">
+                  {dt.day}
+                </span>
+                <span className="font-display text-[26px] leading-[0.9] text-blanco-hueso md:text-4xl">
+                  {dt.time}
+                </span>
+              </>
+            ) : (
+              <span className="font-display text-lg leading-[0.9] text-blanco-hueso md:text-2xl">
+                POR CONFIRMAR
+              </span>
+            )}
           </div>
           <div className="flex flex-col items-center gap-1.5">
             <TeamCrest name={awayTeam.name} isOwnTeam={awayTeam.is_own_team} />

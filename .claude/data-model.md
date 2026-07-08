@@ -69,10 +69,11 @@ create table matches (
   leg int,                             -- 1 = ida, 2 = vuelta (null si partido único)
   home_team_id uuid references teams(id),
   away_team_id uuid references teams(id),
-  match_date timestamptz not null,
+  match_date timestamptz,              -- null = fecha sin confirmar
   score_home int,
   score_away int,
-  status text check (status in ('programado','jugado','suspendido')) default 'programado'
+  status text check (status in ('programado','jugado','suspendido')) default 'programado',
+  created_at timestamptz default now() -- desempate de orden para partidos sin fecha (orden de ingreso)
 );
 
 -- vista calculada, NO se edita directamente. Solo tiene sentido para stages format='liga'

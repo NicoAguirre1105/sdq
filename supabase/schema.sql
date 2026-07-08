@@ -65,10 +65,11 @@ create table matches (
   leg int,
   home_team_id uuid references teams(id),
   away_team_id uuid references teams(id),
-  match_date timestamptz not null,
+  match_date timestamptz,   -- null = fecha sin confirmar
   score_home int,
   score_away int,
-  status text check (status in ('programado', 'jugado', 'suspendido')) default 'programado'
+  status text check (status in ('programado', 'jugado', 'suspendido')) default 'programado',
+  created_at timestamptz default now()   -- desempate de orden para partidos sin fecha
 );
 
 create index matches_stage_id_idx on matches (stage_id);
