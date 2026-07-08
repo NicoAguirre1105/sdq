@@ -70,7 +70,7 @@ export function CanticoList({ canticos }: { canticos: Cantico[] }) {
               {String(i + 1).padStart(2, "0")}
             </span>
             <span className="flex min-w-0 items-baseline gap-2.5">
-              <span className="truncate font-display text-2xl leading-none text-tinta md:text-3xl">
+              <span className="truncate font-display text-2xl leading-[1.2] text-tinta md:text-3xl">
                 {c.title}
               </span>
               {c.classic && (
