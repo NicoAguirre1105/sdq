@@ -11,7 +11,8 @@ export default function CanticosPage() {
   return (
     <>
       <section className="relative overflow-hidden bg-[#081f49] px-4.5 py-8 md:px-0 md:py-10">
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(125deg,#0a234f_0,#0a234f_40px,#0c2a5e_40px,#0c2a5e_80px)]" />
+        <div className="absolute inset-0 bg-[url('/img/hero_2.jpg')] bg-cover bg-center md:bg-[url('/img/hero.jpg')]" />
+        <div className="absolute inset-0 bg-[#081f49]/80" />
         <Container className="relative px-0 md:px-10">
           <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-dorado-escudo uppercase md:text-[11px]">
             La voz de la hinchada

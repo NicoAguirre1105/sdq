@@ -28,9 +28,24 @@ export default async function CanticoDetailPage({ params }: { params: Promise<{ 
       <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 md:grid-cols-[1fr_320px] mb-10">
         {/* Letra */}
         <div className="min-h-[90vh] px-4.5 py-7 md:px-10 md:py-9">
-          <div className="mb-3.5 flex items-center gap-2 font-mono text-[11px] font-semibold text-blanco-hueso/50">
-            <Link href="/canticos" className="transition-colors hover:text-dorado-escudo">
-              ← CÁNTICOS
+          <div className="mb-3.5 flex items-center gap-2 font-mono text-sm font-semibold text-blanco-hueso/50">
+            <Link
+              href="/canticos"
+              className="flex items-center gap-1 transition-colors hover:text-blanco-hueso"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M15 19l-7-7 7-7" />
+              </svg>
+              CÁNTICOS
             </Link>
             <span>/</span>
             <span className="text-dorado-escudo">{cantico.title.toUpperCase()}</span>

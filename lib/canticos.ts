@@ -72,10 +72,7 @@ const AMORES_COMO_EL_NUESTRO: CanticoLine[] = [
   { role: "coro", text: "todavía están corriendo," },
   { role: "llamada", text: "aguante como el nuestro," },
   { role: "coro", text: "nadie lo puede parar." },
-  { role: "llamada", text: "Dale, dale, dale AKD!" },
-  { role: "coro", text: "Dale, dale, dale AKD!" },
-  { role: "llamada", text: "Dale, dale, dale AKD!" },
-  { role: "coro", text: "Dale, dale, dale AKD!" },
+  { role: "llamada", text: "Dale, dale, dale AKD! [x4]" },
 ];
 const NADIE_COMPRENDE_ESTE_AMOR: CanticoLine[] = [
   { role: "llamada", text: "Nadie comprende que este amor se vive así," },

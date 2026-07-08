@@ -4,7 +4,6 @@ import { Container } from "@/components/ui/Container";
 import { NAV_LINKS } from "@/lib/nav-links";
 
 export function Footer() {
-  const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-white/8 bg-black">
@@ -29,7 +28,7 @@ export function Footer() {
       </Container>
 
       <Container className="flex flex-col items-center gap-1.5 border-t border-white/10 px-4.5 py-6 text-center font-body text-xs text-blanco-hueso/50 md:px-10">
-        <p>© {year} Sociedad Deportivo Quito. Todos los derechos reservados.</p>
+        <p>© 2026 Mafia Azul Grana. Todos los derechos reservados.</p>
         <p>
           Sitio web creado por{" "}
           <a
