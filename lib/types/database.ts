@@ -40,6 +40,27 @@ type Team = {
   is_own_team: boolean;
 };
 
+type Competition = {
+  id: string;
+  season_id: string;
+  name: string;
+  slug: string;
+};
+
+// Fila de la vista calculada `standings` (ver supabase/schema.sql). Los conteos
+// llegan como number; points/position se derivan en la capa de aplicación.
+type Standing = {
+  stage_id: string;
+  team_id: string;
+  team_name: string;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goals_for: number;
+  goals_against: number;
+};
+
 type Match = {
   id: string;
   stage_id: string;
@@ -89,8 +110,19 @@ export type Database = {
         Update: Partial<Match>;
         Relationships: [];
       };
+      competitions: {
+        Row: Competition;
+        Insert: Partial<Competition> & Pick<Competition, "season_id" | "name" | "slug">;
+        Update: Partial<Competition>;
+        Relationships: [];
+      };
     };
-    Views: Record<string, never>;
+    Views: {
+      standings: {
+        Row: Standing;
+        Relationships: [];
+      };
+    };
     Functions: Record<string, never>;
   };
 };

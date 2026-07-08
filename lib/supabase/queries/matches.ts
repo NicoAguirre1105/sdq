@@ -25,3 +25,30 @@ export async function getNextMatch() {
 }
 
 export type NextMatch = NonNullable<Awaited<ReturnType<typeof getNextMatch>>>;
+
+// ponytail: sin filtro de stage — Fase 1 tiene un solo stage activo. Filtrar por
+// el stage de la competición vigente cuando haya más de una en simultáneo.
+export async function getUpcomingMatches(limit = 3) {
+  const supabase = await createServerSupabaseClient();
+  const { data: matches, error } = await supabase
+    .from("matches")
+    .select("*")
+    .eq("status", "programado")
+    .order("match_date", { ascending: true })
+    .limit(limit);
+  if (error) throw error;
+  if (!matches?.length) return [];
+
+  const ids = [...new Set(matches.flatMap((m) => [m.home_team_id, m.away_team_id]))];
+  const { data: teams, error: teamsError } = await supabase.from("teams").select("*").in("id", ids);
+  if (teamsError) throw teamsError;
+  const byId = new Map(teams?.map((t) => [t.id, t]));
+
+  return matches.map((m) => ({
+    ...m,
+    homeTeam: byId.get(m.home_team_id) ?? null,
+    awayTeam: byId.get(m.away_team_id) ?? null,
+  }));
+}
+
+export type UpcomingMatch = Awaited<ReturnType<typeof getUpcomingMatches>>[number];
