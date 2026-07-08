@@ -48,8 +48,9 @@ export function CalendarList({ matches }: { matches: OwnTeamMatch[] }) {
     { V: 0, E: 0, D: 0 }
   );
 
-  // matches viene ordenado por fecha asc → el primer 'programado' es el próximo.
-  const nextId = matches.find((m) => m.status === "programado")?.id;
+  // matches viene ordenado por fecha asc → el primer 'programado' con fecha es el
+  // próximo. Los partidos sin fecha confirmada nunca se destacan como "próximo".
+  const nextId = matches.find((m) => m.status === "programado" && m.match_date)?.id;
 
   const filtered = matches.filter((m) => {
     const { isLocal } = perspective(m);

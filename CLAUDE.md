@@ -26,9 +26,16 @@ npx tsc --noEmit  # type-check (no hay script dedicado en package.json)
 
 No hay test runner configurado todavía.
 
+### Flujo de desarrollo y verificación
+
+- **Type-check con `npx tsc --noEmit` después de cambios no triviales** — el `Match`/`Database` tipado a mano detecta la mayoría de los errores de forma (ej. al volver `match_date` nullable, `tsc` fuerza a manejar el null en todos los consumidores). Es la primera red de seguridad, antes de mirar el navegador.
+- **Hay un dev server de preview corriendo** (`.claude/launch.json`). Verificar los cambios observables directamente contra él con las tools `preview_*` (leer estado con `preview_eval`/`preview_snapshot`, inspeccionar estilos con `preview_inspect`, capturar con `preview_screenshot`) en vez de pedirle al usuario que revise a mano. Para páginas con datos de Supabase, `fetch(...)` dentro de `preview_eval` sobre la ruta y revisar el HTML/`status` es la forma rápida de confirmar que la query no rompió.
+- **Errores de datos aparecen como 500** en la ruta (ej. `column ... does not exist` cuando falta correr un `ALTER`). `preview_logs level:error` muestra el error de Postgres exacto; el buffer incluye entradas viejas de compilaciones previas, así que fijarse en la más reciente.
+- **`ponytail:` es el modo por defecto de este repo** — preferir la solución más simple que funcione, reutilizar helpers/patrones existentes antes de escribir nuevos, y marcar simplificaciones deliberadas con un comentario `ponytail:` (ver abajo).
+
 ### Supabase
 
-El schema no usa migraciones incrementales — es un único `supabase/schema.sql` pensado para correrse una sola vez sobre un proyecto nuevo (cubre tablas de Fútbol/Tienda/Admin aunque esas secciones no tengan UI todavía, para evitar migraciones incómodas después). Al modificar el schema, editar `supabase/schema.sql` directamente y aplicar el cambio puntual (`ALTER`/`CREATE`) a mano en el SQL Editor del proyecto real — no existe `supabase/migrations/`.
+El schema no usa migraciones incrementales — es un único `supabase/schema.sql` pensado para correrse una sola vez sobre un proyecto nuevo (cubre tablas de Fútbol/Tienda/Admin aunque esas secciones no tengan UI todavía, para evitar migraciones incómodas después). No existe `supabase/migrations/`.
 
 ```bash
 # Setup de un proyecto nuevo: correr en orden en el SQL Editor de Supabase
@@ -38,7 +45,15 @@ supabase/seed.sql
 
 Requiere `.env.local` con `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 
-Los tipos de `lib/types/database.ts` están **tipados a mano** (solo las tablas que la Fase 1 consulta: `posts`, `players`, `subscribers`, `teams`, `matches`). Reemplazar por completo con `supabase gen types typescript` en cuanto el CLI esté conectado al proyecto real — no seguir extendiendo el archivo a mano más allá de eso.
+**Cómo se cambia el schema (proceso real, seguido hasta ahora):** al modificar el schema hay que tocar **tres lugares** y aplicar el cambio a mano — no hay automatización:
+1. Editar `supabase/schema.sql` (fuente de verdad para instalaciones nuevas).
+2. Editar `.claude/data-model.md` (el doc de schema, para que no quede desincronizado).
+3. Actualizar a mano `lib/types/database.ts` (tipos manuales, ver abajo).
+4. **El dueño del proyecto corre el `ALTER`/`CREATE` puntual en el SQL Editor del Supabase real** — Claude no tiene acceso de escritura a la DB (el `anon key` de `.env.local` está bloqueado por RLS). Entregar siempre el snippet SQL exacto para que lo corra, y del mismo modo entregar los `INSERT` de datos de ejemplo (no se pueden insertar desde el código). El seed en vivo puede divergir del `seed.sql` porque el dueño edita filas a mano (ej. poner fechas en null); no asumir que la DB en vivo coincide con `seed.sql`.
+
+Cambios de schema aplicados a mano hasta ahora (más allá del `schema.sql` original): `matches.match_date` pasó a **nullable** (null = fecha sin confirmar) y se agregó `matches.created_at timestamptz default now()` como desempate de orden para partidos sin fecha (se listan al final, en orden de ingreso).
+
+Los tipos de `lib/types/database.ts` están **tipados a mano**, solo las tablas/vistas que la Fase 1 consulta: `posts`, `players`, `subscribers`, `teams`, `matches`, `seasons`, `competitions`, `stages` y la vista `standings`. Reemplazar por completo con `supabase gen types typescript` en cuanto el CLI esté conectado al proyecto real — no seguir extendiendo el archivo a mano más allá de eso.
 
 ## Documentos de contexto (leer según la tarea)
 
@@ -60,8 +75,13 @@ Los mockups son bundles de Claude Design (HTML con manifest embebido en gzip+bas
 - Página Home (`app/(public)/page.tsx`): hero de próximo partido, grilla de crónicas, newsletter (alta funcional)
 - Página Cánticos (`app/(public)/canticos/`): lista con filtro clásicos/todos + detalle por cántico (letra call/coro, embed de YouTube con minuto de inicio). Contenido en `lib/canticos.ts`, con letras y video de ejemplo — reemplazar por los reales
 - Página Historia (`app/(public)/historia/`): un solo componente cliente (`components/historia/HistoriaContent.tsx`) con tabs "El club" / "Las barras" por estado, no rutas separadas. Contenido en `lib/historia.ts` (vitrina de títulos, línea de tiempo, presidentes — historial real; barras con datos de ejemplo). El tab "Las barras" está comentado en el subnav (no accesible todavía, falta contenido real de cada barra) — no reactivarlo sin confirmar que hay contenido para mostrar.
+- Sección Fútbol (`components/futbol/`, formato `liga`; `eliminacion`/bracket aún no):
+  - `/futbol` — selector de torneo (`?torneo=<slug>`, server-side vía `searchParams`, sin estado cliente), próximos partidos y tabla de posiciones del stage seleccionado. El selector solo aparece con más de una competición.
+  - `/futbol/calendario` — todos los partidos de SD Quito en la temporada (Quito-céntrico), con resultado + pill V/E/D desde su perspectiva, filtros client-side (Todos/Jugados/Próximos/Local/Visitante), record G/E/P y torneo por partido. Partidos sin fecha (`match_date` null) se listan al final ("Sin confirmar") y nunca se marcan como "próximo".
+  - `/plantilla` — jugadores agrupados por posición (dorsal, nombre; foto placeholder). Ruta top-level, no bajo `/futbol`.
+  - `FutbolSubnav` (client, `usePathname`) enlaza Tabla / Calendario / Plantilla en las tres páginas. "Salón de Fama" queda fuera hasta que exista su ruta/datos.
 
-**No implementado todavía:** Plantilla, 404, Fútbol/Calendario, Tienda, Login, y todo `/admin`. No asumir que estas rutas o sus componentes existen — verificar antes de referenciarlas. El link "Tienda" está comentado en `lib/nav-links.ts` por la misma razón (sección sin construir aún).
+**No implementado todavía:** 404, Tienda, Login, y todo `/admin`. Fútbol `eliminacion`/bracket (solo hay `liga`). No asumir que estas rutas o sus componentes existen — verificar antes de referenciarlas. El link "Tienda" está comentado en `lib/nav-links.ts` por la misma razón (sección sin construir aún).
 
 **Pendiente de definir:** número(s) de WhatsApp de destino para pedidos, copy exacto del mensaje pre-armado.
 
@@ -73,15 +93,21 @@ Los mockups son bundles de Claude Design (HTML con manifest embebido en gzip+bas
 
 ### Capa de datos: nunca Supabase directo desde un componente
 
-Todo acceso a datos pasa por `lib/supabase/queries/<dominio>.ts` (una función por consulta, ej. `getPublishedPosts`, `getNextMatch`, `addSubscriber`). Los componentes de servidor llaman a estas funciones, nunca a `supabase.from(...)` inline. `lib/supabase/client.ts` expone `createBrowserSupabaseClient` y `createServerSupabaseClient` por separado.
+Todo acceso a datos pasa por `lib/supabase/queries/<dominio>.ts` (una función por consulta, ej. `getPublishedPosts`, `getNextMatch`, `getStandings`, `getLeagueStages`, `getOwnTeamMatches`, `addSubscriber`). Los componentes de servidor llaman a estas funciones, nunca a `supabase.from(...)` inline. `lib/supabase/client.ts` expone `createBrowserSupabaseClient` y `createServerSupabaseClient` por separado.
 
 Escrituras desde el cliente (hoy solo el alta de newsletter) pasan por una Server Action en `lib/actions/` (ej. `lib/actions/subscribe.ts`, usada con `useActionState`), que a su vez llama a la query — los componentes cliente tampoco llaman a Supabase directo.
+
+Patrones dentro de la capa de datos:
+- **Partidos filtrados por `stage_id`.** `getStandings(stageId)` y `getUpcomingMatches(stageId)` reciben el stage; `/futbol` lo resuelve con `getLeagueStages()` (stages `liga` de la temporada vigente → selector de torneo). `getNextMatch()` (Home) no filtra: toma el próximo programado de cualquier torneo.
+- **`withTeams(supabase, matches)`** (helper privado en `queries/matches.ts`) adjunta `homeTeam`/`awayTeam` a una lista de partidos con una sola consulta a `teams`. Usarlo en vez de repetir el lookup.
+- **Orden con partidos sin fecha:** ordenar por `match_date` con `{ ascending: true, nullsFirst: false }` y desempatar con `.order("created_at", { ascending: true })` para que los sin fecha queden al final en orden de ingreso.
+- **`lib/format.ts` → `formatMatchDate(iso)`** devuelve `{ day, time }` o `null` si no hay fecha. Un único formateador para Home/Fútbol/Calendario; los consumidores renderizan "Sin confirmar" cuando devuelve null.
 
 ### Componentes: `ui/` genéricos vs dominio
 
 - `components/ui/` — primitivos reutilizables entre páginas (`Container` para el max-width del sitio, `PhotoPlaceholder`, `TeamCrest`, `BrandLockup`)
 - `components/layout/` — chrome de sitio (`Navbar`, `Footer`, `SubscribeForm`, `SubscribeModal`)
-- `components/home/`, y futuros `components/futbol/`, `components/tienda/`, etc. — específicos de cada dominio/página
+- `components/home/`, `components/futbol/` (ya existe: `UpcomingMatches`, `StandingsTable`, `CalendarList`, `SquadGrid`, `FutbolSubnav`), y futuros `components/tienda/`, etc. — específicos de cada dominio/página
 
 `Container` (`max-w-[1280px] mx-auto`) es el mecanismo de ancho máximo del sitio: se usa dentro de cada sección con fondo full-bleed (hero, franjas de color), nunca envolviendo la página entera, para que los fondos de color sigan yendo de borde a borde mientras el contenido queda centrado.
 
@@ -103,7 +129,7 @@ Marcan simplificaciones deliberadas con un techo conocido y el camino para escal
 
 ## Decisiones clave a respetar siempre
 
-1. **Fútbol/calendario/standings son una sola fuente de datos.** Se registran partidos de TODOS los equipos de cada torneo (no solo SD Quito), para poder calcular la tabla de posiciones automáticamente en vez de ingresarla a mano. Ver `data-model.md`.
+1. **Fútbol/calendario/standings son una sola fuente de datos.** Se registran partidos de TODOS los equipos de cada torneo (no solo SD Quito), para poder calcular la tabla de posiciones automáticamente (vista `standings`, por `stage_id`) en vez de ingresarla a mano. Ver `data-model.md`. Puede haber **varias competiciones a la vez** (ej. Serie B + una copa): `/futbol` las muestra con un selector de torneo. El **calendario sí es Quito-céntrico** (solo partidos donde juega SD Quito, con resultado desde su perspectiva) — es la excepción a "todos los equipos", que aplica al registro de datos y al cálculo de la tabla, no a esta vista.
 2. **Dos formatos de stage:** `liga` (tabla de posiciones) y `eliminacion` (llaves/bracket, con soporte ida/vuelta vía `tie_id`). La UI y los formularios de admin cambian según el formato.
 3. **No todo necesita CMS.** Historia y Cánticos son contenido estático en el repo (Cánticos como datos tipados en `lib/canticos.ts`, no MDX — la letra es estructurada por línea con rol call/coro, no prosa). Plantilla es semi-estático (Supabase, sin UI de admin). Ver criterio completo en `admin-cms.md`.
 4. **Identidad visual "de hinchada", no "app deportiva genérica".** El elemento de firma es un borde rasgado/deshilachado (SVG) que simula el filo de un trapo de tribuna, usado como transición entre secciones (todavía no implementado — pendiente para Historia/Cánticos). Ver `design-system.md` antes de construir cualquier UI.
