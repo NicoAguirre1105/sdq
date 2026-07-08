@@ -20,7 +20,7 @@
   /admin/futbol             → gestión de teams, stages, matches
   /admin/tienda             → gestión de productos + vista de orders
   /admin/suscriptores
-/not-found                 → 404
+/not-found                 → 404 (implementado: app/(public)/not-found.tsx + catch-all [...not-found] para heredar Navbar/Footer)
 ```
 
 ## Descripción por página
@@ -39,6 +39,6 @@
 | **Suscripción** | Alta de email a newsletter | CMS ligero (`subscribers`) |
 | **Login** | Acceso de administrador | Supabase Auth |
 | **Admin** | Gestión de todo el contenido dinámico | Ver `admin-cms.md` |
-| **Not found** | 404 | Estático |
+| **Not found** | 404 (implementado) | Estático |
 
 Ver `data-model.md` para el detalle de tablas y `admin-cms.md` para el flujo de cada panel.

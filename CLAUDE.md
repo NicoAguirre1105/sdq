@@ -80,8 +80,9 @@ Los mockups son bundles de Claude Design (HTML con manifest embebido en gzip+bas
   - `/futbol/calendario` — todos los partidos de SD Quito en la temporada (Quito-céntrico), con resultado + pill V/E/D desde su perspectiva, filtros client-side (Todos/Jugados/Próximos/Local/Visitante), record G/E/P y torneo por partido. Partidos sin fecha (`match_date` null) se listan al final ("Sin confirmar") y nunca se marcan como "próximo".
   - `/plantilla` — jugadores agrupados por posición (dorsal, nombre; foto placeholder). Ruta top-level, no bajo `/futbol`.
   - `FutbolSubnav` (client, `usePathname`) enlaza Tabla / Calendario / Plantilla en las tres páginas. "Salón de Fama" queda fuera hasta que exista su ruta/datos.
+- Página 404 (`app/(public)/not-found.tsx`): hero azul con textura diagonal, `BrandLockup` (logo Quito + división + MAG, igual que la Navbar), "404" y accesos rápidos. Vive dentro de `(public)` para heredar Navbar/Footer; un catch-all `app/(public)/[...not-found]/page.tsx` enruta las URLs inexistentes al grupo (un `not-found.tsx` suelto solo cubre `notFound()` lanzado dentro del grupo, no las rutas no encontradas). Al construir `/admin`, darle su propio catch-all para que sus rutas inexistentes no caigan en este 404 público.
 
-**No implementado todavía:** 404, Tienda, Login, y todo `/admin`. Fútbol `eliminacion`/bracket (solo hay `liga`). No asumir que estas rutas o sus componentes existen — verificar antes de referenciarlas. El link "Tienda" está comentado en `lib/nav-links.ts` por la misma razón (sección sin construir aún).
+**No implementado todavía:** Tienda, Login, y todo `/admin`. Fútbol `eliminacion`/bracket (solo hay `liga`). No asumir que estas rutas o sus componentes existen — verificar antes de referenciarlas. El link "Tienda" está comentado en `lib/nav-links.ts` por la misma razón (sección sin construir aún).
 
 **Pendiente de definir:** número(s) de WhatsApp de destino para pedidos, copy exacto del mensaje pre-armado.
 
