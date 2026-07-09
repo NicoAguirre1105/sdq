@@ -1,40 +1,50 @@
 const KIT_API = "https://api.kit.com/v4";
 
-// Agrega el correo al Form de Kit. Si el Form tiene doble opt-in activado, Kit
-// manda el correo de verificación. Devuelve el id del subscriber en Kit (para
-// guardarlo y cruzarlo con el webhook de confirmación), o null si no hay
-// credenciales configuradas.
-// ponytail: no-op sin credenciales — el flujo local (sin cuenta Kit) sigue
-// funcionando, el subscriber queda como pendiente en Supabase. Quitar el guard
-// cuando KIT_API_KEY/KIT_FORM_ID estén siempre presentes (prod).
-export async function addToKit(email: string): Promise<string | null> {
-  const key = process.env.KIT_API_KEY;
+// Alta con doble opt-in. Postea al endpoint público de submission del Form (el
+// mismo que usa el embed de Kit): respeta el setting de doble opt-in del Form y
+// dispara el correo de verificación. La API v4 NO sirve para esto — crea al
+// subscriber como "active" sin mandar confirmación.
+// ponytail: endpoint semi-documentado (el del embed), pero es el backbone de todo
+// form de Kit. Si algún día cambia, migrar a v3 `POST /v3/forms/{id}/subscribe`
+// con la API key v3 (una key distinta de la v4).
+export async function addToKit(email: string): Promise<void> {
   const formId = process.env.KIT_FORM_ID;
-  if (!key || !formId) return null;
+  if (!formId) return; // no-op sin form configurado; el alta en Supabase igual queda pendiente
 
-  const res = await fetch(`${KIT_API}/forms/${formId}/subscribers`, {
+  const res = await fetch(`https://app.kit.com/forms/${formId}/subscriptions`, {
     method: "POST",
-    headers: { "X-Kit-Api-Key": key, "Content-Type": "application/json" },
-    body: JSON.stringify({ email_address: email }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Accept: "application/json",
+    },
+    body: new URLSearchParams({ email_address: email }),
   });
   if (!res.ok) throw new Error(`Kit responded ${res.status}`);
-
-  const json = (await res.json()) as { subscriber?: { id?: number } };
-  return json.subscriber?.id != null ? String(json.subscriber.id) : null;
+  const json = (await res.json()) as { status?: string };
+  if (json.status !== "success") throw new Error(`Kit form submission: ${json.status}`);
 }
 
-// Da de baja al subscriber en Kit (deja de recibir correos). Best-effort: no lanza,
-// para que un fallo de Kit no impida borrar la fila en Supabase.
-export async function removeFromKit(kitSubscriberId: string | null): Promise<void> {
+// Da de baja al subscriber en Kit (deja de recibir correos). Busca el id por correo
+// vía v4 y lo desuscribe. Best-effort: no lanza, para que un fallo de Kit no impida
+// borrar la fila en Supabase.
+export async function removeFromKit(email: string): Promise<void> {
   const key = process.env.KIT_API_KEY;
-  if (!key || !kitSubscriberId) return;
+  if (!key) return;
   try {
-    await fetch(`${KIT_API}/subscribers/${kitSubscriberId}/unsubscribe`, {
+    const lookup = await fetch(
+      `${KIT_API}/subscribers?email_address=${encodeURIComponent(email)}`,
+      { headers: { "X-Kit-Api-Key": key } }
+    );
+    if (!lookup.ok) return;
+    const data = (await lookup.json()) as { subscribers?: { id: number }[] };
+    const id = data.subscribers?.[0]?.id;
+    if (!id) return;
+    await fetch(`${KIT_API}/subscribers/${id}/unsubscribe`, {
       method: "POST",
       headers: { "X-Kit-Api-Key": key },
     });
   } catch {
-    // ponytail: si Kit falla, borramos igual en Supabase; la baja en Kit se puede
-    // reconciliar a mano. Un huérfano en Kit no debe bloquear el borrado.
+    // ponytail: un fallo de Kit no debe bloquear el borrado en Supabase; la baja
+    // en Kit se puede reconciliar a mano.
   }
 }

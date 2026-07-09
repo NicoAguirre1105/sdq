@@ -40,14 +40,14 @@ export default function TerminosPage() {
             Estos términos regulan la suscripción al boletín de correo (newsletter) de{" "}
             <strong>Mafia Azul Grana</strong>, el portal hecho por y para la hinchada de Sociedad
             Deportivo Quito. Este no es un sitio oficial del club: es un portal de la hinchada. Al
-            suscribirte, aceptás lo descrito a continuación.
+            suscribirte, aceptas lo descrito a continuación.
           </p>
 
           <div>
             <h2 className="font-display text-2xl text-tinta">1. Responsable</h2>
             <p className="mt-2">
               El responsable del tratamiento de tus datos es el colectivo de hinchas que administra
-              este sitio (Mafia Azul Grana). Para cualquier consulta o solicitud podés escribir a{" "}
+              este sitio (Mafia Azul Grana). Para cualquier consulta o solicitud puedes escribir a{" "}
               <a href={`mailto:${CONTACT_EMAIL}`} className="text-azul-marino underline">
                 {CONTACT_EMAIL}
               </a>
@@ -60,9 +60,9 @@ export default function TerminosPage() {
             <p className="mt-2">Al suscribirte guardamos únicamente:</p>
             <ul className="mt-2 list-disc space-y-1 pl-5">
               <li>Tu dirección de correo electrónico.</li>
-              <li>Los temas de interés que seleccionás (novedades del club, tienda, cánticos).</li>
+              <li>Los temas de interés que seleccionas (novedades del club, tienda, cánticos).</li>
               <li>
-                La fecha en que te suscribís y en que aceptás estos términos, como constancia de tu
+                La fecha en que te suscribes y en que aceptas estos términos, como constancia de tu
                 consentimiento.
               </li>
             </ul>
@@ -84,7 +84,7 @@ export default function TerminosPage() {
             <h2 className="font-display text-2xl text-tinta">4. Verificación (doble opt-in)</h2>
             <p className="mt-2">
               Después de suscribirte recibirás un correo de verificación. Tu suscripción se activa
-              solo cuando confirmás desde ese correo. Si no confirmás, no te enviaremos el boletín.
+              solo cuando confirmas desde ese correo. Si no confirmas, no te enviaremos el boletín.
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export default function TerminosPage() {
               El envío y la gestión de los correos se realiza a través de{" "}
               <strong>Kit</strong> (kit.com), un servicio de email marketing con sede en Estados
               Unidos. Al suscribirte, tu correo se procesa en sus servidores para poder enviarte el
-              boletín. Podés consultar su política de privacidad en su sitio web.
+              boletín. Puedes consultar su política de privacidad en su sitio web.
             </p>
           </div>
 
@@ -102,7 +102,7 @@ export default function TerminosPage() {
             <h2 className="font-display text-2xl text-tinta">6. Cómo darte de baja</h2>
             <p className="mt-2">
               Cada correo que enviamos incluye un enlace para cancelar la suscripción en cualquier
-              momento, sin costo ni explicación. También podés escribirnos a{" "}
+              momento, sin costo ni explicación. También puedes escribirnos a{" "}
               <a href={`mailto:${CONTACT_EMAIL}`} className="text-azul-marino underline">
                 {CONTACT_EMAIL}
               </a>{" "}
@@ -114,8 +114,8 @@ export default function TerminosPage() {
             <h2 className="font-display text-2xl text-tinta">7. Tus derechos</h2>
             <p className="mt-2">
               De acuerdo con la Ley Orgánica de Protección de Datos Personales del Ecuador (LOPDP),
-              tenés derecho a acceder, rectificar, actualizar y eliminar tus datos, así como a
-              retirar tu consentimiento en cualquier momento. Para ejercerlos, escribinos a{" "}
+              tienes derecho a acceder, rectificar, actualizar y eliminar tus datos, así como a
+              retirar tu consentimiento en cualquier momento. Para ejercerlos, escríbenos a{" "}
               <a href={`mailto:${CONTACT_EMAIL}`} className="text-azul-marino underline">
                 {CONTACT_EMAIL}
               </a>

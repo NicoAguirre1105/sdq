@@ -30,8 +30,8 @@ export function SubscribeForm({ compact = false }: { compact?: boolean }) {
           ¡CASI LISTO!
         </h2>
         <p className="mt-3 max-w-lg font-body text-sm text-white/90">
-          Te enviamos un correo de verificación. Abrilo y confirmá tu suscripción para
-          empezar a recibir novedades. Si no lo ves, revisá spam.
+          Te enviamos un correo de verificación. Ábrelo y confirma tu suscripción para
+          empezar a recibir novedades. Si no lo ves, revisa spam.
         </p>
       </div>
     );
@@ -43,13 +43,13 @@ export function SubscribeForm({ compact = false }: { compact?: boolean }) {
       <form action={subAction}>
         <input type="hidden" name="email" value={checkState.email} />
         <h2 className={`font-display leading-[0.9] text-white ${compact ? "text-4xl" : "text-4xl md:text-5xl"}`}>
-          CONFIRMÁ
+          CONFIRMA
           <br />
           TU SUSCRIPCIÓN
         </h2>
         <p className="mt-2 max-w-lg font-body text-[13px] text-white/85">
           Vamos a enviar un correo de verificación a{" "}
-          <strong className="font-semibold text-white">{checkState.email}</strong>. Confirmá ahí
+          <strong className="font-semibold text-white">{checkState.email}</strong>. Confírmalo ahí
           para activar tu suscripción.
         </p>
 
@@ -93,7 +93,7 @@ export function SubscribeForm({ compact = false }: { compact?: boolean }) {
         </button>
         {subState.status === "error" && (
           <p className="mt-2 font-body text-xs text-white/85">
-            {subState.message ?? "Algo salió mal. Probá de nuevo."}
+            {subState.message ?? "Algo salió mal. Intenta de nuevo."}
           </p>
         )}
       </form>
@@ -135,11 +135,11 @@ export function SubscribeForm({ compact = false }: { compact?: boolean }) {
       )}
       {checkState.status === "pending" && (
         <p className="mt-2 font-body text-xs text-white/85">
-          Ya te registraste. Revisá tu correo para confirmar la suscripción.
+          Ya te registraste. Revisa tu correo para confirmar la suscripción.
         </p>
       )}
       {checkState.status === "error" && (
-        <p className="mt-2 font-body text-xs text-white/85">Algo salió mal. Probá de nuevo.</p>
+        <p className="mt-2 font-body text-xs text-white/85">Algo salió mal. Intenta de nuevo.</p>
       )}
     </form>
   );

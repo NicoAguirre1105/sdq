@@ -25,16 +25,11 @@ export async function getSubscriberStatus(email: string): Promise<SubscriberStat
   return data as SubscriberStatus;
 }
 
-export async function addSubscriber(
-  email: string,
-  topics: string[],
-  kitSubscriberId: string | null
-) {
+export async function addSubscriber(email: string, topics: string[]) {
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("subscribers").insert({
     email,
     topics,
-    kit_subscriber_id: kitSubscriberId,
     accepted_terms_at: new Date().toISOString(),
   });
   if (error) {

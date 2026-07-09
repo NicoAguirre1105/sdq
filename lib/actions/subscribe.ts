@@ -43,14 +43,14 @@ export async function subscribeAction(
   const acceptedTerms = formData.get("terms") === "on";
 
   if (!email) return { status: "error" };
-  if (!acceptedTerms) return { status: "error", message: "Debés aceptar los términos para suscribirte." };
+  if (!acceptedTerms) return { status: "error", message: "Debes aceptar los términos para suscribirte." };
 
   try {
     // Kit primero: si falla, no dejamos una fila pendiente que bloquee el reintento.
-    const kitId = await addToKit(email);
-    await addSubscriber(email, topics, kitId);
+    await addToKit(email);
+    await addSubscriber(email, topics);
     return { status: "success" };
   } catch {
-    return { status: "error", message: "Algo salió mal. Probá de nuevo." };
+    return { status: "error", message: "Algo salió mal. Intenta de nuevo." };
   }
 }

@@ -13,12 +13,12 @@ export async function deleteSubscriber(formData: FormData) {
   const supabase = await createServerSupabaseClient();
   const { data: existing } = await supabase
     .from("subscribers")
-    .select("kit_subscriber_id")
+    .select("email")
     .eq("id", id)
     .maybeSingle();
 
   await supabase.from("subscribers").delete().eq("id", id);
-  await removeFromKit(existing?.kit_subscriber_id ?? null);
+  if (existing?.email) await removeFromKit(existing.email);
 
   revalidatePath("/admin/suscriptores");
 }
