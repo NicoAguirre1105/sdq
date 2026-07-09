@@ -21,6 +21,7 @@
     /admin/futbol/equipos      → implementado (catálogo de teams: listado + /new + /[id]/edit; escudo SVG → bucket team_logos)
     /admin/futbol/competiciones → implementado (alta/baja de temporadas y torneos)
     /admin/futbol/stage/new    → implementado (crear stage; en liga elige equipos → stage_teams)
+  /admin/plantilla          → implementado (CRUD de jugadores: listado + /new + /[id]/edit; foto opcional → bucket player_photos)
   /admin/tienda             → gestión de productos + vista de orders — no implementado
   /admin/suscriptores        → no implementado
 /not-found                 → 404 (implementado: app/(public)/not-found.tsx + catch-all [...not-found] para heredar Navbar/Footer)
@@ -41,7 +42,7 @@
 | **Plantilla** | Jugadores del plantel actual | Semi-estático (Supabase, sin UI) |
 | **Suscripción** | Alta de email a newsletter | CMS ligero (`subscribers`) |
 | **Login** | Acceso de administrador (implementado) | Supabase Auth |
-| **Admin** | Gestión de todo el contenido dinámico (implementados: Posts y Fútbol; pendientes: Tienda, Suscriptores, Plantilla) | Ver `admin-cms.md` |
+| **Admin** | Gestión de todo el contenido dinámico (implementados: Posts, Fútbol y Plantilla; pendientes: Tienda, Suscriptores) | Ver `admin-cms.md` |
 | **Not found** | 404 (implementado) | Estático |
 
 Ver `data-model.md` para el detalle de tablas y `admin-cms.md` para el flujo de cada panel.

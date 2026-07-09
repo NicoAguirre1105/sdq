@@ -242,3 +242,19 @@ create policy "admins delete team_logos" on storage.objects for delete
   using (bucket_id = 'team_logos' and exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins read team_logos" on storage.objects for select
   using (bucket_id = 'team_logos' and exists (select 1 from admin_users where id = auth.uid()));
+
+-- Bucket público para fotos de jugadores. Imagen rasterizada (jpg/png/webp), hasta 2 MB.
+-- La foto es opcional: sin foto, la grilla usa un placeholder. Mismas 4 policies de admin.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('player_photos', 'player_photos', true, 2097152,
+        array['image/jpeg', 'image/png', 'image/webp'])
+on conflict (id) do nothing;
+
+create policy "admins upload player_photos" on storage.objects for insert
+  with check (bucket_id = 'player_photos' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins update player_photos" on storage.objects for update
+  using (bucket_id = 'player_photos' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins delete player_photos" on storage.objects for delete
+  using (bucket_id = 'player_photos' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins read player_photos" on storage.objects for select
+  using (bucket_id = 'player_photos' and exists (select 1 from admin_users where id = auth.uid()));

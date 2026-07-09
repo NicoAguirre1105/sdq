@@ -89,8 +89,9 @@ Layout real: pantalla única (`/admin/futbol`) con selector de stage arriba → 
 - Listar, exportar CSV, eliminar
 - Sin editor de contenido — es operativo, no editorial
 
-### 5. Plantilla — nivel B, opcional
-- Si se quiere evitar Supabase Studio: CRUD simple reusando el mismo patrón de posts/productos
+### 5. Plantilla — nivel B — **IMPLEMENTADO** (`/admin/plantilla`)
+- CRUD de jugadores reusando el patrón de posts/teams: nombre, posición (select con las 4 claves de `SquadGrid`), dorsal, bio markdown.
+- **Foto opcional** subida al bucket `player_photos` (jpg/png/webp, ≤2 MB); sin foto la grilla pública usa `PhotoPlaceholder`.
 
 ---
 

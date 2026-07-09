@@ -38,6 +38,7 @@ async function deleteFromBucket(
 
 const POST_IMAGES_BUCKET = "post-images";
 const TEAM_LOGOS_BUCKET = "team_logos";
+const PLAYER_PHOTOS_BUCKET = "player_photos";
 
 export const uploadPostImage = (supabase: SupabaseClient<Database>, file: File) =>
   uploadToBucket(supabase, POST_IMAGES_BUCKET, file);
@@ -50,3 +51,9 @@ export const uploadTeamLogo = (supabase: SupabaseClient<Database>, file: File) =
 
 export const deleteTeamLogo = (supabase: SupabaseClient<Database>, url: string) =>
   deleteFromBucket(supabase, TEAM_LOGOS_BUCKET, url);
+
+export const uploadPlayerPhoto = (supabase: SupabaseClient<Database>, file: File) =>
+  uploadToBucket(supabase, PLAYER_PHOTOS_BUCKET, file);
+
+export const deletePlayerPhoto = (supabase: SupabaseClient<Database>, url: string) =>
+  deleteFromBucket(supabase, PLAYER_PHOTOS_BUCKET, url);

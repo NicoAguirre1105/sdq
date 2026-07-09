@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
 
 type Player = {
@@ -52,9 +53,19 @@ export function SquadGrid({ players }: { players: Player[] }) {
                 className="overflow-hidden rounded-lg border border-azul-marino/12 bg-white"
               >
                 <div className="relative">
-                  {/* Cuando exista players.photo_url:
-                      <Image src={p.photo_url} alt={p.full_name} fill className="object-cover" /> */}
-                  <PhotoPlaceholder label="FOTO JUGADOR" tone="azul" className="h-40 md:h-44" />
+                  {p.photo_url ? (
+                    <div className="relative h-40 md:h-44">
+                      <Image
+                        src={p.photo_url}
+                        alt={p.full_name}
+                        fill
+                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <PhotoPlaceholder label="FOTO JUGADOR" tone="azul" className="h-40 md:h-44" />
+                  )}
                   {p.jersey_number != null && (
                     <span className="absolute top-2 right-2.5 font-display text-4xl leading-none text-dorado-escudo md:text-5xl">
                       {p.jersey_number}
