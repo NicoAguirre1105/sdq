@@ -96,3 +96,30 @@ export async function getOwnTeamMatches() {
 }
 
 export type OwnTeamMatch = Awaited<ReturnType<typeof getOwnTeamMatches>>[number];
+
+// Admin: todos los partidos de un stage (de todos los equipos), para gestión.
+export async function getStageMatches(stageId: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data: matches, error } = await supabase
+    .from("matches")
+    .select("*")
+    .eq("stage_id", stageId)
+    .order("match_date", { ascending: true, nullsFirst: false })
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  if (!matches?.length) return [];
+  return withTeams(supabase, matches);
+}
+
+export type StageMatch = Awaited<ReturnType<typeof getStageMatches>>[number];
+
+export async function getMatchById(id: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("matches")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}

@@ -150,6 +150,12 @@ export type Database = {
         Update: Partial<Stage>;
         Relationships: [];
       };
+      stage_teams: {
+        Row: { stage_id: string; team_id: string };
+        Insert: { stage_id: string; team_id: string };
+        Update: Partial<{ stage_id: string; team_id: string }>;
+        Relationships: [];
+      };
       admin_users: {
         Row: AdminUser;
         Insert: Partial<AdminUser> & Pick<AdminUser, "id" | "full_name">;

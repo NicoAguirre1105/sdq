@@ -37,16 +37,19 @@ create table seasons (
   is_current boolean default false
 );
 
+-- on delete cascade en toda la jerarquía Fútbol: borrar temporada → competiciones →
+-- stages → partidos + stage_teams; borrar equipo → sus partidos + stage_teams. La UI
+-- de admin (borrar temporada/competición/stage/equipo) confía en esto.
 create table competitions (
   id uuid primary key default gen_random_uuid(),
-  season_id uuid references seasons(id),
+  season_id uuid references seasons(id) on delete cascade,
   name text not null,                  -- "Serie B 2026", "Copa Ecuador 2026"
   slug text not null
 );
 
 create table stages (
   id uuid primary key default gen_random_uuid(),
-  competition_id uuid references competitions(id),
+  competition_id uuid references competitions(id) on delete cascade,
   name text not null,                  -- "Fase 1", "Grupo A", "Octavos de Final"
   slug text not null,
   format text check (format in ('liga', 'eliminacion')) not null,
@@ -55,20 +58,20 @@ create table stages (
 
 -- solo aplica si stage.format = 'liga'
 create table stage_teams (
-  stage_id uuid references stages(id),
-  team_id uuid references teams(id),
+  stage_id uuid references stages(id) on delete cascade,
+  team_id uuid references teams(id) on delete cascade,
   primary key (stage_id, team_id)
 );
 
 create table matches (
   id uuid primary key default gen_random_uuid(),
-  stage_id uuid references stages(id),
+  stage_id uuid references stages(id) on delete cascade,
   matchday int,                        -- usado si format = 'liga'
   round_name text,                     -- usado si format = 'eliminacion' (ej. "Semifinal")
   tie_id uuid,                         -- agrupa ida/vuelta de la misma llave (null si partido único)
   leg int,                             -- 1 = ida, 2 = vuelta (null si partido único)
-  home_team_id uuid references teams(id),
-  away_team_id uuid references teams(id),
+  home_team_id uuid references teams(id) on delete cascade,
+  away_team_id uuid references teams(id) on delete cascade,
   match_date timestamptz,              -- null = fecha sin confirmar
   score_home int,
   score_away int,

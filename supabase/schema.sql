@@ -36,35 +36,38 @@ create table seasons (
 
 create table competitions (
   id uuid primary key default gen_random_uuid(),
-  season_id uuid references seasons(id),
+  season_id uuid references seasons(id) on delete cascade,
   name text not null,
   slug text not null
 );
 
 create table stages (
   id uuid primary key default gen_random_uuid(),
-  competition_id uuid references competitions(id),
+  competition_id uuid references competitions(id) on delete cascade,
   name text not null,
   slug text not null,
   format text check (format in ('liga', 'eliminacion')) not null,
   order_index int default 0
 );
 
+-- on delete cascade en toda la jerarquía: borrar una temporada arrastra sus
+-- competiciones → stages → partidos + stage_teams; borrar un equipo arrastra sus
+-- partidos y su presencia en las tablas. La UI de admin confía en esto para el borrado.
 create table stage_teams (
-  stage_id uuid references stages(id),
-  team_id uuid references teams(id),
+  stage_id uuid references stages(id) on delete cascade,
+  team_id uuid references teams(id) on delete cascade,
   primary key (stage_id, team_id)
 );
 
 create table matches (
   id uuid primary key default gen_random_uuid(),
-  stage_id uuid references stages(id),
+  stage_id uuid references stages(id) on delete cascade,
   matchday int,
   round_name text,
   tie_id uuid,
   leg int,
-  home_team_id uuid references teams(id),
-  away_team_id uuid references teams(id),
+  home_team_id uuid references teams(id) on delete cascade,
+  away_team_id uuid references teams(id) on delete cascade,
   match_date timestamptz,   -- null = fecha sin confirmar
   score_home int,
   score_away int,
@@ -224,3 +227,18 @@ create policy "admins delete post-images" on storage.objects for delete
 -- lectura pública sigue viniendo del flag `public` del bucket vía CDN, no de acá.
 create policy "admins read post-images" on storage.objects for select
   using (bucket_id = 'post-images' and exists (select 1 from admin_users where id = auth.uid()));
+
+-- Bucket público para escudos de equipos. Solo SVG (image/svg+xml), hasta 1 MB —
+-- el límite y el mime los aplica el bucket; acá van las policies de escritura (admins).
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('team_logos', 'team_logos', true, 1048576, array['image/svg+xml'])
+on conflict (id) do nothing;
+
+create policy "admins upload team_logos" on storage.objects for insert
+  with check (bucket_id = 'team_logos' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins update team_logos" on storage.objects for update
+  using (bucket_id = 'team_logos' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins delete team_logos" on storage.objects for delete
+  using (bucket_id = 'team_logos' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins read team_logos" on storage.objects for select
+  using (bucket_id = 'team_logos' and exists (select 1 from admin_users where id = auth.uid()));
