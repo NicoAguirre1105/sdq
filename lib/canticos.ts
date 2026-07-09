@@ -38,6 +38,24 @@ const EJEMPLO: CanticoLine[] = [
   { role: "coro", text: "Deportivo Quito, campeón nacional." },
 ];
 
+const ENAMORADO_ESTOY_DE_VOS: CanticoLine[] = [
+  { role: "llamada", text: "Ésta es la pasión azul y grana," },
+  { role: "coro", text: "una fiesta que no se compara," },
+  { role: "llamada", text: "la que está en las buenas y en las malas," },
+  { role: "coro", text: "la que la alienta de verdad." },
+  { role: "llamada", text: "Pero es difícil explicarlo," },
+  { role: "coro", text: "con el Quito voy a todos lados," },
+  { role: "llamada", text: "las cosas que hice por la Academia" },
+  { role: "coro", text: "por nadie lo hice jamás." },
+  { role: "llamada", text: "Enamorado estoy de vos," },
+  { role: "coro", text: "desde hace ya mucho tiempo." },
+  { role: "llamada", text: "Y aunque vos no salgas campeón," },
+  { role: "coro", text: "no abandonó el sentimiento." },
+  { role: "llamada", text: "Borracho te voy a seguir," },
+  { role: "coro", text: "jamás te abandonaría." },
+  { role: "llamada", text: "La mafia te va a acompañar," },
+  { role: "coro", text: "Quito por toda la vida!" },
+];
 const QUITO_CAMPEON: CanticoLine[] = [
   { role: "llamada", text: "Ya llega la hinchada más conocida del mundo entero," },
   { role: "coro", text: "recorriendo caminos, canchas, ciudades con muchos huevos," },
@@ -49,7 +67,6 @@ const QUITO_CAMPEON: CanticoLine[] = [
   { role: "coro", text: "Se viene Quito campeón, Quito campeón, Quito campeón." },
   { role: "llamada", text: "Se viene Quito campeón, Quito campeón, Quito campeón." },
 ];
-
 const LINDO_QUITO: CanticoLine[] = [
   { role: "llamada", text: "Lindo Quito de mi vida," },
   { role: "coro", text: "yo te canto con amor," },
@@ -60,7 +77,6 @@ const LINDO_QUITO: CanticoLine[] = [
   { role: "llamada", text: "el marido de la Liga," },
   { role: "coro", text: "es campeón del Ecuador." },
 ];
-
 const AMORES_COMO_EL_NUESTRO: CanticoLine[] = [
   { role: "llamada", text: "Amores como el nuestro cada vez hay menos," },
   { role: "coro", text: "te sigo a todos lados, voy donde juguemos," },
@@ -206,9 +222,97 @@ const Y_DALE_QUITO_DALE: CanticoLine[] = [
   { role: "coro", text: "Yo soy así, al Quito yo lo quiero," },
   { role: "llamada", text: "vamo' a cag**, UH, a todo el gallinero." },
 ];
+const GORILA_ESPERATE_UN_POQUITO: CanticoLine[] = [
+  { role: "llamada", text: "Gorila esperáte un poquito más," },
+  { role: "coro", text: "que ya nos vamos a encontrar." },
+  { role: "llamada", text: "Gorila esperáte un poquito más," },
+  { role: "coro", text: "que ya nos vamos a encontrar." },
+  { role: "llamada", text: "Los del rojo tienen miedo," },
+  { role: "coro", text: "porque saben que esta banda tiene huevos," },
+  { role: "llamada", text: "a los de Liga los corremos" },
+  { role: "coro", text: "y a los del rojo los vamo' a correr de nuevo." },
+];
+const VAMO_VAMO_LA_AZULGRANA: CanticoLine[] = [
+  { role: "llamada", text: "Vamo', vamo' la azulgrana," },
+  { role: "coro", text: "yo te sigo de la plaza," },
+  { role: "llamada", text: "de cabeza a donde vayas," },
+  { role: "coro", text: "en las buenas y en las malas." },
+  { role: "llamada", text: "Tu hinchada que vino descontrolada," },
+  { role: "coro", text: "no te deja de alentar," },
+  { role: "llamada", text: " hasta el final." },
+  { role: "coro", text: "Y a mí no me importa nada," },
+  { role: "llamada", text: "si son todos noveleros," },
+  { role: "coro", text: "son amargos los toreros," },
+  { role: "llamada", text: "un velorio el astillero." },
+  { role: "coro", text: "fsdfsdfsdfsdf" },
+  { role: "llamada", text: "sdfsdfsfsdfsdf" },
+  { role: "coro", text: "Vamo' AKD, vamo' a ganar," },
+  { role: "llamada", text: "donde jugués yo voy a estar," },
+  { role: "coro", text: "te alentaré de corazón," },
+  { role: "llamada", text: "te quiero ver salir camepón." },
+];
+const BANDA_DE_LOS_PLACEROS: CanticoLine[] = [
+  { role: "llamada", text: "Ésta es la banda loca de los placeros," },
+  { role: "coro", text: "la que le sigue al Quito donde juguemos," },
+  { role: "llamada", text: "la que deja la vida por los colores," },
+  { role: "coro", text: "la que le pide aguante a los jugadores" },
+  { role: "llamada", text: "para ser campeones." },
+];
+const HOY_ES_CUANDO_MAS_TE_AMO: CanticoLine[] = [
+  { role: "llamada", text: "EWFWEFWEFWE" },
+  { role: "coro", text: "wefwefwfwefwe" },
+  { role: "llamada", text: "lo único que sigue intacto" },
+  { role: "coro", text: "es mi amor por ti." },
+  { role: "llamada", text: "Por las alegrías que pasamos" },
+  { role: "coro", text: "y por el amor que te juré," },
+  { role: "llamada", text: "yo soy hincha de la AKD." },
+  { role: "coro", text: "Los huevos que tiene esta hinchada," },
+  { role: "llamada", text: "esos pu*** los quieren tener." },
+  { role: "coro", text: "Hoy es cuando más te amo!" },
+  { role: "llamada", text: "En las malas estoy junto con vos," },
+  { role: "coro", text: "por eso somos la más fiel," },
+  { role: "llamada", text: "quiero morir aquí a tu lado" },
+  { role: "coro", text: "porque juntos vamos a volver." },
+];
+const QUITO_CORAZON: CanticoLine[] = [
+  { role: "llamada", text: "Ooohhhhhhh!" },
+  { role: "coro", text: "Quito corazón" },
+  { role: "llamada", text: "Corazón, corazón," },
+  { role: "coro", text: "Quito corazón." },
+  { role: "llamada", text: "--- (variante)" },
+  { role: "coro", text: "Ooohhhhhhh!" },
+  { role: "llamada", text: "Vamos a volver," },
+  { role: "coro", text: "a volver, a volver," },
+  { role: "llamada", text: "vamos a volver." },
+  { role: "llamada", text: "--- (variante)" },
+  { role: "coro", text: "Ooohhhhhhh!" },
+  { role: "llamada", text: "Somos la más fiel," },
+  { role: "coro", text: "la más fiel, la más fiel," },
+  { role: "llamada", text: "somos la más fiel." },
+];
+const A_VER_LOS_JUGADORES: CanticoLine[] = [
+  { role: "llamada", text: "A ver, a ver los jugadores," },
+  { role: "coro", text: "a ver, a ver si pueden oír," },
+  { role: "llamada", text: "por la camiseta del Quito" },
+  { role: "coro", text: "vamos a matar o morir." },
+];
+const COLORES_DE_LA_CAPITAL: CanticoLine[] = [
+  { role: "llamada", text: "Quito, tú eres mi vida," },
+  { role: "coro", text: "por historia fuimos la Argentina," },
+  { role: "llamada", text: "por historia somos la Academia," },
+  { role: "coro", text: "por historia tú llevas la insignia de ésta gran ciudad." },
+  { role: "llamada", text: "Los colores de la capital" },
+  { role: "coro", text: "azul y rojo." },
+  { role: "llamada", text: "Vos cag** no hables más," },
+  { role: "coro", text: "que en mi nombre está el de la ciudad." },
+  { role: "llamada", text: "La gloriosa AKD," },
+  { role: "coro", text: "soy de vos aunque vuelva a nacer." },
+];
 
 export const CANTICOS: Cantico[] = [
+  { slug: "enamorado-estoy-de-vos", title: "Enamorado estoy de vos", classic: false, youtubeUrl: "", startSeconds: 0, lines:ENAMORADO_ESTOY_DE_VOS},
   { slug: "se-viene-quito-campeon", title: "Se viene Quito campeón", classic: false, youtubeUrl: "https://www.youtube.com/watch?v=Ws-J40TX-1c", startSeconds: 56, lines: QUITO_CAMPEON },
+  { slug: "los-colores-de-la-capital", title: "Los colores de la capital", classic: false, youtubeUrl: "https://www.youtube.com/watch?v=JnSn9_73A2w", startSeconds: 179, lines: COLORES_DE_LA_CAPITAL },
   { slug: "lindo-quito", title: "Lindo Quito de mi vida", classic: true, youtubeUrl: "https://www.youtube.com/watch?v=Ws-J40TX-1c", startSeconds: 148, lines: LINDO_QUITO },
   { slug: "amores-como-el-nuestro", title: "Amores como el nuestro", classic: false, youtubeUrl: "https://www.youtube.com/watch?v=Ws-J40TX-1c", startSeconds: 267, lines: AMORES_COMO_EL_NUESTRO },
   { slug: "nadie-comprende-este-amor", title: "Nadie comprende este amor", classic: false, youtubeUrl: "https://www.youtube.com/watch?v=uPMJFpics6o", startSeconds: 46, lines: NADIE_COMPRENDE_ESTE_AMOR },
@@ -220,6 +324,12 @@ export const CANTICOS: Cantico[] = [
   { slug: "quito-mi-viejo-amigo", title: "Quito, mi viejo amigo", classic: false, youtubeUrl: 'https://www.youtube.com/watch?v=4F_0xH9wPj8', startSeconds: 28, lines: QUITO_MI_VIEJO_AMIGO },
   { slug: "la-banda-del-brujo-presente", title: "La banda del Brujo presente", classic: false, youtubeUrl: 'https://www.youtube.com/watch?v=4F_0xH9wPj8', startSeconds: 217, lines: BANDA_DEL_BRUJO },
   { slug: "y-dale-quito-dale", title: "Y dale, Quito dale", classic: true, youtubeUrl: 'https://www.youtube.com/watch?v=hAFW26InC7w', startSeconds: 376, lines: Y_DALE_QUITO_DALE },
+  { slug: "gorila-esperate-un-poquito", title: "Gorila esperáte un poquito", classic: false, youtubeUrl: 'https://www.youtube.com/watch?v=lk0xuROJhL0', startSeconds: 232, lines: GORILA_ESPERATE_UN_POQUITO},
+  { slug: "vamo-vamo-la-azulgrana", title: "Vamo' vamo' la azulgrana", classic: false, youtubeUrl: 'https://www.youtube.com/watch?v=a6zHCQIsCgo', startSeconds: 244, lines: VAMO_VAMO_LA_AZULGRANA},
+  { slug: "la-banda-loca-de-los-placeros", title: "La banda loca de los placeros", classic: false, youtubeUrl: 'https://www.youtube.com/watch?v=H3lDCo3UZV0', startSeconds: 18, lines: BANDA_DE_LOS_PLACEROS},
+  { slug: "hoy-es-cuando-mas-te-amo", title: "Hoy es cuando más te amo", classic: false, youtubeUrl: 'https://www.youtube.com/watch?v=H3lDCo3UZV0', startSeconds: 108, lines: HOY_ES_CUANDO_MAS_TE_AMO},
+  { slug: "quito-corazon", title: "Quito corazón", classic: true, youtubeUrl: 'https://www.youtube.com/watch?v=YNyjKYewxgU', startSeconds: 28, lines: QUITO_CORAZON},
+  { slug: "a-ver-los-jugadores", title: "A ver los jugadores", classic: true, youtubeUrl: 'https://www.youtube.com/watch?v=Qh1UBIgbLCY', startSeconds: 273, lines: A_VER_LOS_JUGADORES},
 ];
 
 export function getCantico(slug: string): Cantico | undefined {
