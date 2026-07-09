@@ -8,6 +8,8 @@ import {
   deleteMatch,
   type MatchFormState,
 } from "@/lib/actions/matches";
+import { Toast } from "@/components/ui/Toast";
+import { DeleteButton } from "@/components/admin/DeleteButton";
 
 type Team = { id: string; name: string };
 
@@ -98,13 +100,9 @@ export function MatchForm({
           </div>
         </header>
 
-        <div className="mx-auto max-w-2xl px-6 py-6">
-          {state.error && (
-            <p className="mb-4 rounded-md bg-rojo-bandera/10 px-3 py-2 font-body text-[13px] text-rojo-bandera">
-              {state.error}
-            </p>
-          )}
+        <Toast message={state.error} />
 
+        <div className="mx-auto max-w-2xl px-6 py-6">
           <div className="mb-4 flex flex-wrap gap-4">
             <div className="min-w-[180px] flex-1">
               <label htmlFor="home_team_id" className={label}>
@@ -243,23 +241,14 @@ export function MatchForm({
 
       {editing && (
         <div className="mx-auto max-w-2xl px-6 pb-10">
-          <form
+          <DeleteButton
             action={deleteMatch}
-            onSubmit={(e) => {
-              if (!confirm("¿Eliminar este partido? No se puede deshacer.")) {
-                e.preventDefault();
-              }
-            }}
-          >
-            <input type="hidden" name="id" value={match.id} />
-            <input type="hidden" name="stage_id" value={stageId} />
-            <button
-              type="submit"
-              className="rounded-md border border-rojo-bandera/40 px-4 py-2 font-body text-xs font-bold text-rojo-bandera transition-colors hover:bg-rojo-bandera hover:text-white"
-            >
-              Eliminar partido
-            </button>
-          </form>
+            id={match.id}
+            extraFields={{ stage_id: stageId }}
+            label="Eliminar partido"
+            message="¿Eliminar este partido? No se puede deshacer."
+            className="rounded-md border border-rojo-bandera/40 px-4 py-2 font-body text-xs font-bold text-rojo-bandera transition-colors hover:bg-rojo-bandera hover:text-white"
+          />
         </div>
       )}
     </>

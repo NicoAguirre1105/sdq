@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { createStage, type StageFormState } from "@/lib/actions/stages";
+import { Toast } from "@/components/ui/Toast";
 
 type Option = { id: string; label: string };
 type Team = { id: string; name: string };
@@ -54,12 +55,9 @@ export function StageForm({
         </div>
       </header>
 
+      <Toast message={state.error} />
+
       <div className="mx-auto max-w-2xl px-6 py-6">
-        {state.error && (
-          <p className="mb-4 rounded-md bg-rojo-bandera/10 px-3 py-2 font-body text-[13px] text-rojo-bandera">
-            {state.error}
-          </p>
-        )}
 
         {competitions.length === 0 ? (
           <p className="rounded-md bg-azul-marino/6 px-3 py-3 font-body text-sm text-tinta/70">

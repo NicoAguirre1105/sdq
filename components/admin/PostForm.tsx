@@ -10,6 +10,8 @@ import {
 } from "@/lib/actions/posts";
 import { renderMarkdown } from "@/lib/markdown";
 import { slugify } from "@/lib/slug";
+import { Toast } from "@/components/ui/Toast";
+import { DeleteButton } from "@/components/admin/DeleteButton";
 
 type PostValues = {
   id: string;
@@ -85,12 +87,9 @@ export function PostForm({ post }: { post?: PostValues }) {
           </div>
         </header>
 
+        <Toast message={state.error} />
+
         <div className="mx-auto max-w-2xl px-6 py-6">
-          {state.error && (
-            <p className="mb-4 rounded-md bg-rojo-bandera/10 px-3 py-2 font-body text-[13px] text-rojo-bandera">
-              {state.error}
-            </p>
-          )}
 
           <label htmlFor="title" className={label}>
             Título
@@ -246,22 +245,13 @@ export function PostForm({ post }: { post?: PostValues }) {
 
       {editing && (
         <div className="mx-auto max-w-2xl px-6 pb-10">
-          <form
+          <DeleteButton
             action={deletePost}
-            onSubmit={(e) => {
-              if (!confirm("¿Eliminar este post? No se puede deshacer.")) {
-                e.preventDefault();
-              }
-            }}
-          >
-            <input type="hidden" name="id" value={post.id} />
-            <button
-              type="submit"
-              className="rounded-md border border-rojo-bandera/40 px-4 py-2 font-body text-xs font-bold text-rojo-bandera transition-colors hover:bg-rojo-bandera hover:text-white"
-            >
-              Eliminar post
-            </button>
-          </form>
+            id={post.id}
+            label="Eliminar post"
+            message="¿Eliminar este post? No se puede deshacer."
+            className="rounded-md border border-rojo-bandera/40 px-4 py-2 font-body text-xs font-bold text-rojo-bandera transition-colors hover:bg-rojo-bandera hover:text-white"
+          />
         </div>
       )}
     </>

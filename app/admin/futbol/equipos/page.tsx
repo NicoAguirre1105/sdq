@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAllTeams } from "@/lib/supabase/queries/teams";
+import { Toast } from "@/components/ui/Toast";
 
 export default async function AdminTeamsPage({
   searchParams,
@@ -34,12 +35,15 @@ export default async function AdminTeamsPage({
         </Link>
       </header>
 
+      <Toast
+        message={
+          error === "en-uso"
+            ? "No se puede eliminar: el equipo tiene partidos o está en una tabla."
+            : null
+        }
+      />
+
       <div className="px-6 py-6">
-        {error === "en-uso" && (
-          <p className="mb-4 rounded-md bg-rojo-bandera/10 px-3 py-2 font-body text-[13px] text-rojo-bandera">
-            No se puede eliminar: el equipo tiene partidos o está en una tabla.
-          </p>
-        )}
 
         {teams.length === 0 ? (
           <p className="font-body text-sm text-tinta/55">

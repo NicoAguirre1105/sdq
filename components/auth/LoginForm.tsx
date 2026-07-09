@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { signInAction, type SignInState } from "@/lib/actions/auth";
+import { Toast } from "@/components/ui/Toast";
 
 const initial: SignInState = {};
 
@@ -62,11 +63,7 @@ export function LoginForm() {
         </button>
       </div>
 
-      {state.error && (
-        <p className="mb-4 rounded-md bg-rojo-bandera/10 px-3 py-2 font-body text-[13px] text-rojo-bandera">
-          {state.error}
-        </p>
-      )}
+      <Toast message={state.error} />
 
       <button
         type="submit"

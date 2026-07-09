@@ -10,6 +10,7 @@ import {
   deleteCompetition,
 } from "@/lib/actions/competitions";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { Toast } from "@/components/ui/Toast";
 
 const label = "block font-mono text-[10px] tracking-[0.1em] text-tinta/55 uppercase";
 const field =
@@ -44,13 +45,15 @@ export default async function CompetitionsPage({
         </div>
       </header>
 
+      <Toast
+        message={
+          error
+            ? `No se pudo guardar ${error === "season" ? "la temporada" : "la competición"}. Revisá los datos.`
+            : null
+        }
+      />
+
       <div className="grid gap-6 px-6 py-6 lg:grid-cols-2">
-        {error && (
-          <p className="rounded-md bg-rojo-bandera/10 px-3 py-2 font-body text-[13px] text-rojo-bandera lg:col-span-2">
-            No se pudo guardar {error === "season" ? "la temporada" : "la competición"}.
-            Revisá los datos.
-          </p>
-        )}
 
         {/* Temporadas */}
         <section>
