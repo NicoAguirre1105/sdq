@@ -12,13 +12,15 @@ export async function getPublishedPosts(limit = 10) {
   return data;
 }
 
+// maybeSingle (no single): un slug inexistente o despublicado (filtrado por RLS)
+// debe devolver null para que la página llame notFound(), no un error 500.
 export async function getPostBySlug(slug: string) {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
     .select("*")
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
   if (error) throw error;
   return data;
 }

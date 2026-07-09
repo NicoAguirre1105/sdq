@@ -1,9 +1,10 @@
 // ponytail: renderer de un subconjunto de Markdown (headings, negrita, itálica, links,
 // listas, párrafos) hecho a mano para no sumar dependencia en un repo dep-minimal. Escapa
 // el HTML ANTES de formatear, así el output es seguro para dangerouslySetInnerHTML aunque
-// el contenido venga de un admin. Techo conocido: no cubre tablas, imágenes, code blocks
-// anidados. Cuando exista la página pública de detalle de post y haga falta Markdown
-// completo, reemplazar por `marked` + sanitizado y borrar esto.
+// el contenido venga de un admin. Se usa tanto en el preview del editor (`PostForm`) como
+// en la página pública `/post/[slug]` — mismo renderer, mismo look. Techo conocido: no
+// cubre tablas, imágenes ni code blocks. Cuando el contenido real de un post lo necesite,
+// reemplazar por `marked` + sanitizado y borrar esto.
 
 function escapeHtml(s: string) {
   return s

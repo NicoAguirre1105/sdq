@@ -4,6 +4,7 @@
 
 ```
 /                          → Home (feed de posts)
+/post/[slug]               → implementado — Detalle de post (crónica/noticia/aviso), Markdown renderizado
 /historia                  → Historia del club (estático)
 /futbol                    → Landing de sección deportiva
   /futbol/tabla             → Tabla de posiciones (o bracket con scroll horizontal, según formato del stage activo)
@@ -32,6 +33,7 @@
 | Página | Propósito | Gestión de contenido |
 |---|---|---|
 | **Home** | Feed de noticias/crónicas/avisos a la hinchada | CMS (posts) |
+| **Detalle de post** (`/post/[slug]`) | Contenido completo de una crónica/noticia/aviso | CMS (posts), derivado — `getPostBySlug` |
 | **Historia** | Historia del club: fundación, títulos, hitos | Estático |
 | **Fútbol** | Tabla de posiciones o llaves de eliminación, próximos partidos | Calculado/derivado desde `matches` |
 | **Calendario** | Todos los partidos de la temporada (todas las competitions/stages) | Derivado desde `matches` |

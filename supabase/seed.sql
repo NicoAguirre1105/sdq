@@ -88,42 +88,42 @@ insert into matches (stage_id, home_team_id, away_team_id, status) values
 insert into posts (title, slug, excerpt, content_md, category, published_at) values
   ('Triunfo en la altura: Quito 2-1 Macará', 'triunfo-altura-quito-2-1-macara',
    'Doblete de Bryan Angulo para un cierre agónico en el Atahualpa.',
-   '## Triunfo en la altura\n\nDoblete de Bryan Angulo para un cierre agónico en el Atahualpa. El equipo mostró carácter en los últimos minutos ante un rival que llegó a igualar el marcador.',
+   E'## Triunfo en la altura\n\nDoblete de Bryan Angulo para un cierre agónico en el Atahualpa. El equipo mostró carácter en los últimos minutos ante un rival que llegó a igualar el marcador.',
    'cronica', now() - interval '2 days'),
 
   ('Refuerzo: llega el volante Iván Mera', 'refuerzo-ivan-mera',
    'El mediocampista firma por dos temporadas con la azulgrana.',
-   '## Nuevo refuerzo\n\nEl mediocampista firma por dos temporadas con la azulgrana. Llega procedente del ascenso con la ilusión de aportar experiencia al mediocampo.',
+   E'## Nuevo refuerzo\n\nEl mediocampista firma por dos temporadas con la azulgrana. Llega procedente del ascenso con la ilusión de aportar experiencia al mediocampo.',
    'noticia', now() - interval '3 days'),
 
   ('Venta de entradas: Clásico Capitalino', 'venta-entradas-clasico-capitalino',
    'Preventa para socios desde el lunes 07 de julio.',
-   '## Preventa\n\nPreventa para socios desde el lunes 07 de julio. La venta general abre 48 horas después en boletería del estadio y puntos autorizados.',
+   E'## Preventa\n\nPreventa para socios desde el lunes 07 de julio. La venta general abre 48 horas después en boletería del estadio y puntos autorizados.',
    'aviso', now() - interval '4 days'),
 
   ('Empate sin goles ante Mushuc Runa', 'empate-mushuc-runa',
    'Un punto que sabe a poco tras dominar gran parte del partido.',
-   '## Reparto de puntos\n\nUn punto que sabe a poco tras dominar gran parte del partido. El equipo generó ocasiones claras que no pudo concretar.',
+   E'## Reparto de puntos\n\nUn punto que sabe a poco tras dominar gran parte del partido. El equipo generó ocasiones claras que no pudo concretar.',
    'cronica', now() - interval '9 days'),
 
   ('Contrato renovado: el capitán sigue una temporada más', 'renovacion-capitan',
    'El referente del plantel extendió su vínculo con el club.',
-   '## Renovación\n\nEl referente del plantel extendió su vínculo con el club hasta el final de la próxima temporada.',
+   E'## Renovación\n\nEl referente del plantel extendió su vínculo con el club hasta el final de la próxima temporada.',
    'noticia', now() - interval '10 days'),
 
   ('Cambio de horario: Quito vs Gualaceo se juega a las 18:00', 'cambio-horario-gualaceo',
    'La fecha se reprograma por disposición del ente organizador.',
-   '## Cambio de horario\n\nLa fecha se reprograma por disposición del ente organizador. Se mantiene la sede y el día, solo cambia el horario de inicio.',
+   E'## Cambio de horario\n\nLa fecha se reprograma por disposición del ente organizador. Se mantiene la sede y el día, solo cambia el horario de inicio.',
    'aviso', now() - interval '12 days'),
 
   ('Victoria sólida ante Gualaceo en casa', 'victoria-gualaceo-casa',
    'Tres goles y una defensa que no concedió espacios.',
-   '## Victoria en casa\n\nTres goles y una defensa que no concedió espacios en un partido controlado de principio a fin.',
+   E'## Victoria en casa\n\nTres goles y una defensa que no concedió espacios en un partido controlado de principio a fin.',
    'cronica', now() - interval '15 days'),
 
   ('Nueva imagen: se presenta la camiseta alternativa', 'nueva-camiseta-alternativa',
    'La segunda equipación rinde homenaje a la hinchada histórica.',
-   '## Nueva camiseta\n\nLa segunda equipación rinde homenaje a la hinchada histórica del club y ya está disponible para reserva.',
+   E'## Nueva camiseta\n\nLa segunda equipación rinde homenaje a la hinchada histórica del club y ya está disponible para reserva.',
    'noticia', now() - interval '20 days');
 
 -- ============ Plantilla ============

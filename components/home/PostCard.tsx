@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
 
 type Post = {
@@ -31,29 +32,34 @@ export function PostCard({ post }: { post: Post }) {
   const meta = CATEGORY[post.category ?? "noticia"];
 
   return (
-    <article className="cursor-pointer overflow-hidden rounded-lg border border-azul-marino/12 bg-white transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(11,46,107,0.45)]">
-      {post.cover_image ? (
-        <div className="relative h-40">
-          <Image
-            src={post.cover_image}
-            alt={post.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover"
-          />
-        </div>
-      ) : (
-        <PhotoPlaceholder label={meta.photo} tone={meta.tone} className="h-40" />
-      )}
-      <div className="p-4.5">
-        <p className={`mb-2 font-mono text-[10px] font-bold tracking-[0.1em] ${meta.text}`}>
-          {meta.label} · {relativeDays(post.published_at)}
-        </p>
-        <h3 className="mb-2 font-display text-[27px] leading-[0.95] text-tinta">{post.title}</h3>
-        {post.excerpt && (
-          <p className="font-body text-xs leading-relaxed text-tinta/60">{post.excerpt}</p>
+    <Link
+      href={`/post/${post.slug}`}
+      className="block overflow-hidden rounded-lg border border-azul-marino/12 bg-white transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(11,46,107,0.45)]"
+    >
+      <article>
+        {post.cover_image ? (
+          <div className="relative h-40">
+            <Image
+              src={post.cover_image}
+              alt={post.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <PhotoPlaceholder label={meta.photo} tone={meta.tone} className="h-40" />
         )}
-      </div>
-    </article>
+        <div className="p-4.5">
+          <p className={`mb-2 font-mono text-[10px] font-bold tracking-[0.1em] ${meta.text}`}>
+            {meta.label} · {relativeDays(post.published_at)}
+          </p>
+          <h3 className="mb-2 font-display text-[27px] leading-[0.95] text-tinta">{post.title}</h3>
+          {post.excerpt && (
+            <p className="font-body text-xs leading-relaxed text-tinta/60">{post.excerpt}</p>
+          )}
+        </div>
+      </article>
+    </Link>
   );
 }
