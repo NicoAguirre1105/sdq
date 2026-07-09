@@ -28,7 +28,12 @@ export function Footer() {
       </Container>
 
       <Container className="flex flex-col items-center gap-1.5 border-t border-white/10 px-4.5 py-6 text-center font-body text-xs text-blanco-hueso/50 md:px-10">
-        <p>© 2026 Mafia Azul Grana. Todos los derechos reservados.</p>
+        <p>
+          © 2026 Mafia Azul Grana. Todos los derechos reservados.{" "}
+          <Link href="/terminos" className="underline transition-colors hover:text-blanco-hueso">
+            Términos de la suscripción
+          </Link>
+        </p>
         <p>
           Sitio web creado por{" "}
           <a

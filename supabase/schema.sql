@@ -149,9 +149,34 @@ create table subscribers (
   id uuid primary key default gen_random_uuid(),
   email text unique not null,
   topics text[] default '{}',
-  confirmed boolean default false,
+  kit_subscriber_id text,          -- id del subscriber en Kit, para cruzar con el webhook
+  confirmed boolean default false, -- lo activa el webhook al confirmar, no el alta inicial
+  accepted_terms_at timestamptz,   -- constancia de aceptación de términos
   subscribed_at timestamptz default now()
 );
+
+-- Estado de un correo sin exponer lectura pública de la tabla: security definer
+-- corre como owner (salta RLS) y devuelve solo 'new' | 'pending' | 'confirmed'.
+-- Lo usa el paso 1 del form de suscripción vía rpc.
+create or replace function subscriber_status(p_email text)
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_confirmed boolean;
+begin
+  select confirmed into v_confirmed
+  from subscribers where email = lower(trim(p_email));
+  if not found then return 'new';
+  elsif v_confirmed then return 'confirmed';
+  else return 'pending';
+  end if;
+end;
+$$;
+
+grant execute on function subscriber_status(text) to anon, authenticated;
 
 -- ============ Auth / Admin ============
 

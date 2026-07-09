@@ -193,11 +193,15 @@ Mismo patrón se replica en `matches`, `stages`, `competitions`, `teams`, `produ
 create table subscribers (
   id uuid primary key default gen_random_uuid(),
   email text unique not null,
-  kit_subscriber_id text,          -- id del subscriber en Kit, para referencia cruzada
-  confirmed boolean default false, -- lo actualiza el webhook, no el alta inicial
+  topics text[] default '{}',      -- temas elegidos: 'club' | 'tienda' | 'canticos'
+  kit_subscriber_id text,          -- id del subscriber en Kit, para cruzar con el webhook
+  confirmed boolean default false, -- lo activa el webhook al confirmar, no el alta inicial
+  accepted_terms_at timestamptz,   -- constancia de aceptación de términos (/terminos)
   subscribed_at timestamptz default now()
 );
 ```
+
+**Flujo de alta (doble opt-in):** el form (`components/layout/SubscribeForm.tsx`) es de 2 pasos. Paso 1 llama a `subscriber_status(email)` (función `security definer`, devuelve `new`/`pending`/`confirmed` sin exponer lectura pública de la tabla). Si es nuevo, el paso 2 pide aceptar términos (`/terminos`) y confirmar; al enviar, `subscribeAction` agrega el correo a **Kit** (`lib/kit.ts`, que dispara el correo de verificación) y lo guarda como `confirmed = false`. Cuando el usuario confirma desde el correo, Kit dispara un webhook (`app/api/kit/webhook/route.ts`) que marca `confirmed = true` vía service role. El webhook se protege con `KIT_WEBHOOK_SECRET` en la query (`?token=`) porque Kit no firma los webhooks.
 
 ## Pendiente de definir
 - Cálculo de `points`/`position` en standings: columna computada vs. cálculo en la app

@@ -29,7 +29,9 @@ type Subscriber = {
   id: string;
   email: string;
   topics: string[];
-  confirmed: boolean;
+  kit_subscriber_id: string | null; // id del subscriber en Kit, para cruzar con el webhook
+  confirmed: boolean; // lo activa el webhook al confirmar; el alta lo deja en false
+  accepted_terms_at: string | null; // constancia de aceptación de términos
   subscribed_at: string;
 };
 
@@ -170,6 +172,11 @@ export type Database = {
         Relationships: [];
       };
     };
-    Functions: Record<string, never>;
+    Functions: {
+      subscriber_status: {
+        Args: { p_email: string };
+        Returns: string; // 'new' | 'pending' | 'confirmed'
+      };
+    };
   };
 };
