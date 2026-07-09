@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import Link from "next/link";
 import { createStage, type StageFormState } from "@/lib/actions/stages";
 import { Toast } from "@/components/ui/Toast";
+import { withOfflineGuard } from "@/lib/action-guard";
 
 type Option = { id: string; label: string };
 type Team = { id: string; name: string };
@@ -21,7 +22,7 @@ export function StageForm({
   teams: Team[];
 }) {
   const [state, formAction, isPending] = useActionState<StageFormState, FormData>(
-    createStage,
+    withOfflineGuard(createStage),
     {}
   );
   const [format, setFormat] = useState<"liga" | "eliminacion">("liga");
@@ -63,9 +64,9 @@ export function StageForm({
           <p className="rounded-md bg-azul-marino/6 px-3 py-3 font-body text-sm text-tinta/70">
             No hay competiciones cargadas.{" "}
             <Link href="/admin/futbol/competiciones" className="font-bold text-azul-marino underline">
-              Creá una temporada y un torneo
+              Crea una temporada y un torneo
             </Link>{" "}
-            y volvé a agregarle stages.
+            y vuelve a agregarle stages.
           </p>
         ) : (
           <>
@@ -87,7 +88,7 @@ export function StageForm({
             <p className="mt-1 mb-4 font-mono text-[9px] text-tinta/40">
               ¿Falta un torneo o temporada?{" "}
               <Link href="/admin/futbol/competiciones" className="font-bold text-azul-marino underline">
-                Crealo acá
+                Créalo acá
               </Link>
               .
             </p>
@@ -138,7 +139,7 @@ export function StageForm({
               <>
                 <span className={label}>Equipos participantes</span>
                 <p className="mt-1 mb-2 font-mono text-[9px] text-tinta/40">
-                  La tabla se calcula a partir de estos equipos. Elegí al menos 2.
+                  La tabla se calcula a partir de estos equipos. Elige al menos 2.
                 </p>
                 <div className="grid grid-cols-1 gap-1.5 rounded-md border border-azul-marino/15 bg-white p-3 sm:grid-cols-2">
                   {teams.map((t) => (

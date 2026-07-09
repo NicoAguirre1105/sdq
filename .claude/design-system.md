@@ -31,6 +31,11 @@ Contraste deliberado entre display (crudo, pintado a brocha) y body (limpio, leg
 - **Texturas sutiles:** patrones diagonales muy tenues (tipo tela/graderío) en fondos oscuros, no ruido visual dominante.
 - **Jerarquía de tarjetas:** tag/categoría en la esquina superior (fondo rojo, texto blanco, mono, uppercase) + título en display + descripción en body.
 
+## Escudos de equipos (logos)
+
+- **Todos los escudos SVG de equipos (`teams.logo_url`, bucket `team_logos`) son de un solo color: blanco, sin fondo.** Así contrastan sobre cualquier fondo oscuro donde aparezcan (hero, tarjeta de próximo partido, etc.) sin necesitar variantes por equipo.
+- **Consecuencia:** un escudo blanco es invisible sobre fondo claro. Solo colocarlos sobre fondos oscuros (azul marino/tinta). Donde haya que mostrarlos sobre claro (ej. preview del logo en `/admin/futbol/equipos`), envolverlos en un chip de fondo oscuro. `TeamCrest` (`components/ui/TeamCrest.tsx`) renderiza el SVG real si hay `logo_url`, o cae a iniciales en forma de escudo si el equipo aún no tiene logo.
+
 ## Fuente de verdad
 
 El **mockup de Claude Design es la referencia visual final** — este documento describe la intención y los tokens

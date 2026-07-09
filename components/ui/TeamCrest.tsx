@@ -2,14 +2,34 @@ const SIZES = { sm: 32, md: 44 } as const;
 
 export function TeamCrest({
   name,
+  logoUrl = null,
   isOwnTeam = false,
   size = "md",
 }: {
   name: string;
+  logoUrl?: string | null;
   isOwnTeam?: boolean;
   size?: keyof typeof SIZES;
 }) {
   const px = SIZES[size];
+
+  // Escudo real: SVG blanco sin fondo (ver design-system.md). Solo se usa sobre
+  // fondos oscuros para que contraste. Se sirve como <img> (SVG del bucket público).
+  if (logoUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={logoUrl}
+        alt={name}
+        width={px}
+        height={px}
+        className="object-contain"
+        style={{ width: px, height: px }}
+      />
+    );
+  }
+
+  // Fallback (equipo sin logo cargado): iniciales en forma de escudo.
   const initials = name
     .split(" ")
     .filter((w) => w.length > 2)
@@ -18,8 +38,6 @@ export function TeamCrest({
     .join("")
     .toUpperCase();
 
-  // Placeholder de escudo por equipo. Cuando haya logos reales (teams.logo_url),
-  // renderizar <Image src={logoUrl} alt={name} width={px} height={px} /> en su lugar.
   return (
     <div
       className={`flex items-center justify-center font-display ${

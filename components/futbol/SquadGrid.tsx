@@ -1,20 +1,23 @@
 import Image from "next/image";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
+import { STAFF_POSITION } from "@/lib/positions";
 
 type Player = {
   id: string;
   full_name: string;
   position: string | null;
   jersey_number: number | null;
+  staff_role: string | null;
   photo_url: string | null;
 };
 
-// Orden de secciones + etiqueta plural del encabezado.
+// Orden de secciones + etiqueta plural del encabezado. Cuerpo técnico al final.
 const GROUPS: { key: string; label: string }[] = [
   { key: "Portero", label: "Porteros" },
   { key: "Defensa", label: "Defensas" },
   { key: "Mediocampista", label: "Mediocampistas" },
   { key: "Delantero", label: "Delanteros" },
+  { key: STAFF_POSITION, label: "Cuerpo técnico" },
 ];
 
 export function SquadGrid({ players }: { players: Player[] }) {
@@ -54,7 +57,7 @@ export function SquadGrid({ players }: { players: Player[] }) {
               >
                 <div className="relative">
                   {p.photo_url ? (
-                    <div className="relative h-40 md:h-44">
+                    <div className="relative h-60 md:h-70">
                       <Image
                         src={p.photo_url}
                         alt={p.full_name}
@@ -66,9 +69,9 @@ export function SquadGrid({ players }: { players: Player[] }) {
                   ) : (
                     <PhotoPlaceholder label="FOTO JUGADOR" tone="azul" className="h-40 md:h-44" />
                   )}
-                  {p.jersey_number != null && (
+                  {(p.staff_role ?? p.jersey_number) != null && (
                     <span className="absolute top-2 right-2.5 font-display text-4xl leading-none text-dorado-escudo md:text-5xl">
-                      {p.jersey_number}
+                      {p.staff_role ?? p.jersey_number}
                     </span>
                   )}
                 </div>

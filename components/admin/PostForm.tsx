@@ -12,6 +12,7 @@ import { renderMarkdown } from "@/lib/markdown";
 import { slugify } from "@/lib/slug";
 import { Toast } from "@/components/ui/Toast";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { withOfflineGuard } from "@/lib/action-guard";
 
 type PostValues = {
   id: string;
@@ -33,7 +34,7 @@ export function PostForm({ post }: { post?: PostValues }) {
   const editing = !!post;
   const action = editing ? updatePost : createPost;
   const [state, formAction, isPending] = useActionState<PostFormState, FormData>(
-    action,
+    withOfflineGuard(action),
     {}
   );
 

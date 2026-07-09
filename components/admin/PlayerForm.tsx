@@ -10,13 +10,15 @@ import {
 } from "@/lib/actions/players";
 import { Toast } from "@/components/ui/Toast";
 import { DeleteButton } from "@/components/admin/DeleteButton";
-import { POSITIONS } from "@/lib/positions";
+import { POSITIONS, STAFF_POSITION } from "@/lib/positions";
+import { withOfflineGuard } from "@/lib/action-guard";
 
 type PlayerValues = {
   id: string;
   full_name: string;
   position: string | null;
   jersey_number: number | null;
+  staff_role: string | null;
   bio_md: string | null;
   photo_url: string | null;
 };
@@ -30,10 +32,12 @@ export function PlayerForm({ player }: { player?: PlayerValues }) {
   const editing = !!player;
   const action = editing ? updatePlayer : createPlayer;
   const [state, formAction, isPending] = useActionState<PlayerFormState, FormData>(
-    action,
+    withOfflineGuard(action),
     {}
   );
 
+  const [position, setPosition] = useState(player?.position ?? "");
+  const isStaff = position === STAFF_POSITION;
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState(player?.photo_url ?? "");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -95,7 +99,8 @@ export function PlayerForm({ player }: { player?: PlayerValues }) {
               <select
                 id="position"
                 name="position"
-                defaultValue={player?.position ?? ""}
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
                 className={field}
               >
                 <option value="">Sin posición</option>
@@ -107,17 +112,36 @@ export function PlayerForm({ player }: { player?: PlayerValues }) {
               </select>
             </div>
             <div className="min-w-[100px] flex-1">
-              <label htmlFor="jersey_number" className={label}>
-                Dorsal
-              </label>
-              <input
-                id="jersey_number"
-                name="jersey_number"
-                type="number"
-                min={0}
-                defaultValue={player?.jersey_number ?? ""}
-                className={`${field} font-mono`}
-              />
+              {isStaff ? (
+                <>
+                  <label htmlFor="staff_role" className={label}>
+                    Cargo (siglas)
+                  </label>
+                  <input
+                    id="staff_role"
+                    name="staff_role"
+                    type="text"
+                    maxLength={5}
+                    placeholder="DT"
+                    defaultValue={player?.staff_role ?? ""}
+                    className={`${field} font-mono uppercase`}
+                  />
+                </>
+              ) : (
+                <>
+                  <label htmlFor="jersey_number" className={label}>
+                    Dorsal
+                  </label>
+                  <input
+                    id="jersey_number"
+                    name="jersey_number"
+                    type="number"
+                    min={0}
+                    defaultValue={player?.jersey_number ?? ""}
+                    className={`${field} font-mono`}
+                  />
+                </>
+              )}
             </div>
           </div>
 

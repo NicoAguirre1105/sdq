@@ -20,6 +20,7 @@ type Player = {
   full_name: string;
   position: string | null;
   jersey_number: number | null;
+  staff_role: string | null; // siglas del cargo si position = 'Cuerpo técnico'
   photo_url: string | null;
   bio_md: string | null;
 };

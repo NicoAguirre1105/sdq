@@ -2,6 +2,16 @@ import { createServerSupabaseClient } from "@/lib/supabase/client";
 
 type ServerClient = Awaited<ReturnType<typeof createServerSupabaseClient>>;
 
+// id del equipo propio (SD Quito). null si no hay ninguno marcado.
+async function getOwnTeamId(supabase: ServerClient): Promise<string | null> {
+  const { data } = await supabase
+    .from("teams")
+    .select("id")
+    .eq("is_own_team", true)
+    .maybeSingle();
+  return data?.id ?? null;
+}
+
 // Adjunta homeTeam/awayTeam a una lista de partidos con una sola consulta a teams.
 async function withTeams<T extends { home_team_id: string; away_team_id: string }>(
   supabase: ServerClient,
@@ -18,12 +28,17 @@ async function withTeams<T extends { home_team_id: string; away_team_id: string 
   }));
 }
 
+// Próximo partido programado de SD Quito (cualquier torneo). Solo del equipo propio.
 export async function getNextMatch() {
   const supabase = await createServerSupabaseClient();
+  const ownId = await getOwnTeamId(supabase);
+  if (!ownId) return null;
+
   const { data: match, error } = await supabase
     .from("matches")
     .select("*")
     .eq("status", "programado")
+    .or(`home_team_id.eq.${ownId},away_team_id.eq.${ownId}`)
     .order("match_date", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true })
     .limit(1)
@@ -35,13 +50,18 @@ export async function getNextMatch() {
 
 export type NextMatch = NonNullable<Awaited<ReturnType<typeof getNextMatch>>>;
 
+// Próximos partidos programados de SD Quito dentro de un stage. Solo del equipo propio.
 export async function getUpcomingMatches(stageId: string, limit = 3) {
   const supabase = await createServerSupabaseClient();
+  const ownId = await getOwnTeamId(supabase);
+  if (!ownId) return [];
+
   const { data: matches, error } = await supabase
     .from("matches")
     .select("*")
     .eq("stage_id", stageId)
     .eq("status", "programado")
+    .or(`home_team_id.eq.${ownId},away_team_id.eq.${ownId}`)
     .order("match_date", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true })
     .limit(limit);
@@ -56,17 +76,13 @@ export type UpcomingMatch = Awaited<ReturnType<typeof getUpcomingMatches>>[numbe
 // calendario. Cubre todas las competiciones/stages.
 export async function getOwnTeamMatches() {
   const supabase = await createServerSupabaseClient();
-  const { data: own } = await supabase
-    .from("teams")
-    .select("id")
-    .eq("is_own_team", true)
-    .maybeSingle();
-  if (!own) return [];
+  const ownId = await getOwnTeamId(supabase);
+  if (!ownId) return [];
 
   const { data: matches, error } = await supabase
     .from("matches")
     .select("*")
-    .or(`home_team_id.eq.${own.id},away_team_id.eq.${own.id}`)
+    .or(`home_team_id.eq.${ownId},away_team_id.eq.${ownId}`)
     .order("match_date", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
   if (error) throw error;

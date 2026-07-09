@@ -34,7 +34,7 @@ export default async function AdminPlantillaPage() {
                 className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-azul-marino/8 px-4 py-3 first:border-t-0"
               >
                 <span className="w-8 flex-none text-right font-display text-xl text-dorado-escudo">
-                  {p.jersey_number ?? "—"}
+                  {p.staff_role ?? p.jersey_number ?? "—"}
                 </span>
                 <Link
                   href={`/admin/plantilla/${p.id}/edit`}

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/client";
 import { requireAdmin } from "@/lib/auth";
-import { POSITIONS } from "@/lib/positions";
+import { POSITIONS, STAFF_POSITION } from "@/lib/positions";
 import { uploadPlayerPhoto, deletePlayerPhoto } from "@/lib/supabase/queries/storage";
 import { getPlayerById } from "@/lib/supabase/queries/players";
 import type { Database } from "@/lib/types/database";
@@ -18,6 +18,7 @@ type ParsedPlayer = {
   full_name: string;
   position: string | null;
   jersey_number: number | null;
+  staff_role: string | null;
   bio_md: string | null;
   photo_url: string | null;
 };
@@ -48,16 +49,26 @@ function parse(formData: FormData): ParsedPlayer | { error: string } {
   const full_name = String(formData.get("full_name") ?? "").trim();
   const rawPosition = String(formData.get("position") ?? "");
   const rawNumber = String(formData.get("jersey_number") ?? "").trim();
+  const rawStaffRole = String(formData.get("staff_role") ?? "").trim();
   const bio_md = String(formData.get("bio_md") ?? "").trim();
   const photo_url = String(formData.get("photo_url") ?? "").trim();
 
   if (!full_name) return { error: "El nombre del jugador es obligatorio." };
 
+  const position = (POSITIONS as readonly string[]).includes(rawPosition)
+    ? rawPosition
+    : null;
+  // Cuerpo técnico usa siglas (staff_role) y nunca dorsal; el resto al revés. Así,
+  // cambiar la posición de un jugador limpia el campo que ya no aplica.
+  const isStaff = position === STAFF_POSITION;
   const n = Number(rawNumber);
+
   return {
     full_name,
-    position: (POSITIONS as readonly string[]).includes(rawPosition) ? rawPosition : null,
-    jersey_number: rawNumber && Number.isInteger(n) && n >= 0 ? n : null,
+    position,
+    jersey_number:
+      !isStaff && rawNumber && Number.isInteger(n) && n >= 0 ? n : null,
+    staff_role: isStaff ? rawStaffRole.toUpperCase() || null : null,
     bio_md: bio_md || null,
     photo_url: photo_url || null,
   };

@@ -10,6 +10,7 @@ import {
 } from "@/lib/actions/teams";
 import { Toast } from "@/components/ui/Toast";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { withOfflineGuard } from "@/lib/action-guard";
 
 type TeamValues = {
   id: string;
@@ -27,7 +28,7 @@ export function TeamForm({ team }: { team?: TeamValues }) {
   const editing = !!team;
   const action = editing ? updateTeam : createTeam;
   const [state, formAction, isPending] = useActionState<TeamFormState, FormData>(
-    action,
+    withOfflineGuard(action),
     {}
   );
 
@@ -100,7 +101,8 @@ export function TeamForm({ team }: { team?: TeamValues }) {
           <input type="hidden" name="logo_url" value={logoUrl} />
           <div className="mt-1.5 mb-4">
             {(logoPreview || logoUrl) && (
-              <div className="relative mb-2 inline-flex rounded-md border border-azul-marino/15 bg-white p-3">
+              // Fondo oscuro: los escudos son SVG blancos sin fondo (ver design-system.md).
+              <div className="relative mb-2 inline-flex rounded-md border border-azul-marino/15 bg-azul-marino p-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={logoPreview || logoUrl}

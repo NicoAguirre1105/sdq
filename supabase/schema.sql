@@ -105,8 +105,9 @@ group by s.id, t.id, t.name;
 create table players (
   id uuid primary key default gen_random_uuid(),
   full_name text not null,
-  position text,
-  jersey_number int,
+  position text,               -- incluye 'Cuerpo técnico' (ver lib/positions.ts)
+  jersey_number int,           -- null para cuerpo técnico
+  staff_role text,             -- siglas del cargo (ej. 'DT') si position = 'Cuerpo técnico'
   photo_url text,
   bio_md text
 );

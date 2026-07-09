@@ -10,6 +10,7 @@ import {
 } from "@/lib/actions/matches";
 import { Toast } from "@/components/ui/Toast";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { withOfflineGuard } from "@/lib/action-guard";
 
 type Team = { id: string; name: string };
 
@@ -58,7 +59,7 @@ export function MatchForm({
   const editing = !!match;
   const action = editing ? updateMatch : createMatch;
   const [state, formAction, isPending] = useActionState<MatchFormState, FormData>(
-    action,
+    withOfflineGuard(action),
     {}
   );
 

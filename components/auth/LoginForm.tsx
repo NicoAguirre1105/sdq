@@ -3,11 +3,15 @@
 import { useActionState, useState } from "react";
 import { signInAction, type SignInState } from "@/lib/actions/auth";
 import { Toast } from "@/components/ui/Toast";
+import { withOfflineGuard } from "@/lib/action-guard";
 
 const initial: SignInState = {};
 
 export function LoginForm() {
-  const [state, formAction, isPending] = useActionState(signInAction, initial);
+  const [state, formAction, isPending] = useActionState(
+    withOfflineGuard(signInAction),
+    initial
+  );
   const [showPassword, setShowPassword] = useState(false);
 
   const labelClass =
