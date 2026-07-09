@@ -67,17 +67,19 @@ seasons
 - Crear, editar, eliminar, publicar/despublicar
 - Campos: título, slug, extracto, contenido (markdown), categoría (noticia/crónica/aviso), imagen de portada
 
-### 2. Fútbol — nivel C (la sección más compleja)
-- **Teams (catálogo):** crear equipo (nombre, logo) — se toca poco, casi nivel B
-- **Nueva tabla/stage:** elegir/crear `competition` → nombrar `stage` → **elegir formato** (`liga` o `eliminación`):
-  - **Liga:** seleccionar equipos participantes (`stage_teams`)
+### 2. Fútbol — nivel C (la sección más compleja) — **IMPLEMENTADO** (ver detalle en `CLAUDE.md` → Fase 2)
+- **Teams (catálogo):** crear/editar/eliminar equipo (nombre, nombre corto, escudo SVG → bucket `team_logos`). `is_own_team` **no** se edita desde el form (queda `false` al crear; se cambia a mano en Supabase).
+- **Nueva tabla/stage** (`/admin/futbol/stage/new`): elegir `competition` existente → nombrar `stage` → **elegir formato** (`liga` o `eliminación`):
+  - **Liga:** seleccionar equipos participantes (`stage_teams`) vía checkboxes
   - **Eliminación:** no pide equipos fijos; se van definiendo ronda a ronda
+- **Competiciones/temporadas** (`/admin/futbol/competiciones`): alta/baja de `seasons` y `competitions` (antes solo en Supabase Studio).
 - **Partidos:** cargar/editar por `stage` — el formulario cambia según formato:
   - **Liga:** local, visitante, fecha, `matchday`, marcador, status
-  - **Eliminación:** local, visitante, fecha, `round_name`, marcador, status, y marcar si es ida/vuelta (genera par de filas con `tie_id`)
+  - **Eliminación:** local, visitante, fecha, `round_name`, marcador, status. **Falta** el ida/vuelta (`tie_id`/`leg`) y la vista de bracket.
 - **Standings:** solo lectura (vista calculada), únicamente visible en stages de formato `liga`
+- **Borrado en cascada:** eliminar temporada/competición/stage/equipo arrastra sus partidos (FK `on delete cascade`).
 
-Vista sugerida en un solo panel: selector de stage arriba → tabla de partidos editable (con el formulario correspondiente a su formato) → standings calculada al costado (preview, solo si aplica).
+Layout real: pantalla única (`/admin/futbol`) con selector de stage arriba → partidos editables + standings al costado (solo `liga`); el editor de partido se abre con `?match=new|<id>` sobre la misma ruta.
 
 ### 3. Tienda — nivel C
 - CRUD de productos: nombre, descripción, precio, stock, imágenes, categoría

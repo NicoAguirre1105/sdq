@@ -15,9 +15,12 @@
 /plantilla                 → Plantilla de jugadores
 /suscripcion               → Alta/gestión de newsletter (pública)
 /login                     → Autenticación (implementado: email+contraseña, Supabase Auth)
-/admin                     → Panel de administración (implementado: protegido por middleware + requireAdmin; solo dashboard placeholder, sin CRUD todavía)
+/admin                     → Panel de administración (implementado: protegido por middleware + requireAdmin; dashboard placeholder)
   /admin/posts               → implementado (CRUD: listado + /new + /[id]/edit, editor markdown con preview)
-  /admin/futbol             → gestión de teams, stages, matches — no implementado
+  /admin/futbol             → implementado (pantalla única: selector de stage + partidos editables + tabla read-only; `?match=new|<id>` abre el editor)
+    /admin/futbol/equipos      → implementado (catálogo de teams: listado + /new + /[id]/edit; escudo SVG → bucket team_logos)
+    /admin/futbol/competiciones → implementado (alta/baja de temporadas y torneos)
+    /admin/futbol/stage/new    → implementado (crear stage; en liga elige equipos → stage_teams)
   /admin/tienda             → gestión de productos + vista de orders — no implementado
   /admin/suscriptores        → no implementado
 /not-found                 → 404 (implementado: app/(public)/not-found.tsx + catch-all [...not-found] para heredar Navbar/Footer)
@@ -38,7 +41,7 @@
 | **Plantilla** | Jugadores del plantel actual | Semi-estático (Supabase, sin UI) |
 | **Suscripción** | Alta de email a newsletter | CMS ligero (`subscribers`) |
 | **Login** | Acceso de administrador (implementado) | Supabase Auth |
-| **Admin** | Gestión de todo el contenido dinámico (shell + protección implementados, CRUD pendiente) | Ver `admin-cms.md` |
+| **Admin** | Gestión de todo el contenido dinámico (implementados: Posts y Fútbol; pendientes: Tienda, Suscriptores, Plantilla) | Ver `admin-cms.md` |
 | **Not found** | 404 (implementado) | Estático |
 
 Ver `data-model.md` para el detalle de tablas y `admin-cms.md` para el flujo de cada panel.
