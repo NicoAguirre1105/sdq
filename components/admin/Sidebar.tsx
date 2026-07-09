@@ -5,15 +5,14 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOutAction } from "@/lib/actions/auth";
 
-// Dashboard, Posts, Fútbol y Plantilla están construidos; el resto se muestra
-// deshabilitado con "pronto" para que la navegación no lleve a rutas 404. Habilitar
-// a medida que se construyan (Tienda, Suscriptores).
+// Dashboard, Posts, Fútbol, Suscriptores y Plantilla están construidos; Tienda se
+// muestra deshabilitada con "pronto" para que la navegación no lleve a rutas 404.
 const NAV = [
   { href: "/admin", label: "Dashboard", enabled: true, exact: true },
   { href: "/admin/posts", label: "Posts", enabled: true },
   { href: "/admin/futbol", label: "Fútbol", enabled: true },
   { href: "/admin/tienda", label: "Tienda", enabled: false },
-  { href: "/admin/suscriptores", label: "Suscriptores", enabled: false },
+  { href: "/admin/suscriptores", label: "Suscriptores", enabled: true },
   { href: "/admin/plantilla", label: "Plantilla", enabled: true },
 ];
 

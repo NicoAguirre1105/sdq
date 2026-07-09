@@ -22,3 +22,19 @@ export async function addToKit(email: string): Promise<string | null> {
   const json = (await res.json()) as { subscriber?: { id?: number } };
   return json.subscriber?.id != null ? String(json.subscriber.id) : null;
 }
+
+// Da de baja al subscriber en Kit (deja de recibir correos). Best-effort: no lanza,
+// para que un fallo de Kit no impida borrar la fila en Supabase.
+export async function removeFromKit(kitSubscriberId: string | null): Promise<void> {
+  const key = process.env.KIT_API_KEY;
+  if (!key || !kitSubscriberId) return;
+  try {
+    await fetch(`${KIT_API}/subscribers/${kitSubscriberId}/unsubscribe`, {
+      method: "POST",
+      headers: { "X-Kit-Api-Key": key },
+    });
+  } catch {
+    // ponytail: si Kit falla, borramos igual en Supabase; la baja en Kit se puede
+    // reconciliar a mano. Un huérfano en Kit no debe bloquear el borrado.
+  }
+}

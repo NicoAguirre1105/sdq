@@ -5,6 +5,17 @@ import {
 
 export type SubscriberStatus = "new" | "pending" | "confirmed";
 
+// Listado para el admin. RLS permite SELECT solo a admins (sesión en admin_users).
+export async function getAllSubscribers() {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("subscribers")
+    .select("*")
+    .order("subscribed_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
 // Estado del correo sin abrir lectura pública sobre `subscribers`: la función
 // `subscriber_status` (security definer, ver schema.sql) devuelve solo el estado.
 export async function getSubscriberStatus(email: string): Promise<SubscriberStatus> {
