@@ -161,12 +161,12 @@ export function PostForm({ post }: { post?: PostValues }) {
           <input type="hidden" name="cover_image" value={coverUrl} />
           <div className="mt-1.5 mb-4">
             {(coverPreview || coverUrl) && (
-              <div className="relative mb-2">
+              <div className="relative mb-2 aspect-video w-full overflow-hidden rounded-md border border-azul-marino/15">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={coverPreview || coverUrl}
                   alt="Portada"
-                  className="h-40 w-full rounded-md border border-azul-marino/15 object-cover"
+                  className="h-full w-full object-cover"
                 />
                 <button
                   type="button"
@@ -193,7 +193,7 @@ export function PostForm({ post }: { post?: PostValues }) {
               className="block w-full font-body text-xs text-tinta/70 file:mr-3 file:rounded-md file:border-0 file:bg-azul-marino file:px-3 file:py-2 file:font-body file:text-xs file:font-bold file:text-white"
             />
             <p className="mt-1 font-mono text-[9px] text-tinta/40">
-              JPG o PNG, hasta 5 MB. Se sube al guardar.{" "}
+              JPG o PNG, hasta 5 MB. Relación recomendada 16:9 (ej. 1600×900 px). Se sube al guardar.{" "}
               {coverPreview || coverUrl
                 ? "Subir otra reemplaza la actual."
                 : ""}

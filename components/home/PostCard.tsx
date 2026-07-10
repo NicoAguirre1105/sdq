@@ -39,7 +39,7 @@ export function PostCard({ post }: { post: Post }) {
     >
       <article>
         {post.cover_image ? (
-          <div className="relative h-40">
+          <div className="relative aspect-video">
             <Image
               src={post.cover_image}
               alt={post.title}
@@ -49,7 +49,7 @@ export function PostCard({ post }: { post: Post }) {
             />
           </div>
         ) : (
-          <PhotoPlaceholder label={meta.photo} tone={meta.tone} className="h-40" />
+          <PhotoPlaceholder label={meta.photo} tone={meta.tone} className="aspect-video" />
         )}
         <div className="p-4.5">
           <p className={`mb-2 font-mono text-[10px] font-bold tracking-[0.1em] ${meta.text}`}>

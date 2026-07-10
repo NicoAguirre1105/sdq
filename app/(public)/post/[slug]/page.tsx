@@ -48,56 +48,56 @@ export default async function PostDetailPage({
   return (
     <article className="bg-blanco-hueso">
       <Container className="px-4.5 py-7 md:px-10 md:py-9">
-        <div className="mb-3.5 flex items-center gap-2 font-mono text-sm font-semibold text-tinta/45">
-          <Link
-            href="/"
-            className="flex items-center gap-1 transition-colors hover:text-tinta"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-3.5 flex items-center gap-2 font-mono text-sm font-semibold text-tinta/45">
+            <Link
+              href="/"
+              className="flex items-center gap-1 transition-colors hover:text-tinta"
             >
-              <path d="M15 19l-7-7 7-7" />
-            </svg>
-            INICIO
-          </Link>
-          <span>/</span>
-          <span className={meta.text}>{meta.label}</span>
-        </div>
-
-        <p className={`mb-1.5 font-mono text-[11px] font-semibold tracking-[0.14em] ${meta.text}`}>
-          {meta.label} · {formatDate(post.published_at)}
-        </p>
-        <h1 className="mb-6 max-w-3xl font-display text-[44px] leading-[0.88] text-tinta md:text-[64px]">
-          {post.title}
-        </h1>
-
-        {post.cover_image ? (
-          <div className="relative mb-8 h-56 w-full overflow-hidden rounded-lg md:h-[420px]">
-            <Image
-              src={post.cover_image}
-              alt={post.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 1280px"
-              className="object-cover"
-              priority
-            />
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M15 19l-7-7 7-7" />
+              </svg>
+              INICIO
+            </Link>
+            <span>/</span>
+            <span className={meta.text}>{meta.label}</span>
           </div>
-        ) : (
-          <PhotoPlaceholder
-            label={meta.photo}
-            tone={meta.tone}
-            className="mb-8 h-56 w-full rounded-lg md:h-[420px]"
-          />
-        )}
 
-        <div className="mx-auto max-w-2xl">
+          <p className={`mb-1.5 font-mono text-[11px] font-semibold tracking-[0.14em] ${meta.text}`}>
+            {meta.label} · {formatDate(post.published_at)}
+          </p>
+          <h1 className="mb-6 font-display text-[44px] leading-[0.88] text-tinta md:text-[64px]">
+            {post.title}
+          </h1>
+
+          {post.cover_image ? (
+            <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg">
+              <Image
+                src={post.cover_image}
+                alt={post.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
+                priority
+              />
+            </div>
+          ) : (
+            <PhotoPlaceholder
+              label={meta.photo}
+              tone={meta.tone}
+              className="mb-8 aspect-video w-full rounded-lg"
+            />
+          )}
+
           {post.excerpt && (
             <p className="mb-6 font-body text-lg leading-relaxed text-tinta/70">
               {post.excerpt}
