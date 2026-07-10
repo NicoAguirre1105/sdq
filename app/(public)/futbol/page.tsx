@@ -19,7 +19,17 @@ export default async function FutbolPage({
 }) {
   const { torneo } = await searchParams;
   const leagues = await getLeagueStages();
-  const selected = leagues.find((l) => l.competitionSlug === torneo) ?? leagues[0] ?? null;
+  // Selecciona por stageId, no por competitionSlug: una competición puede tener
+  // varias fases (stages) en formato liga, y el slug de competición se repite
+  // entre ellas — buscar por slug siempre devolvía la primera fase.
+  const selected = leagues.find((l) => l.stageId === torneo) ?? leagues[0] ?? null;
+
+  // Si más de una fase comparte competición, la etiqueta suma el nombre de la fase
+  // para no mostrar el mismo texto dos veces en el selector de torneo.
+  function stageLabel(l: (typeof leagues)[number]) {
+    const siblings = leagues.filter((x) => x.competitionSlug === l.competitionSlug);
+    return siblings.length > 1 ? `${l.competitionName} · ${l.stageName}` : l.competitionName;
+  }
 
   const [matches, standings] = selected
     ? await Promise.all([getUpcomingMatches(selected.stageId, 3), getStandings(selected.stageId)])
@@ -32,7 +42,7 @@ export default async function FutbolPage({
         <div className="absolute inset-0 bg-[#081f49]/80" />
         <Container className="relative px-0 md:px-10">
           <p className="mb-4 font-mono text-[10px] tracking-[0.18em] text-dorado-escudo uppercase md:text-[11px]">
-            {selected?.competitionName ?? "Temporada en curso"}
+            {selected ? stageLabel(selected) : "Temporada en curso"}
           </p>
           <h1 className="font-display text-[56px] leading-[0.82] text-blanco-hueso md:text-[78px]">
             FÚTBOL
@@ -50,11 +60,11 @@ export default async function FutbolPage({
           {leagues.length > 1 && (
             <nav className="mb-8 flex flex-wrap gap-2" aria-label="Torneos">
               {leagues.map((l) => {
-                const active = l.competitionSlug === selected?.competitionSlug;
+                const active = l.stageId === selected?.stageId;
                 return (
                   <Link
-                    key={l.competitionSlug}
-                    href={`/futbol?torneo=${l.competitionSlug}`}
+                    key={l.stageId}
+                    href={`/futbol?torneo=${l.stageId}`}
                     aria-current={active ? "page" : undefined}
                     className={`rounded-full px-3.5 py-1.5 font-mono text-[11px] tracking-[0.08em] uppercase transition-colors ${
                       active
@@ -62,7 +72,7 @@ export default async function FutbolPage({
                         : "border border-azul-marino/25 text-azul-marino hover:bg-azul-marino/8"
                     }`}
                   >
-                    {l.competitionName}
+                    {stageLabel(l)}
                   </Link>
                 );
               })}

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOutAction } from "@/lib/actions/auth";
 
-// Dashboard, Posts, Fútbol, Suscriptores y Plantilla están construidos; Tienda se
+// Dashboard, Posts, Fútbol, Suscriptores, Plantilla y QR están construidos; Tienda se
 // muestra deshabilitada con "pronto" para que la navegación no lleve a rutas 404.
 const NAV = [
   { href: "/admin", label: "Dashboard", enabled: true, exact: true },
@@ -14,6 +14,7 @@ const NAV = [
   { href: "/admin/tienda", label: "Tienda", enabled: false },
   { href: "/admin/suscriptores", label: "Suscriptores", enabled: true },
   { href: "/admin/plantilla", label: "Plantilla", enabled: true },
+  { href: "/admin/qr", label: "QR", enabled: true },
 ];
 
 export function Sidebar({ adminName }: { adminName: string }) {

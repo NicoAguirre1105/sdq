@@ -1,3 +1,5 @@
+import { getSiteUrl } from "@/lib/site-url";
+
 const KIT_API = "https://api.kit.com/v4";
 
 export type PostCategory = "noticia" | "cronica" | "aviso" | "cantico" | null;
@@ -84,8 +86,7 @@ export async function broadcastNewPost(post: {
   const key = process.env.KIT_API_KEY;
   if (!key) return;
   const topic = post.category ? CATEGORY_TOPIC[post.category] : "club"; // sin categoría → novedades del club
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sdq-cyan.vercel.app";
-  const url = `${base}/post/${post.slug}`;
+  const url = `${getSiteUrl()}/post/${post.slug}`;
   const now = new Date().toISOString();
   const content =
     `<p>Hola, hincha. Publicamos algo nuevo en Mafia Azul Grana:</p>` +

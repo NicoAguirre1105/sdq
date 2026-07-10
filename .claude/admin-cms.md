@@ -93,6 +93,9 @@ Layout real: pantalla única (`/admin/futbol`) con selector de stage arriba → 
 - CRUD de jugadores reusando el patrón de posts/teams: nombre, posición (select con las 4 claves de `SquadGrid`), dorsal, bio markdown.
 - **Foto opcional** subida al bucket `player_photos` (jpg/png/webp, ≤2 MB); sin foto la grilla pública usa `PhotoPlaceholder`.
 
+### 6. QR→PDF — no es contenido CMS (utilidad) — **IMPLEMENTADO** (`/admin/qr`)
+- No gestiona datos: genera al vuelo un PDF con QR hacia `/canticos` o hacia un cántico puntual, para imprimir/repartir. Sin tabla propia — lee `CANTICOS` de `lib/canticos.ts`.
+
 ---
 
 ## Pendiente por definir

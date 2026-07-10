@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getAdminStages } from "@/lib/supabase/queries/competitions";
 import { getStageMatches, getMatchById } from "@/lib/supabase/queries/matches";
 import { getStandings } from "@/lib/supabase/queries/standings";
-import { getAllTeams } from "@/lib/supabase/queries/teams";
+import { getAllTeams, getStageTeams } from "@/lib/supabase/queries/teams";
 import { formatMatchDate } from "@/lib/format";
 import { MatchForm } from "@/components/admin/MatchForm";
 import { DeleteButton } from "@/components/admin/DeleteButton";
@@ -61,7 +61,13 @@ export default async function AdminFutbolPage({
 
   // Formulario de crear/editar partido.
   if (match) {
-    const teams = await getAllTeams();
+    // Liga: solo los equipos inscritos en este stage. Eliminación no tiene lista
+    // fija (se define ronda a ronda) y usa el catálogo completo. Si un stage liga
+    // quedó sin stage_teams cargados (dato viejo/manual), cae al catálogo completo
+    // en vez de bloquear la carga de partidos.
+    const stageTeams =
+      selected.format === "liga" ? await getStageTeams(selected.stageId) : [];
+    const teams = stageTeams.length ? stageTeams : await getAllTeams();
     const existing = match !== "new" ? await getMatchById(match) : null;
     return (
       <MatchForm
