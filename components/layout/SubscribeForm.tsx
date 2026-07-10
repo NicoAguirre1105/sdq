@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import {
   checkSubscriberAction,
@@ -18,7 +18,20 @@ const TOPICS = [
 const checkInitial: CheckState = { status: "idle" };
 const subscribeInitial: SubscribeState = { status: "idle" };
 
+// El botón "volver" del paso 2 reinicia el flujo remontando SubscribeFlow (cambia
+// el key), que es la forma limpia de resetear el estado de useActionState.
 export function SubscribeForm({ compact = false }: { compact?: boolean }) {
+  const [resetKey, setResetKey] = useState(0);
+  return (
+    <SubscribeFlow
+      key={resetKey}
+      compact={compact}
+      onReset={() => setResetKey((k) => k + 1)}
+    />
+  );
+}
+
+function SubscribeFlow({ compact, onReset }: { compact: boolean; onReset: () => void }) {
   const [checkState, checkAction, checking] = useActionState(checkSubscriberAction, checkInitial);
   const [subState, subAction, subscribing] = useActionState(subscribeAction, subscribeInitial);
 
@@ -42,6 +55,17 @@ export function SubscribeForm({ compact = false }: { compact?: boolean }) {
     return (
       <form action={subAction}>
         <input type="hidden" name="email" value={checkState.email} />
+        <button
+          type="button"
+          onClick={onReset}
+          className="mb-3 flex items-center gap-1.5 font-body text-[12px] font-semibold text-white/70 transition-colors hover:text-white"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M19 12H5" />
+            <path d="M12 19l-7-7 7-7" />
+          </svg>
+          Cambiar correo
+        </button>
         <h2 className={`font-display leading-[0.9] text-white ${compact ? "text-4xl" : "text-4xl md:text-5xl"}`}>
           CONFIRMA
           <br />
