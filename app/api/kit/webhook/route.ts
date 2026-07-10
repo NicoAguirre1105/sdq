@@ -6,8 +6,6 @@ import { confirmSubscriber } from "@/lib/supabase/queries/subscribers";
 //
 // Se protege con un token compartido en la query (?token=), porque Kit no firma
 // los webhooks. Registrar el webhook con esa URL (ver KIT_WEBHOOK_SECRET).
-// ponytail: la forma exacta del payload se confirma en la verificación end-to-end;
-// leemos el email de las ubicaciones habituales de v4.
 export async function POST(req: Request) {
   const url = new URL(req.url);
   const secret = process.env.KIT_WEBHOOK_SECRET;
@@ -22,8 +20,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid json" }, { status: 400 });
   }
 
-  const subscriber = (body as { subscriber?: { email_address?: string } })?.subscriber;
-  const email = subscriber?.email_address;
+  // Kit envía `{ subscriber: { email_address } }`; toleramos variantes por si el
+  // payload difiere (email en otra clave o al nivel raíz).
+  const b = body as {
+    subscriber?: { email_address?: string; email?: string };
+    email_address?: string;
+    email?: string;
+  };
+  const email =
+    b.subscriber?.email_address ?? b.subscriber?.email ?? b.email_address ?? b.email;
   if (!email) {
     return NextResponse.json({ error: "no email in payload" }, { status: 400 });
   }
