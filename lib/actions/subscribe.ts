@@ -47,7 +47,7 @@ export async function subscribeAction(
 
   try {
     // Kit primero: si falla, no dejamos una fila pendiente que bloquee el reintento.
-    await addToKit(email);
+    await addToKit(email, topics);
     await addSubscriber(email, topics);
     return { status: "success" };
   } catch {
