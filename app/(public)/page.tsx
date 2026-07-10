@@ -2,11 +2,24 @@ import { Hero } from "@/components/home/Hero";
 import { PostCard } from "@/components/home/PostCard";
 import { SubscribeForm } from "@/components/layout/SubscribeForm";
 import { Container } from "@/components/ui/Container";
+import { Pagination } from "@/components/ui/Pagination";
 import { getPublishedPosts } from "@/lib/supabase/queries/posts";
 import { getNextMatch } from "@/lib/supabase/queries/matches";
 
-export default async function HomePage() {
-  const [posts, nextMatch] = await Promise.all([getPublishedPosts(9), getNextMatch()]);
+const POSTS_PER_PAGE = 9;
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, Number(pageParam) || 1);
+  const [{ posts, total }, nextMatch] = await Promise.all([
+    getPublishedPosts(page, POSTS_PER_PAGE),
+    getNextMatch(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
 
   return (
     <>
@@ -22,6 +35,7 @@ export default async function HomePage() {
               <PostCard key={post.slug} post={post} />
             ))}
           </div>
+          <Pagination page={page} totalPages={totalPages} basePath="/" />
         </Container>
       </section>
 

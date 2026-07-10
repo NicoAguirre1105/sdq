@@ -19,12 +19,11 @@ export type Cantico = {
   lines: CanticoLine[];
 };
 
-// Convierte una URL de YouTube (watch o youtu.be) en URL de embed con arranque
-// en el segundo dado. Sin autoplay (es el default de YouTube).
-export function youtubeEmbedUrl(url: string, startSeconds = 0): string | null {
-  const id = url.match(/[?&]v=([^&]+)/)?.[1] ?? url.match(/youtu\.be\/([^?]+)/)?.[1];
-  if (!id) return null;
-  return `https://www.youtube.com/embed/${id}?rel=0${startSeconds ? `&start=${startSeconds}` : ""}`;
+// Extrae el ID de video de una URL de YouTube (watch o youtu.be). El embed lo arma
+// el componente cliente `YouTubeEmbed` vía la IFrame API (para poder apagar los
+// subtítulos, que no se pueden desactivar solo con params de URL).
+export function youtubeId(url: string): string | null {
+  return url.match(/[?&]v=([^&]+)/)?.[1] ?? url.match(/youtu\.be\/([^?]+)/)?.[1] ?? null;
 }
 
 const EJEMPLO: CanticoLine[] = [

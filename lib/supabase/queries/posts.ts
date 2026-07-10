@@ -1,15 +1,17 @@
 import { createServerSupabaseClient } from "@/lib/supabase/client";
 
-export async function getPublishedPosts(limit = 10) {
+export async function getPublishedPosts(page = 1, pageSize = 9) {
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+  const { data, error, count } = await supabase
     .from("posts")
-    .select("*")
+    .select("*", { count: "exact" })
     .lte("published_at", new Date().toISOString())
     .order("published_at", { ascending: false })
-    .limit(limit);
+    .range(from, to);
   if (error) throw error;
-  return data;
+  return { posts: data ?? [], total: count ?? 0 };
 }
 
 // maybeSingle (no single): un slug inexistente o despublicado (filtrado por RLS)

@@ -11,6 +11,7 @@ import {
 import { Toast } from "@/components/ui/Toast";
 import { DeleteButton } from "@/components/admin/DeleteButton";
 import { withOfflineGuard } from "@/lib/action-guard";
+import { toQuitoInput } from "@/lib/format";
 
 type Team = { id: string; name: string };
 
@@ -30,16 +31,6 @@ const label =
   "block font-mono text-[10px] tracking-[0.1em] text-tinta/55 uppercase";
 const field =
   "mt-1.5 w-full rounded-md border border-azul-marino/20 bg-white px-3.5 py-2.5 font-body text-sm text-tinta outline-none focus:border-azul-marino";
-
-// timestamptz ISO → valor para <input type="datetime-local"> (YYYY-MM-DDTHH:mm), hora local.
-function toLocalInput(iso: string | null) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}`;
-}
 
 export function MatchForm({
   stageId,
@@ -154,7 +145,7 @@ export function MatchForm({
                 id="match_date"
                 name="match_date"
                 type="datetime-local"
-                defaultValue={toLocalInput(match?.match_date ?? null)}
+                defaultValue={toQuitoInput(match?.match_date ?? null)}
                 className={`${field} font-mono`}
               />
               <p className="mt-1 font-mono text-[9px] text-tinta/40">

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/client";
 import { requireAdmin } from "@/lib/auth";
+import { quitoInputToISO } from "@/lib/format";
 import type { Database } from "@/lib/types/database";
 
 export type MatchFormState = { error?: string };
@@ -47,8 +48,8 @@ function parse(formData: FormData): ParsedMatch | { error: string } {
     stage_id,
     home_team_id,
     away_team_id,
-    // datetime-local no lleva zona; se guarda tal cual como timestamptz.
-    match_date: rawDate ? new Date(rawDate).toISOString() : null,
+    // datetime-local se interpreta como hora de Quito (UTC-5) → instante UTC.
+    match_date: rawDate ? quitoInputToISO(rawDate) : null,
     matchday: optInt(formData.get("matchday")),
     round_name: round_name || null,
     score_home: optInt(formData.get("score_home")),

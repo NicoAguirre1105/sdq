@@ -36,42 +36,58 @@ export default async function AdminSubscribersPage() {
         {subscribers.length === 0 ? (
           <p className="font-body text-sm text-tinta/55">Todavía no hay suscriptores.</p>
         ) : (
-          <ul className="overflow-hidden rounded-lg border border-azul-marino/12 bg-white">
-            {subscribers.map((sub) => (
-              <li
-                key={sub.id}
-                className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-azul-marino/8 px-4 py-3 first:border-t-0"
-              >
-                <span className="min-w-0 flex-1 font-body text-sm font-semibold text-tinta">
-                  <span className="line-clamp-1">{sub.email}</span>
-                </span>
+          <div className="overflow-x-auto rounded-lg border border-azul-marino/12 bg-white">
+            <div className="min-w-[680px]">
+              <div className="flex items-center gap-4 border-b border-azul-marino/10 bg-azul-marino/[0.03] px-4 py-2.5 font-mono text-[9px] font-bold tracking-[0.1em] text-tinta/45 uppercase">
+                <span className="w-[240px] flex-none">Correo</span>
+                <span className="min-w-[160px] flex-1">Temas</span>
+                <span className="w-[116px] flex-none">Estado</span>
+                <span className="w-[92px] flex-none text-right">Fecha</span>
+                <span className="w-[64px] flex-none" />
+              </div>
 
-                <span className="font-mono text-[9px] text-tinta/45">
-                  {sub.topics.map((t) => TOPIC_LABEL[t] ?? t).join(" · ") || "—"}
-                </span>
+              <ul>
+                {subscribers.map((sub) => (
+                  <li
+                    key={sub.id}
+                    className="flex items-center gap-4 border-t border-azul-marino/8 px-4 py-3"
+                  >
+                    <span className="w-[240px] flex-none truncate font-body text-sm font-semibold text-tinta">
+                      {sub.email}
+                    </span>
 
-                <span
-                  className={`rounded px-2 py-1 font-mono text-[9px] font-bold ${
-                    sub.confirmed
-                      ? "bg-[#1E8A5B]/12 text-[#1E8A5B]"
-                      : "bg-dorado-escudo/15 text-[#9a7b1a]"
-                  }`}
-                >
-                  {sub.confirmed ? "● CONFIRMADO" : "○ PENDIENTE"}
-                </span>
+                    <span className="min-w-[160px] flex-1 truncate font-mono text-[10px] text-tinta/50">
+                      {sub.topics.map((t) => TOPIC_LABEL[t] ?? t).join(" · ") || "—"}
+                    </span>
 
-                <span className="w-24 text-right font-mono text-[10px] text-tinta/50">
-                  {formatDate(sub.subscribed_at)}
-                </span>
+                    <span className="w-[116px] flex-none">
+                      <span
+                        className={`inline-block rounded px-2 py-1 font-mono text-[9px] font-bold whitespace-nowrap ${
+                          sub.confirmed
+                            ? "bg-[#1E8A5B]/12 text-[#1E8A5B]"
+                            : "bg-dorado-escudo/15 text-[#9a7b1a]"
+                        }`}
+                      >
+                        {sub.confirmed ? "● CONFIRMADO" : "○ PENDIENTE"}
+                      </span>
+                    </span>
 
-                <DeleteButton
-                  action={deleteSubscriber}
-                  id={sub.id}
-                  message={`¿Eliminar a ${sub.email}? También se da de baja en Kit.`}
-                />
-              </li>
-            ))}
-          </ul>
+                    <span className="w-[92px] flex-none text-right font-mono text-[10px] text-tinta/50">
+                      {formatDate(sub.subscribed_at)}
+                    </span>
+
+                    <span className="w-[64px] flex-none text-right">
+                      <DeleteButton
+                        action={deleteSubscriber}
+                        id={sub.id}
+                        message={`¿Eliminar a ${sub.email}? También se da de baja en Kit.`}
+                      />
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         )}
       </div>
     </>

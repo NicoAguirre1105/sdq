@@ -155,63 +155,65 @@ export default async function AdminFutbolPage({
           />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           {/* Partidos */}
-          <div>
+          <div className="min-w-0">
             <div className="mb-3 font-display text-xl text-tinta">PARTIDOS</div>
             {matches.length === 0 ? (
               <p className="font-body text-sm text-tinta/55">
                 Sin partidos cargados en este stage.
               </p>
             ) : (
-              <ul className="overflow-hidden rounded-lg border border-azul-marino/12 bg-white">
-                {matches.map((m) => {
-                  const when = formatMatchDate(m.match_date);
-                  const played = m.score_home != null && m.score_away != null;
-                  return (
-                    <li
-                      key={m.id}
-                      className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-azul-marino/8 px-4 py-3 first:border-t-0"
-                    >
-                      <span className="w-14 flex-none font-mono text-[10px] text-tinta/50">
-                        {selected.format === "liga"
-                          ? m.matchday != null
-                            ? `F${m.matchday}`
-                            : "—"
-                          : m.round_name ?? "—"}
-                      </span>
-                      <Link
-                        href={`/admin/futbol?stage=${selected.stageId}&match=${m.id}`}
-                        className="min-w-0 flex-1 font-body text-sm font-semibold text-tinta hover:text-azul-marino"
+              <div className="overflow-x-auto rounded-lg border border-azul-marino/12 bg-white">
+                <ul className="min-w-[620px]">
+                  {matches.map((m) => {
+                    const when = formatMatchDate(m.match_date);
+                    const played = m.score_home != null && m.score_away != null;
+                    return (
+                      <li
+                        key={m.id}
+                        className="flex items-center gap-4 border-t border-azul-marino/8 px-4 py-3 first:border-t-0"
                       >
-                        <span className="line-clamp-1">
-                          {m.homeTeam?.name ?? "?"}{" "}
-                          <span className="font-mono text-tinta/40">
-                            {played ? `${m.score_home}-${m.score_away}` : "vs"}
-                          </span>{" "}
-                          {m.awayTeam?.name ?? "?"}
+                        <span className="w-12 flex-none font-mono text-[10px] text-tinta/50">
+                          {selected.format === "liga"
+                            ? m.matchday != null
+                              ? `F${m.matchday}`
+                              : "—"
+                            : m.round_name ?? "—"}
                         </span>
-                      </Link>
-                      <span className="w-28 text-right font-mono text-[10px] text-tinta/50">
-                        {when ? `${when.day} ${when.time}` : "Sin confirmar"}
-                      </span>
-                      <span
-                        className={`rounded px-2 py-1 font-mono text-[9px] font-bold uppercase ${
-                          STATUS_STYLE[m.status] ?? "bg-tinta/8 text-tinta/50"
-                        }`}
-                      >
-                        {m.status}
-                      </span>
-                      <Link
-                        href={`/admin/futbol?stage=${selected.stageId}&match=${m.id}`}
-                        className="font-mono text-[10px] font-semibold text-azul-marino hover:underline"
-                      >
-                        EDITAR
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+                        <Link
+                          href={`/admin/futbol?stage=${selected.stageId}&match=${m.id}`}
+                          className="min-w-[190px] flex-1 font-body text-sm font-semibold text-tinta hover:text-azul-marino"
+                        >
+                          <span className="line-clamp-1">
+                            {m.homeTeam?.name ?? "?"}{" "}
+                            <span className="font-mono text-tinta/40">
+                              {played ? `${m.score_home}-${m.score_away}` : "vs"}
+                            </span>{" "}
+                            {m.awayTeam?.name ?? "?"}
+                          </span>
+                        </Link>
+                        <span className="w-28 flex-none text-right font-mono text-[10px] text-tinta/50">
+                          {when ? `${when.day} ${when.time}` : "Sin confirmar"}
+                        </span>
+                        <span
+                          className={`w-24 flex-none text-center rounded px-2 py-1 font-mono text-[9px] font-bold uppercase ${
+                            STATUS_STYLE[m.status] ?? "bg-tinta/8 text-tinta/50"
+                          }`}
+                        >
+                          {m.status}
+                        </span>
+                        <Link
+                          href={`/admin/futbol?stage=${selected.stageId}&match=${m.id}`}
+                          className="w-14 flex-none text-right font-mono text-[10px] font-semibold text-azul-marino hover:underline"
+                        >
+                          EDITAR
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             )}
           </div>
 

@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import type { Cantico } from "@/lib/canticos";
+import { Pagination } from "@/components/ui/Pagination";
+
+const PER_PAGE = 10;
 
 function Chevron() {
   return (
@@ -24,10 +27,28 @@ function Chevron() {
 
 export function CanticoList({ canticos }: { canticos: Cantico[] }) {
   const [onlyClassic, setOnlyClassic] = useState(false);
+  const [page, setPage] = useState(1);
+  const topRef = useRef<HTMLDivElement>(null);
+
   const visible = onlyClassic ? canticos.filter((c) => c.classic) : canticos;
+  const totalPages = Math.max(1, Math.ceil(visible.length / PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const offset = (safePage - 1) * PER_PAGE;
+  const pageItems = visible.slice(offset, offset + PER_PAGE);
+
+  // Cambiar de filtro vuelve a la primera página.
+  function filter(classic: boolean) {
+    setOnlyClassic(classic);
+    setPage(1);
+  }
+
+  function goTo(p: number) {
+    setPage(p);
+    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   return (
-    <>
+    <div ref={topRef} className="scroll-mt-4">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-display text-[30px] text-tinta">
           TODOS LOS CÁNTICOS{" "}
@@ -36,7 +57,7 @@ export function CanticoList({ canticos }: { canticos: Cantico[] }) {
         <div className="flex gap-1.5 font-mono text-[10px] font-semibold">
           <button
             type="button"
-            onClick={() => setOnlyClassic(false)}
+            onClick={() => filter(false)}
             className={`rounded px-3 py-1.5 transition-colors ${
               onlyClassic
                 ? "border border-azul-marino/15 bg-white hover:border-azul-marino"
@@ -47,7 +68,7 @@ export function CanticoList({ canticos }: { canticos: Cantico[] }) {
           </button>
           <button
             type="button"
-            onClick={() => setOnlyClassic(true)}
+            onClick={() => filter(true)}
             className={`rounded px-3 py-1.5 transition-colors ${
               onlyClassic
                 ? "bg-azul-marino text-white"
@@ -60,14 +81,14 @@ export function CanticoList({ canticos }: { canticos: Cantico[] }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        {visible.map((c, i) => (
+        {pageItems.map((c, i) => (
           <Link
             key={c.slug}
             href={`/canticos/${c.slug}`}
             className="group grid grid-cols-[36px_1fr_28px] items-center gap-3 rounded-lg border border-azul-marino/10 bg-white p-3.5 transition-all hover:border-azul-marino/25 hover:shadow-[0_8px_24px_-12px_rgba(11,46,107,0.4)] md:grid-cols-[44px_1fr_40px] md:gap-4 md:px-4.5"
           >
             <span className="text-center font-display text-2xl text-azul-marino/40 md:text-3xl">
-              {String(i + 1).padStart(2, "0")}
+              {String(offset + i + 1).padStart(2, "0")}
             </span>
             <span className="flex min-w-0 items-baseline gap-2.5">
               <span className="truncate font-display text-2xl leading-[1.2] text-tinta md:text-3xl">
@@ -85,6 +106,8 @@ export function CanticoList({ canticos }: { canticos: Cantico[] }) {
           </Link>
         ))}
       </div>
-    </>
+
+      <Pagination page={safePage} totalPages={totalPages} onChange={goTo} />
+    </div>
   );
 }

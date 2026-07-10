@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CANTICOS, getCantico, youtubeEmbedUrl } from "@/lib/canticos";
+import { CANTICOS, getCantico, youtubeId } from "@/lib/canticos";
+import { YouTubeEmbed } from "@/components/canticos/YouTubeEmbed";
 
 export function generateStaticParams() {
   return CANTICOS.map((c) => ({ slug: c.slug }));
@@ -18,7 +19,7 @@ export default async function CanticoDetailPage({ params }: { params: Promise<{ 
   if (!cantico) notFound();
 
   const others = CANTICOS.filter((c) => c.slug !== cantico.slug).slice(0, 4);
-  const embedUrl = cantico.youtubeUrl && youtubeEmbedUrl(cantico.youtubeUrl, cantico.startSeconds);
+  const videoId = cantico.youtubeUrl ? youtubeId(cantico.youtubeUrl) : null;
   const watchUrl =
     cantico.youtubeUrl &&
     `${cantico.youtubeUrl}${cantico.startSeconds ? `&t=${cantico.startSeconds}s` : ""}`;
@@ -71,13 +72,12 @@ export default async function CanticoDetailPage({ params }: { params: Promise<{ 
 
         {/* Sidebar: video + más cánticos */}
         <aside className="border-t border-white/8 bg-[#081f49] px-4.5 py-6 md:border-t-0 md:border-l md:px-6 md:py-7">
-          {embedUrl ? (
-            <iframe
-              src={embedUrl}
+          {videoId ? (
+            <YouTubeEmbed
+              videoId={videoId}
+              start={cantico.startSeconds}
               title={`${cantico.title} — YouTube`}
-              className="mb-4 aspect-video w-full rounded-lg border-0"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
+              className="mb-4 aspect-video w-full overflow-hidden rounded-lg bg-black/20"
             />
           ) : (
             <div className="mb-4 flex aspect-video items-center justify-center rounded-lg bg-[repeating-linear-gradient(125deg,#0B2E6B,#0B2E6B_14px,#12408c_14px,#12408c_28px)]">
