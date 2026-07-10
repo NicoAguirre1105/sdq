@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import QRCode from "qrcode";
+import sharp from "sharp";
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { requireAdmin } from "@/lib/auth";
 import { getCantico } from "@/lib/canticos";
@@ -67,28 +68,63 @@ export async function GET(request: Request) {
   page.drawRectangle({ x: 0, y: height - 16, width, height: 16, color: ROJO_BANDERA });
   page.drawRectangle({ x: 0, y: 0, width, height: 16, color: AZUL_MARINO });
 
-  const logoBytes = await readFile(path.join(process.cwd(), "public/img/logoSDQ.png"));
-  const logo = await pdfDoc.embedPng(logoBytes);
-  const logoWidth = 70;
-  const logoHeight = (logo.height / logo.width) * logoWidth;
-  page.drawImage(logo, {
-    x: (width - logoWidth) / 2,
-    y: height - 130,
-    width: logoWidth,
-    height: logoHeight,
+  // Lockup de marca: escudo Quito (color, va directo sobre blanco) + divisor +
+  // logo MAG (mag.svg es blanco sin fondo — necesita un chip oscuro atrás para
+  // verse, mismo criterio que BrandLockup.tsx en el sitio). pdf-lib no rasteriza
+  // SVG; sharp (ya instalado como dependencia de next/image) lo convierte a PNG.
+  const [logoBytes, magSvgBytes] = await Promise.all([
+    readFile(path.join(process.cwd(), "public/img/logoSDQ.png")),
+    readFile(path.join(process.cwd(), "public/img/mag.svg")),
+  ]);
+  const magPngBytes = await sharp(magSvgBytes).resize({ width: 800 }).png().toBuffer();
+
+  const quitoLogo = await pdfDoc.embedPng(logoBytes);
+  const magLogo = await pdfDoc.embedPng(magPngBytes);
+
+  const quitoH = 55;
+  const quitoW = quitoH * (quitoLogo.width / quitoLogo.height);
+  const chipH = 55;
+  const chipPadY = 10;
+  const chipPadX = 14;
+  const magH = chipH - chipPadY * 2;
+  const magW = magH * (magLogo.width / magLogo.height);
+  const chipW = magW + chipPadX * 2;
+  const gap = 16;
+
+  const lockupWidth = quitoW + gap + 1 + gap + chipW;
+  const lockupX = (width - lockupWidth) / 2;
+  const lockupY = height - 140; // y = base de ambos elementos (coords pdf-lib: origen abajo-izq)
+
+  page.drawImage(quitoLogo, { x: lockupX, y: lockupY, width: quitoW, height: quitoH });
+
+  const dividerX = lockupX + quitoW + gap;
+  page.drawLine({
+    start: { x: dividerX, y: lockupY },
+    end: { x: dividerX, y: lockupY + quitoH },
+    thickness: 1,
+    color: rgb(0.75, 0.75, 0.75),
+  });
+
+  const chipX = dividerX + gap;
+  page.drawRectangle({ x: chipX, y: lockupY, width: chipW, height: chipH, color: AZUL_MARINO });
+  page.drawImage(magLogo, {
+    x: chipX + chipPadX,
+    y: lockupY + chipPadY,
+    width: magW,
+    height: magH,
   });
 
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-  drawCentered(page, "MAFIA AZUL GRANA", fontBold, 13, height - 165, AZUL_MARINO);
+  drawCentered(page, "MAFIA AZUL GRANA", fontBold, 13, lockupY - 35, AZUL_MARINO);
 
   // Achica el título si no entra en una sola línea (nombres de cántico largos).
   let titleSize = 30;
   while (fontBold.widthOfTextAtSize(title, titleSize) > width - 80 && titleSize > 14) {
     titleSize -= 2;
   }
-  drawCentered(page, title, fontBold, titleSize, height - 215, TINTA);
+  drawCentered(page, title, fontBold, titleSize, lockupY - 85, TINTA);
 
   const qrImage = await pdfDoc.embedPng(qrPngBytes);
   const qrSize = 300;
