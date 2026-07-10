@@ -7,6 +7,18 @@ import { Pagination } from "@/components/ui/Pagination";
 
 const PER_PAGE = 10;
 
+// Sin acentos ni mayúsculas, para que "cancion"/"canción" matcheen igual.
+function normalize(s: string) {
+  return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+}
+
+function matchesQuery(c: Cantico, query: string) {
+  if (!query) return true;
+  const q = normalize(query);
+  if (normalize(c.title).includes(q)) return true;
+  return c.lines.some((l) => normalize(l.text).includes(q));
+}
+
 function Chevron() {
   return (
     <svg
@@ -27,18 +39,25 @@ function Chevron() {
 
 export function CanticoList({ canticos }: { canticos: Cantico[] }) {
   const [onlyClassic, setOnlyClassic] = useState(false);
+  const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const topRef = useRef<HTMLDivElement>(null);
 
-  const visible = onlyClassic ? canticos.filter((c) => c.classic) : canticos;
+  const classicFiltered = onlyClassic ? canticos.filter((c) => c.classic) : canticos;
+  const visible = classicFiltered.filter((c) => matchesQuery(c, query));
   const totalPages = Math.max(1, Math.ceil(visible.length / PER_PAGE));
   const safePage = Math.min(page, totalPages);
   const offset = (safePage - 1) * PER_PAGE;
   const pageItems = visible.slice(offset, offset + PER_PAGE);
 
-  // Cambiar de filtro vuelve a la primera página.
+  // Cambiar de filtro o buscar vuelve a la primera página.
   function filter(classic: boolean) {
     setOnlyClassic(classic);
+    setPage(1);
+  }
+
+  function search(q: string) {
+    setQuery(q);
     setPage(1);
   }
 
@@ -79,6 +98,36 @@ export function CanticoList({ canticos }: { canticos: Cantico[] }) {
           </button>
         </div>
       </div>
+
+      <div className="relative mb-4">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-tinta/35"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => search(e.target.value)}
+          placeholder="Busca por título o letra…"
+          className="w-full rounded-lg border border-azul-marino/15 bg-white py-2.5 pr-3.5 pl-10 font-body text-sm text-tinta outline-none focus:border-azul-marino"
+        />
+      </div>
+
+      {visible.length === 0 && (
+        <p className="py-6 text-center font-body text-sm text-tinta/50">
+          No encontramos ningún cántico con “{query}”.
+        </p>
+      )}
 
       <div className="flex flex-col gap-2">
         {pageItems.map((c, i) => (
