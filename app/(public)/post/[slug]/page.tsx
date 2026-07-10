@@ -10,6 +10,7 @@ const CATEGORY = {
   cronica: { label: "CRÓNICA", text: "text-rojo-bandera", photo: "FOTO PARTIDO", tone: "azul" },
   noticia: { label: "NOTICIA", text: "text-azul-marino", photo: "FOTO JUGADOR", tone: "rojo" },
   aviso: { label: "AVISO", text: "text-dorado-escudo", photo: "ARTE AVISO", tone: "dorado" },
+  cantico: { label: "CÁNTICO", text: "text-rojo-bandera", photo: "ARTE CÁNTICO", tone: "rojo" },
 } as const;
 
 function formatDate(iso: string | null) {

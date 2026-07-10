@@ -20,7 +20,7 @@ type PostValues = {
   slug: string;
   excerpt: string | null;
   content_md: string;
-  category: "noticia" | "cronica" | "aviso" | null;
+  category: "noticia" | "cronica" | "aviso" | "cantico" | null;
   cover_image: string | null;
   published_at: string | null;
 };
@@ -139,6 +139,7 @@ export function PostForm({ post }: { post?: PostValues }) {
                 <option value="noticia">Noticia</option>
                 <option value="cronica">Crónica</option>
                 <option value="aviso">Aviso</option>
+                <option value="cantico">Cántico</option>
               </select>
             </div>
             <div className="flex-1">

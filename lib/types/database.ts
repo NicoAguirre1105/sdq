@@ -10,7 +10,7 @@ type Post = {
   slug: string;
   excerpt: string | null;
   content_md: string;
-  category: "noticia" | "cronica" | "aviso" | null;
+  category: "noticia" | "cronica" | "aviso" | "cantico" | null;
   cover_image: string | null;
   published_at: string | null; // null = borrador (oculto para el público por RLS)
 };

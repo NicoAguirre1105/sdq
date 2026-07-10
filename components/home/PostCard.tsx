@@ -6,7 +6,7 @@ type Post = {
   slug: string;
   title: string;
   excerpt: string | null;
-  category: "noticia" | "cronica" | "aviso" | null;
+  category: "noticia" | "cronica" | "aviso" | "cantico" | null;
   cover_image: string | null;
   published_at: string | null;
 };
@@ -15,6 +15,7 @@ const CATEGORY = {
   cronica: { label: "CRÓNICA", tone: "azul", text: "text-rojo-bandera", photo: "FOTO PARTIDO" },
   noticia: { label: "NOTICIA", tone: "rojo", text: "text-azul-marino", photo: "FOTO JUGADOR" },
   aviso: { label: "AVISO", tone: "dorado", text: "text-dorado-escudo", photo: "ARTE AVISO" },
+  cantico: { label: "CÁNTICO", tone: "rojo", text: "text-rojo-bandera", photo: "ARTE CÁNTICO" },
 } as const;
 
 function relativeDays(iso: string | null) {

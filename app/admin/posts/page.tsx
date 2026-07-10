@@ -5,6 +5,7 @@ const CATEGORY_LABEL: Record<string, { label: string; className: string }> = {
   noticia: { label: "NOTICIA", className: "text-azul-marino" },
   cronica: { label: "CRÓNICA", className: "text-rojo-bandera" },
   aviso: { label: "AVISO", className: "text-dorado-escudo" },
+  cantico: { label: "CÁNTICO", className: "text-rojo-bandera" },
 };
 
 function isPublished(publishedAt: string | null) {

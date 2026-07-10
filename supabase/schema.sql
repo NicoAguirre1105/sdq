@@ -11,7 +11,7 @@ create table posts (
   slug text unique not null,
   excerpt text,
   content_md text not null,
-  category text check (category in ('noticia', 'cronica', 'aviso')),
+  category text check (category in ('noticia', 'cronica', 'aviso', 'cantico')),
   cover_image text,
   published_at timestamptz default now()
 );

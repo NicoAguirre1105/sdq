@@ -22,6 +22,54 @@ export async function addToKit(email: string): Promise<void> {
   if (!res.ok) throw new Error(`Kit responded ${res.status}`);
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// Notifica un post nuevo a los suscriptores vía un broadcast de Kit (API v4).
+// Kit solo envía broadcasts a suscriptores confirmados (los pendientes del doble
+// opt-in quedan excluidos), así que esto cubre "solo verificados" sin filtrar a mano.
+// Best-effort: no lanza, para que un fallo de Kit no impida guardar el post.
+export async function broadcastNewPost(post: {
+  title: string;
+  slug: string;
+  excerpt: string | null;
+}): Promise<void> {
+  const key = process.env.KIT_API_KEY;
+  if (!key) return;
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sdq-cyan.vercel.app";
+  const url = `${base}/post/${post.slug}`;
+  const now = new Date().toISOString();
+  const content =
+    `<p>${escapeHtml(post.title)}</p>` +
+    (post.excerpt ? `<p>${escapeHtml(post.excerpt)}</p>` : "") +
+    `<p><a href="${url}">Leer en la web</a></p>`;
+
+  try {
+    await fetch(`${KIT_API}/broadcasts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Kit-Api-Key": key },
+      body: JSON.stringify({
+        subject: post.title,
+        preview_text: post.excerpt ?? post.title,
+        description: `Post: ${post.title}`,
+        content,
+        public: false,
+        published_at: now,
+        send_at: now, // ISO now = envío inmediato; null sería borrador
+        subscriber_filter: null, // null = todos los suscriptores (confirmados)
+      }),
+    });
+  } catch {
+    // ponytail: un fallo de Kit no debe bloquear el guardado del post; el envío
+    // se puede reintentar a mano desde el panel de Kit.
+  }
+}
+
 // Da de baja al subscriber en Kit (deja de recibir correos). Busca el id por correo
 // vía v4 y lo desuscribe. Best-effort: no lanza, para que un fallo de Kit no impida
 // borrar la fila en Supabase.

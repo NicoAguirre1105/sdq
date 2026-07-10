@@ -8,6 +8,7 @@ import { requireAdmin } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 import { uploadPostImage, deletePostImage } from "@/lib/supabase/queries/storage";
 import { getPostById } from "@/lib/supabase/queries/posts";
+import { broadcastNewPost } from "@/lib/kit";
 import type { Database } from "@/lib/types/database";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -41,12 +42,12 @@ type ParsedPost = {
   slug: string;
   excerpt: string | null;
   content_md: string;
-  category: "noticia" | "cronica" | "aviso" | null;
+  category: "noticia" | "cronica" | "aviso" | "cantico" | null;
   cover_image: string | null;
   published: boolean;
 };
 
-const CATEGORIES = ["noticia", "cronica", "aviso"] as const;
+const CATEGORIES = ["noticia", "cronica", "aviso", "cantico"] as const;
 
 function parse(formData: FormData): ParsedPost | { error: string } {
   const title = String(formData.get("title") ?? "").trim();
@@ -98,6 +99,8 @@ export async function createPost(
     return { error: "No se pudo guardar el post." };
   }
 
+  if (published) await broadcastNewPost(post);
+
   revalidatePath("/admin/posts");
   revalidatePath("/");
   redirect("/admin/posts");
@@ -141,6 +144,9 @@ export async function updatePost(
   if (existing?.cover_image && existing.cover_image !== cover.url) {
     await deletePostImage(supabase, existing.cover_image);
   }
+
+  // Notificar solo al pasar de borrador a publicado, no en cada edición posterior.
+  if (published && !existing?.published_at) await broadcastNewPost(post);
 
   revalidatePath("/admin/posts");
   revalidatePath("/");
