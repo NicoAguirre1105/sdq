@@ -104,7 +104,7 @@ export default async function PostDetailPage({
             </p>
           )}
           <div
-            className="font-body text-[15px] leading-relaxed text-tinta [&_a]:text-azul-marino [&_a]:underline [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-3xl [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-2xl [&_h3]:mt-5 [&_h3]:font-display [&_h3]:text-xl [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-3 [&_strong]:font-bold"
+            className="font-body text-base leading-relaxed text-tinta [&_a]:text-azul-marino [&_a]:underline [&_h1]:mt-6 [&_h1]:font-display [&_h1]:text-3xl [&_h2]:mt-6 [&_h2]:font-display [&_h2]:text-2xl [&_h3]:mt-5 [&_h3]:font-display [&_h3]:text-xl [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-3 [&_strong]:font-bold"
             dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content_md) }}
           />
         </div>
