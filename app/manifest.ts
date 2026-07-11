@@ -5,7 +5,8 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Mafia Azul Grana | SD Quito",
     short_name: "Mafia Azul Grana",
     description: "Portal de la hinchada de Sociedad Deportivo Quito",
-    start_url: "/",
+    // Sin start_url fijo: así "Agregar a inicio" en iOS apunta a la página desde
+    // la que se agrega (ej. /admin), no siempre al home del sitio.
     display: "browser",
     lang: "es-EC",
     background_color: "#0B2E6B",
