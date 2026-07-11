@@ -5,6 +5,7 @@ import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
 import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 import { getPostBySlug } from "@/lib/supabase/queries/posts";
 import { renderMarkdown } from "@/lib/markdown";
+import { getSiteUrl } from "@/lib/site-url";
 
 const CATEGORY = {
   cronica: { label: "CRÓNICA", text: "text-rojo-bandera", photo: "FOTO PARTIDO", tone: "azul" },
@@ -28,9 +29,22 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: "Post no encontrado" };
+  const title = `${post.title} | Mafia Azul Grana`;
+  const description = post.excerpt ?? undefined;
   return {
-    title: `${post.title} | Mafia Azul Grana`,
-    description: post.excerpt ?? undefined,
+    title,
+    description,
+    alternates: { canonical: `${getSiteUrl()}/post/${post.slug}` },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      publishedTime: post.published_at ?? undefined,
+      images: post.cover_image ? [post.cover_image] : undefined,
+    },
+    twitter: post.cover_image
+      ? { card: "summary_large_image", images: [post.cover_image] }
+      : undefined,
   };
 }
 
@@ -44,9 +58,28 @@ export default async function PostDetailPage({
   if (!post) notFound();
 
   const meta = CATEGORY[post.category ?? "noticia"];
+  const siteUrl = getSiteUrl();
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: post.title,
+    description: post.excerpt ?? undefined,
+    image: post.cover_image ? [post.cover_image] : undefined,
+    datePublished: post.published_at ?? undefined,
+    mainEntityOfPage: `${siteUrl}/post/${post.slug}`,
+    publisher: {
+      "@type": "Organization",
+      name: "Mafia Azul Grana",
+      logo: { "@type": "ImageObject", url: `${siteUrl}/img/logoSDQ_color.png` },
+    },
+  };
 
   return (
     <article className="bg-blanco-hueso">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <Container className="px-4.5 py-7 md:px-10 md:py-9">
         <div className="mx-auto max-w-3xl">
           <div className="mb-3.5 flex items-center gap-2 font-mono text-sm font-semibold text-tinta/45">

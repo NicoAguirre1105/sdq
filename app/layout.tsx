@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 // Fuentes auto-hospedadas (no dependen de fonts.googleapis.com en build/dev).
@@ -25,9 +26,44 @@ const jetbrainsMono = localFont({
   display: "swap",
 });
 
+const siteUrl = getSiteUrl();
+const title = "Mafia Azul Grana | SD Quito";
+const description = "Portal de la hinchada de Sociedad Deportivo Quito";
+
 export const metadata: Metadata = {
-  title: "Mafia Azul Grana | SD Quito",
-  description: "Portal de la hinchada de Sociedad Deportivo Quito",
+  metadataBase: new URL(siteUrl),
+  title,
+  description,
+  robots: { index: true, follow: true },
+  openGraph: {
+    title,
+    description,
+    url: siteUrl,
+    siteName: "Mafia Azul Grana",
+    locale: "es_EC",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0B2E6B",
+};
+
+// JSON-LD (GEO/AEO): entidad de la hinchada para buscadores y motores de
+// respuesta con IA. sameAs queda vacío hasta que existan cuentas oficiales de
+// redes sociales — agregar ahí cuando se creen.
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SportsOrganization",
+  name: "Mafia Azul Grana",
+  description,
+  url: siteUrl,
+  logo: `${siteUrl}/img/logoSDQ_color.png`,
 };
 
 export default function RootLayout({
@@ -40,6 +76,12 @@ export default function RootLayout({
       lang="es"
       className={`${bebasNeue.variable} ${ibmPlexSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col font-body">{children}</body>
     </html>
   );
