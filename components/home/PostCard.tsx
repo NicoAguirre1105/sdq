@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
+import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 
 type Post = {
   slug: string;
@@ -40,7 +40,7 @@ export function PostCard({ post }: { post: Post }) {
       <article>
         {post.cover_image ? (
           <div className="relative aspect-video">
-            <Image
+            <ImageWithSkeleton
               src={post.cover_image}
               alt={post.title}
               fill

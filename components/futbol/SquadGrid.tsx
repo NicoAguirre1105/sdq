@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
+import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 import { STAFF_POSITION } from "@/lib/positions";
 
 type Player = {
@@ -58,7 +58,7 @@ export function SquadGrid({ players }: { players: Player[] }) {
                 <div className="relative">
                   {p.photo_url ? (
                     <div className="relative h-60 md:h-70">
-                      <Image
+                      <ImageWithSkeleton
                         src={p.photo_url}
                         alt={p.full_name}
                         fill

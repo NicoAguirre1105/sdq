@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
+import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 import { getPostBySlug } from "@/lib/supabase/queries/posts";
 import { renderMarkdown } from "@/lib/markdown";
 
@@ -81,7 +81,7 @@ export default async function PostDetailPage({
 
           {post.cover_image ? (
             <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg">
-              <Image
+              <ImageWithSkeleton
                 src={post.cover_image}
                 alt={post.title}
                 fill
