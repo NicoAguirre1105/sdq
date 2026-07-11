@@ -7,6 +7,9 @@ import { formatMatchDate } from "@/lib/format";
 import { MatchForm } from "@/components/admin/MatchForm";
 import { DeleteButton } from "@/components/admin/DeleteButton";
 import { deleteStage } from "@/lib/actions/stages";
+import { TabbedContent } from "@/components/ui/TabbedContent";
+import { MatchListSkeleton } from "@/components/ui/MatchListSkeleton";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
 const STATUS_STYLE: Record<string, string> = {
   jugado: "bg-[#1E8A5B]/12 text-[#1E8A5B]",
@@ -22,6 +25,10 @@ function stageLabel(s: {
   return [s.seasonLabel, s.competitionName, s.stageName].filter(Boolean).join(" · ");
 }
 
+// ponytail: sin loading.tsx / <Suspense> de Server Components acá — dejaban el
+// fallback pegado para siempre (bug reproducido con Next 16.2.10 + Turbopack, ver
+// progreso.md). El loading state del selector de stage es 100% client-side vía
+// TabbedContent (useTransition), que no usa streaming de RSC.
 export default async function AdminFutbolPage({
   searchParams,
 }: {
@@ -124,43 +131,49 @@ export default async function AdminFutbolPage({
       </header>
 
       <div className="px-6 py-6">
-        {/* Selector de stage */}
-        <div className="mb-6 flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[9px] tracking-[0.14em] text-tinta/45 uppercase">
-            Stage
-          </span>
-          {stages.map((s) => {
+        <TabbedContent
+          navClassName="mb-6 flex flex-wrap items-center gap-2"
+          prefix={
+            <span className="font-mono text-[9px] tracking-[0.14em] text-tinta/45 uppercase">
+              Stage
+            </span>
+          }
+          suffix={
+            <DeleteButton
+              action={deleteStage}
+              id={selected.stageId}
+              label="Eliminar este stage"
+              message={`¿Eliminar "${stageLabel(selected)}"? Se borran también sus partidos y su tabla. No se puede deshacer.`}
+              className="ml-auto font-mono text-[10px] font-bold text-rojo-bandera hover:underline"
+            />
+          }
+          fallback={<AdminFutbolFallback />}
+          tabs={stages.map((s) => {
             const active = s.stageId === selected.stageId;
-            return (
-              <Link
-                key={s.stageId}
-                href={`/admin/futbol?stage=${s.stageId}`}
-                className={`flex items-center gap-2 rounded-md border px-3 py-1.5 font-body text-xs font-semibold transition-colors ${
-                  active
-                    ? "border-azul-marino bg-azul-marino text-white"
-                    : "border-azul-marino/16 text-tinta/70 hover:border-azul-marino/40"
-                }`}
-              >
-                {stageLabel(s)}
-                <span
-                  className={`font-mono text-[7px] font-bold tracking-wide ${
-                    active ? "text-dorado-escudo" : "text-tinta/35"
-                  }`}
-                >
-                  {s.format === "liga" ? "LIGA" : "ELIM"}
-                </span>
-              </Link>
-            );
+            return {
+              key: s.stageId,
+              href: `/admin/futbol?stage=${s.stageId}`,
+              active,
+              className: `flex items-center gap-2 rounded-md border px-3 py-1.5 font-body text-xs font-semibold transition-colors ${
+                active
+                  ? "border-azul-marino bg-azul-marino text-white"
+                  : "border-azul-marino/16 text-tinta/70 hover:border-azul-marino/40"
+              }`,
+              label: (
+                <>
+                  {stageLabel(s)}
+                  <span
+                    className={`font-mono text-[7px] font-bold tracking-wide ${
+                      active ? "text-dorado-escudo" : "text-tinta/35"
+                    }`}
+                  >
+                    {s.format === "liga" ? "LIGA" : "ELIM"}
+                  </span>
+                </>
+              ),
+            };
           })}
-          <DeleteButton
-            action={deleteStage}
-            id={selected.stageId}
-            label="Eliminar este stage"
-            message={`¿Eliminar "${stageLabel(selected)}"? Se borran también sus partidos y su tabla. No se puede deshacer.`}
-            className="ml-auto font-mono text-[10px] font-bold text-rojo-bandera hover:underline"
-          />
-        </div>
-
+        >
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           {/* Partidos */}
           <div className="min-w-0">
@@ -269,7 +282,19 @@ export default async function AdminFutbolPage({
             </div>
           )}
         </div>
+        </TabbedContent>
       </div>
     </>
+  );
+}
+
+function AdminFutbolFallback() {
+  return (
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="overflow-hidden rounded-lg border border-azul-marino/12 bg-white px-4">
+        <MatchListSkeleton rows={6} />
+      </div>
+      <TableSkeleton rows={5} />
+    </div>
   );
 }

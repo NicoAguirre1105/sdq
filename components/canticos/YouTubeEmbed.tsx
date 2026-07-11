@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Embed de YouTube con los subtítulos DESHABILITADOS de forma fiable.
 //
@@ -49,6 +49,7 @@ export function YouTubeEmbed({
   className?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let player: YTPlayer | undefined;
@@ -83,6 +84,7 @@ export function YouTubeEmbed({
             } catch {
               // si la API cambia el nombre del módulo, no romper el player
             }
+            if (!cancelled) setReady(true);
           },
         },
       });
@@ -101,5 +103,13 @@ export function YouTubeEmbed({
 
   // React solo maneja el contenedor; el host interno (y el iframe que lo reemplaza)
   // se crean/eliminan a mano en el effect. El wrapper mantiene aspect-ratio y bordes.
-  return <div ref={containerRef} title={title} className={className} />;
+  // El shimmer va con z-10 para tapar el iframe (insertado a mano, sin que React
+  // controle el orden de stacking) hasta que el player esté listo.
+  return (
+    <div ref={containerRef} title={title} className={`relative ${className}`}>
+      {!ready && (
+        <div className="absolute inset-0 z-10 animate-pulse bg-white/10" />
+      )}
+    </div>
+  );
 }

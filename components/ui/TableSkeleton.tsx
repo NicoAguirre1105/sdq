@@ -1,6 +1,4 @@
-// Skeleton genérico para listas/tablas mientras carga la data (usado en loading.tsx
-// de rutas con Server Components — Next.js lo muestra automáticamente vía Suspense
-// mientras se resuelven las queries de la página).
+// Skeleton genérico para listas/tablas mientras carga la data.
 const WIDTHS = ["w-1/3", "w-1/4", "w-1/6", "w-1/5", "w-10"];
 
 export function TableSkeleton({ rows = 6 }: { rows?: number }) {
