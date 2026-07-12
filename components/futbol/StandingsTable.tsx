@@ -31,7 +31,7 @@ export function StandingsTable({ rows }: { rows: StandingRow[] }) {
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="no-scrollbar overflow-x-auto">
       <table className="min-w-[480px] border-collapse text-left">
         <thead>
           <tr className="font-mono text-[10px] tracking-[0.06em] text-tinta/50">

@@ -59,6 +59,9 @@ export function PostCard({ post }: { post: Post }) {
           {post.excerpt && (
             <p className="font-body text-xs leading-relaxed text-tinta/60">{post.excerpt}</p>
           )}
+          <span className={`mt-2.5 inline-block font-body text-xs font-bold underline ${meta.text}`}>
+            Ver más
+          </span>
         </div>
       </article>
     </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLockup } from "@/components/ui/BrandLockup";
@@ -12,6 +12,18 @@ export function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
+
+  // Auto-abre la ventana de suscripción a los 30s de navegación, una sola vez
+  // (no vuelve a aparecer sola en visitas futuras). Navbar solo vive en
+  // app/(public)/layout.tsx, así que esto nunca corre en /admin ni /login.
+  useEffect(() => {
+    if (localStorage.getItem("sdq_subscribe_prompted")) return;
+    const timer = setTimeout(() => {
+      setSubscribeOpen(true);
+      localStorage.setItem("sdq_subscribe_prompted", "1");
+    }, 30_000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>

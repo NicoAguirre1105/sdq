@@ -36,7 +36,7 @@ export default async function AdminSubscribersPage() {
         {subscribers.length === 0 ? (
           <p className="font-body text-sm text-tinta/55">Todavía no hay suscriptores.</p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-azul-marino/12 bg-white">
+          <div className="no-scrollbar overflow-x-auto rounded-lg border border-azul-marino/12 bg-white">
             {/* 768px = suma real de columnas (240+160+116+92+64) + gaps (4×16) + padding (2×16) */}
             <div className="min-w-[768px]">
               <div className="flex items-center gap-4 border-b border-azul-marino/10 bg-azul-marino/[0.03] px-4 py-2.5 font-mono text-[9px] font-bold tracking-[0.1em] text-tinta/45 uppercase">

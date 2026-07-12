@@ -35,7 +35,7 @@ export function Sidebar({ adminName }: { adminName: string }) {
         </span>
       </div>
 
-      <nav className="flex flex-1 gap-0.5 overflow-x-auto p-2.5 md:flex-col md:overflow-visible">
+      <nav className="no-scrollbar flex flex-1 gap-0.5 overflow-x-auto p-2.5 md:flex-col md:overflow-visible">
         {NAV.map((item) => {
           const active = item.exact
             ? pathname === item.href

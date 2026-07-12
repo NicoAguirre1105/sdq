@@ -30,6 +30,15 @@ body {
   font-family: var(--font-body);
 }
 
+/* Scroll horizontal sin barra visible (nav admin, tablas) — sigue siendo scrolleable. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Tailwind v4 no fuerza cursor:pointer en <button>; lo restauramos para todo botón
    accionable (los deshabilitados quedan con el cursor por defecto). */
 @layer base {

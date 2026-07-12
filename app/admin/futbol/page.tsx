@@ -183,7 +183,7 @@ export default async function AdminFutbolPage({
                 Sin partidos cargados en este stage.
               </p>
             ) : (
-              <div className="overflow-x-auto rounded-lg border border-azul-marino/12 bg-white">
+              <div className="no-scrollbar overflow-x-auto rounded-lg border border-azul-marino/12 bg-white">
                 <ul className="min-w-[620px]">
                   {matches.map((m) => {
                     const when = formatMatchDate(m.match_date);
