@@ -75,7 +75,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-md bg-rojo-bandera py-3.5 font-body text-sm font-bold text-white transition-colors hover:bg-rojo-bandera-hover disabled:opacity-60"
+        className="rounded-md bg-rojo-bandera py-3.5 font-body text-sm font-bold text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-rojo-bandera-hover active:scale-[0.97] disabled:opacity-60"
       >
         {isPending ? "Entrando…" : "Entrar al panel"}
       </button>

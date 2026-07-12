@@ -32,7 +32,7 @@ export function HeroHeadlineForm({ headline }: { headline: string }) {
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-md bg-azul-marino px-4 py-2.5 font-body text-xs font-bold text-white transition-colors hover:bg-azul-marino/90 disabled:opacity-60"
+        className="rounded-md bg-azul-marino px-4 py-2.5 font-body text-xs font-bold text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-azul-marino/90 active:scale-[0.97] disabled:opacity-60"
       >
         {isPending ? "Guardando…" : state.success ? "Guardado ✓" : "Guardar"}
       </button>

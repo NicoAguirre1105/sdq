@@ -111,7 +111,7 @@ function SubscribeFlow({ compact, onReset }: { compact: boolean; onReset: () => 
         <button
           type="submit"
           disabled={subscribing}
-          className="mt-5 rounded-[5px] bg-azul-marino px-5.5 py-3.5 font-body text-[13px] font-bold text-white transition-colors hover:bg-tinta disabled:opacity-60"
+          className="mt-5 rounded-[5px] bg-azul-marino px-5.5 py-3.5 font-body text-[13px] font-bold text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-tinta active:scale-[0.97] disabled:opacity-60"
         >
           {subscribing ? "Enviando…" : "Quiero suscribirme"}
         </button>
@@ -148,7 +148,7 @@ function SubscribeFlow({ compact, onReset }: { compact: boolean; onReset: () => 
         <button
           type="submit"
           disabled={checking}
-          className="rounded-[5px] bg-azul-marino px-5.5 py-3.5 font-body text-[13px] font-bold text-white transition-colors hover:bg-tinta disabled:opacity-60"
+          className="rounded-[5px] bg-azul-marino px-5.5 py-3.5 font-body text-[13px] font-bold text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-tinta active:scale-[0.97] disabled:opacity-60"
         >
           {checking ? "…" : "Continuar"}
         </button>

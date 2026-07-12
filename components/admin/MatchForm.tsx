@@ -95,7 +95,7 @@ export function MatchForm({
             <button
               type="submit"
               disabled={isPending}
-              className="rounded-md bg-rojo-bandera px-4 py-2 font-body text-xs font-bold text-white transition-colors hover:bg-rojo-bandera-hover disabled:opacity-60"
+              className="rounded-md bg-rojo-bandera px-4 py-2 font-body text-xs font-bold text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-rojo-bandera-hover active:scale-[0.97] disabled:opacity-60"
             >
               {isPending ? "Guardando…" : "Guardar"}
             </button>

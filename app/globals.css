@@ -22,6 +22,11 @@
   --font-display: var(--font-bebas-neue);
   --font-body: var(--font-ibm-plex-sans);
   --font-mono: var(--font-jetbrains-mono);
+
+  /* Curvas de easing con más "punch" que las de Tailwind por defecto — usar en vez
+     de ease/ease-out planas para que las animaciones de UI se sientan intencionales. */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 body {

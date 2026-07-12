@@ -35,7 +35,7 @@ export function PostCard({ post }: { post: Post }) {
   return (
     <Link
       href={`/post/${post.slug}`}
-      className="block overflow-hidden rounded-lg border border-azul-marino/12 bg-white transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(11,46,107,0.45)]"
+      className="block overflow-hidden rounded-lg border border-azul-marino/12 bg-white transition-[transform,box-shadow] duration-200 ease-out-strong hover:-translate-y-0.5 hover:shadow-[0_12px_34px_-14px_rgba(11,46,107,0.45)]"
     >
       <article>
         {post.cover_image ? (
