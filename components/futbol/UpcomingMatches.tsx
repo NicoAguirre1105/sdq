@@ -45,9 +45,21 @@ export function UpcomingMatches({ matches }: { matches: UpcomingMatch[] }) {
             <p className="font-display text-lg leading-none tracking-[0.02em] text-tinta md:text-xl">
               vs {opponentName}
             </p>
-            {m.matchday != null && (
-              <span className="ml-auto font-mono text-[10px] text-tinta/40">FECHA {m.matchday}</span>
-            )}
+            <div className="ml-auto flex items-center gap-3">
+              {m.ticket_url && (
+                <a
+                  href={m.ticket_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-md bg-rojo-bandera px-3 py-1.5 font-mono text-[10px] font-bold tracking-wide text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-rojo-bandera-hover active:scale-95"
+                >
+                  ENTRADAS
+                </a>
+              )}
+              {m.matchday != null && (
+                <span className="font-mono text-[10px] text-tinta/40">FECHA {m.matchday}</span>
+              )}
+            </div>
           </li>
         );
       })}

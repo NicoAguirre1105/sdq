@@ -106,6 +106,7 @@ type Match = {
 type SiteSettings = {
   id: true;
   hero_headline: string;
+  hero_subtitle: string;
 };
 
 export type Database = {

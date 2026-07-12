@@ -153,6 +153,16 @@ export function CalendarList({ matches }: { matches: OwnTeamMatch[] }) {
                 </div>
 
                 <div className="ml-auto flex items-center gap-2.5">
+                  {m.status !== "jugado" && m.ticket_url && (
+                    <a
+                      href={m.ticket_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-md bg-rojo-bandera px-3 py-1.5 font-mono text-[10px] font-bold tracking-wide text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-rojo-bandera-hover active:scale-95"
+                    >
+                      ENTRADAS
+                    </a>
+                  )}
                   {isNext && (
                     <span className="font-mono text-[9px] tracking-[0.1em] text-dorado-escudo uppercase">
                       Próximo

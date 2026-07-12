@@ -184,7 +184,8 @@ grant execute on function subscriber_status(text) to anon, authenticated;
 -- justifican tabla propia, ej. el headline del hero de Home.
 create table site_settings (
   id boolean primary key default true check (id),
-  hero_headline text not null default 'la akd quiere mantener el liderato'
+  hero_headline text not null default 'la akd quiere mantener el liderato',
+  hero_subtitle text not null default 'Virtualmente con cupo en la final de Copa Pichincha y clasificados como primero de grupo, la AKD busca terminar el trabajo de buena manera en el último partido de esta fase.'
 );
 
 insert into site_settings (id) values (true) on conflict (id) do nothing;

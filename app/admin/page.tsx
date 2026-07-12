@@ -3,10 +3,9 @@ import { getPublishedPosts } from "@/lib/supabase/queries/posts";
 import { getAllSubscribers } from "@/lib/supabase/queries/subscribers";
 import { getNextMatch } from "@/lib/supabase/queries/matches";
 import { getSiteSettings } from "@/lib/supabase/queries/settings";
-import { HeroHeadlineForm } from "@/components/admin/HeroHeadlineForm";
+import { HeroContentForm } from "@/components/admin/HeroContentForm";
 import { formatMatchDate } from "@/lib/format";
-
-const DEFAULT_HEADLINE = "la akd quiere mantener el liderato";
+import { DEFAULT_HERO_HEADLINE, DEFAULT_HERO_SUBTITLE } from "@/lib/hero-defaults";
 
 function todayLabel() {
   return new Date()
@@ -104,8 +103,11 @@ export default async function AdminDashboard() {
         </div>
 
         <div className="rounded-lg border border-azul-marino/12 bg-white p-4.5 md:max-w-2xl">
-          <p className="mb-2.5 font-display text-xl text-tinta">TÍTULO DEL HERO (HOME)</p>
-          <HeroHeadlineForm headline={settings?.hero_headline ?? DEFAULT_HEADLINE} />
+          <p className="mb-2.5 font-display text-xl text-tinta">HERO DE HOME</p>
+          <HeroContentForm
+            headline={settings?.hero_headline ?? DEFAULT_HERO_HEADLINE}
+            subtitle={settings?.hero_subtitle ?? DEFAULT_HERO_SUBTITLE}
+          />
         </div>
       </div>
     </>

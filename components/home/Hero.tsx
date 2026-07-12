@@ -6,9 +6,11 @@ import type { NextMatch } from "@/lib/supabase/queries/matches";
 export function Hero({
   nextMatch,
   headline,
+  subtitle,
 }: {
   nextMatch: NextMatch | null;
   headline: string;
+  subtitle: string;
 }) {
   if (!nextMatch || !nextMatch.homeTeam || !nextMatch.awayTeam) {
     return (
@@ -24,21 +26,24 @@ export function Hero({
   const dt = formatMatchDate(nextMatch.match_date);
 
   return (
-    <div className="relative h-[340px] overflow-hidden bg-[#081f49] md:h-[430px]">
+    <div className="relative overflow-hidden bg-[#081f49]">
       <div className="absolute inset-0 bg-[url('/img/hero_2.jpg')] bg-cover bg-center md:bg-[url('/img/hero.jpg')]" />
       <div className="absolute inset-0 bg-[#081f49]/75" />
-      <Container className="absolute inset-0 flex flex-col justify-between px-4.5 py-6.5 md:px-10 md:py-13">
+      <Container className="relative flex flex-col gap-8 px-4.5 py-9 md:gap-12 md:px-10 md:py-16">
         <div>
-          <p className="mb-2 font-mono text-[10px] tracking-[0.18em] text-dorado-escudo uppercase md:mb-2.5 md:text-xs">
+          <p className="mb-2.5 font-mono text-[10px] tracking-[0.18em] text-dorado-escudo uppercase md:mb-3 md:text-xs">
             Próximo partido{nextMatch.matchday ? ` · Fecha ${nextMatch.matchday}` : ""}
           </p>
           <h1 className="font-display text-[56px] leading-[0.82] text-blanco-hueso md:text-[92px]">
             {headline}
           </h1>
+          <p className="mt-4 max-w-xl font-body text-sm leading-relaxed text-blanco-hueso/75 md:mt-5 md:max-w-2xl md:text-base">
+            {subtitle}
+          </p>
         </div>
 
-        <div className="flex flex-col items-start gap-2.5">
-          <div className="flex w-full items-center justify-between gap-4 rounded-[9px] border-2 border-dorado-escudo/60 bg-[#081938]/82 px-3.5 py-3.5 backdrop-blur-md md:w-fit md:gap-6.5 md:px-5.5">
+        <div className="flex flex-col items-start gap-3.5">
+          <div className="flex w-full items-center justify-between gap-5 rounded-[9px] border-2 border-dorado-escudo/60 bg-[#081938]/82 px-3.5 py-4 backdrop-blur-md md:w-fit md:gap-7 md:px-5.5">
             <div className="flex flex-col items-center gap-1.5">
               <TeamCrest
                 name={homeTeam.name}

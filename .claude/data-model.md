@@ -206,12 +206,13 @@ create table subscribers (
 
 ## Configuración del sitio
 
-Fila única (singleton, `id boolean` fijo en `true`) para textos editables desde el admin que no justifican tabla propia — hoy solo el headline del hero de Home. Si se suman más campos editables del sitio, se agregan como columnas acá, no como tablas nuevas.
+Fila única (singleton, `id boolean` fijo en `true`) para textos editables desde el admin que no justifican tabla propia — hoy el headline y el subtítulo del hero de Home. Si se suman más campos editables del sitio, se agregan como columnas acá, no como tablas nuevas.
 
 ```sql
 create table site_settings (
   id boolean primary key default true check (id),
-  hero_headline text not null default 'la akd quiere mantener el liderato'
+  hero_headline text not null default 'la akd quiere mantener el liderato',
+  hero_subtitle text not null default 'Virtualmente con cupo en la final de Copa Pichincha y clasificados como primero de grupo, la AKD busca terminar el trabajo de buena manera en el último partido de esta fase.'
 );
 ```
 

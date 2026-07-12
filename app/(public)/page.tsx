@@ -6,9 +6,9 @@ import { Pagination } from "@/components/ui/Pagination";
 import { getPublishedPosts } from "@/lib/supabase/queries/posts";
 import { getNextMatch } from "@/lib/supabase/queries/matches";
 import { getSiteSettings } from "@/lib/supabase/queries/settings";
+import { DEFAULT_HERO_HEADLINE, DEFAULT_HERO_SUBTITLE } from "@/lib/hero-defaults";
 
 const POSTS_PER_PAGE = 9;
-const DEFAULT_HEADLINE = "la akd quiere mantener el liderato";
 
 export default async function HomePage({
   searchParams,
@@ -26,7 +26,11 @@ export default async function HomePage({
 
   return (
     <>
-      <Hero nextMatch={nextMatch} headline={settings?.hero_headline ?? DEFAULT_HEADLINE} />
+      <Hero
+        nextMatch={nextMatch}
+        headline={settings?.hero_headline ?? DEFAULT_HERO_HEADLINE}
+        subtitle={settings?.hero_subtitle ?? DEFAULT_HERO_SUBTITLE}
+      />
 
       <section className="bg-blanco-hueso">
         <Container className="px-4.5 py-8 md:px-10 md:py-8">

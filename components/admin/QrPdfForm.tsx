@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 type CanticoOption = { slug: string; title: string };
+type Target = "home" | "canticos" | "cantico";
 
 export function QrPdfForm({
   canticos,
@@ -11,14 +12,14 @@ export function QrPdfForm({
   canticos: CanticoOption[];
   siteUrl: string;
 }) {
-  const [target, setTarget] = useState<"canticos" | "cantico">("canticos");
+  const [target, setTarget] = useState<Target>("home");
   const [slug, setSlug] = useState(canticos[0]?.slug ?? "");
 
-  const path = target === "canticos" ? "/canticos" : `/canticos/${slug}`;
+  const path = target === "home" ? "" : target === "canticos" ? "/canticos" : `/canticos/${slug}`;
   const href =
-    target === "canticos"
-      ? "/api/admin/qr-pdf?target=canticos"
-      : `/api/admin/qr-pdf?target=cantico&slug=${encodeURIComponent(slug)}`;
+    target === "cantico"
+      ? `/api/admin/qr-pdf?target=cantico&slug=${encodeURIComponent(slug)}`
+      : `/api/admin/qr-pdf?target=${target}`;
 
   return (
     <div className="max-w-md rounded-lg border border-azul-marino/12 bg-white p-5">
@@ -26,6 +27,16 @@ export function QrPdfForm({
         <legend className="mb-1 font-mono text-[10px] tracking-[0.1em] text-tinta/55 uppercase">
           Destino del QR
         </legend>
+        <label className="flex cursor-pointer items-center gap-2.5 font-body text-sm text-tinta">
+          <input
+            type="radio"
+            name="target"
+            checked={target === "home"}
+            onChange={() => setTarget("home")}
+            className="accent-azul-marino"
+          />
+          Sitio web (todas las secciones)
+        </label>
         <label className="flex cursor-pointer items-center gap-2.5 font-body text-sm text-tinta">
           <input
             type="radio"
@@ -74,7 +85,7 @@ export function QrPdfForm({
 
       <a
         href={href}
-        className="inline-block rounded-md bg-rojo-bandera px-4 py-2.5 font-body text-xs font-bold text-white transition-colors hover:bg-rojo-bandera-hover"
+        className="inline-block rounded-md bg-rojo-bandera px-4 py-2.5 font-body text-xs font-bold text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-rojo-bandera-hover active:scale-[0.97]"
       >
         Descargar PDF con QR
       </a>
