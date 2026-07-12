@@ -146,7 +146,11 @@ export function MatchForm({
                 name="match_date"
                 type="datetime-local"
                 defaultValue={toQuitoInput(match?.match_date ?? null)}
-                className={`${field} min-w-0 font-mono`}
+                // overflow-hidden: Safari en iOS no respeta width/min-width en
+                // datetime-local cuando el texto interno (agrandado por Dynamic
+                // Type) no entra — renderiza el control más ancho que su caja y
+                // empuja la fila. Esto lo recorta en vez de dejarlo romper el layout.
+                className={`${field} min-w-0 overflow-hidden font-mono`}
               />
               <p className="mt-1 font-mono text-[9px] text-tinta/40">
                 Vacío = fecha sin confirmar.
