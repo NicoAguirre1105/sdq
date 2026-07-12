@@ -16,8 +16,11 @@ export function LoginForm() {
 
   const labelClass =
     "block mt-1.5 font-mono text-[10px] tracking-[0.1em] text-tinta/55 uppercase";
+  // text-base (16px), no text-sm: en iOS Safari un input con font-size <16px
+  // dispara auto-zoom al enfocarlo, y ese zoom queda pegado tras el redirect a
+  // /admin, dejando el dashboard chico dentro del viewport.
   const inputClass =
-    "w-full rounded-md border border-azul-marino/20 bg-white px-4 py-3 font-body text-sm text-tinta outline-none focus:border-azul-marino";
+    "w-full rounded-md border border-azul-marino/20 bg-white px-4 py-3 font-body text-base text-tinta outline-none focus:border-azul-marino";
 
   return (
     <form action={formAction} className="flex flex-col">

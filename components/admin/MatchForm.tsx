@@ -146,7 +146,7 @@ export function MatchForm({
                 name="match_date"
                 type="datetime-local"
                 defaultValue={toQuitoInput(match?.match_date ?? null)}
-                className={`${field} font-mono`}
+                className={`${field} min-w-0 font-mono`}
               />
               <p className="mt-1 font-mono text-[9px] text-tinta/40">
                 Vacío = fecha sin confirmar.
