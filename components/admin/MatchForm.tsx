@@ -107,7 +107,7 @@ export function MatchForm({
                 required
                 className={field}
               >
-                <option value="">Elegí equipo…</option>
+                <option value="">Elige equipo…</option>
                 {teams.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
@@ -126,7 +126,7 @@ export function MatchForm({
                 required
                 className={field}
               >
-                <option value="">Elegí equipo…</option>
+                <option value="">Elige equipo…</option>
                 {teams.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
@@ -150,7 +150,7 @@ export function MatchForm({
                 // datetime-local cuando el texto interno (agrandado por Dynamic
                 // Type) no entra — renderiza el control más ancho que su caja y
                 // empuja la fila. Esto lo recorta en vez de dejarlo romper el layout.
-                className={`${field} min-w-0 overflow-hidden font-mono`}
+                className={`${field} -webkit-appearance: nones`}
               />
               <p className="mt-1 font-mono text-[9px] text-tinta/40">
                 Vacío = fecha sin confirmar.
