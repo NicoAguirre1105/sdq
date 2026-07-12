@@ -72,7 +72,8 @@ create table matches (
   score_home int,
   score_away int,
   status text check (status in ('programado', 'jugado', 'suspendido')) default 'programado',
-  created_at timestamptz default now()   -- desempate de orden para partidos sin fecha
+  created_at timestamptz default now(),  -- desempate de orden para partidos sin fecha
+  ticket_url text   -- null = sin venta de entradas para este partido
 );
 
 create index matches_stage_id_idx on matches (stage_id);
@@ -178,6 +179,16 @@ $$;
 
 grant execute on function subscriber_status(text) to anon, authenticated;
 
+-- ============ Configuración del sitio ============
+-- Fila única (id boolean fijo en true) para textos editables desde el admin que no
+-- justifican tabla propia, ej. el headline del hero de Home.
+create table site_settings (
+  id boolean primary key default true check (id),
+  hero_headline text not null default 'la akd quiere mantener el liderato'
+);
+
+insert into site_settings (id) values (true) on conflict (id) do nothing;
+
 -- ============ Auth / Admin ============
 
 create table admin_users (
@@ -201,6 +212,7 @@ alter table orders enable row level security;
 alter table order_items enable row level security;
 alter table subscribers enable row level security;
 alter table admin_users enable row level security;
+alter table site_settings enable row level security;
 
 -- lectura pública donde corresponde
 create policy "public read published posts" on posts for select using (published_at <= now());
@@ -212,6 +224,7 @@ create policy "public read stage_teams" on stage_teams for select using (true);
 create policy "public read matches" on matches for select using (true);
 create policy "public read players" on players for select using (true);
 create policy "public read products" on products for select using (true);
+create policy "public read site_settings" on site_settings for select using (true);
 
 -- alta pública de newsletter: cualquiera puede insertar, nadie lee desde el cliente
 create policy "anyone can subscribe" on subscribers for insert with check (true);
@@ -234,6 +247,7 @@ create policy "admins delete subscribers" on subscribers for delete using (exist
 -- comparación directa, sin subconsulta contra admin_users: evita la recursión infinita
 -- que se dispara si esta política intentara comprobarse contra sí misma
 create policy "admins manage own row" on admin_users for all using (id = auth.uid());
+create policy "admins manage site_settings" on site_settings for all using (exists (select 1 from admin_users where id = auth.uid()));
 
 -- ============ Storage ============
 -- Bucket público para portadas de posts. La lectura es pública por el flag `public`

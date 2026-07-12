@@ -21,7 +21,17 @@ type ParsedMatch = {
   score_home: number | null;
   score_away: number | null;
   status: (typeof STATUSES)[number];
+  ticket_url: string | null;
 };
+
+function isValidUrl(value: string): boolean {
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 function optInt(raw: FormDataEntryValue | null): number | null {
   const s = String(raw ?? "").trim();
@@ -37,12 +47,15 @@ function parse(formData: FormData): ParsedMatch | { error: string } {
   const rawStatus = String(formData.get("status") ?? "");
   const rawDate = String(formData.get("match_date") ?? "").trim();
   const round_name = String(formData.get("round_name") ?? "").trim();
+  const ticket_url = String(formData.get("ticket_url") ?? "").trim();
 
   if (!stage_id) return { error: "Falta el stage." };
   if (!home_team_id || !away_team_id)
     return { error: "Elegí el equipo local y el visitante." };
   if (home_team_id === away_team_id)
     return { error: "El local y el visitante no pueden ser el mismo equipo." };
+  if (ticket_url && !isValidUrl(ticket_url))
+    return { error: "El link de entradas no es una URL válida." };
 
   return {
     stage_id,
@@ -57,6 +70,7 @@ function parse(formData: FormData): ParsedMatch | { error: string } {
     status: (STATUSES as readonly string[]).includes(rawStatus)
       ? (rawStatus as ParsedMatch["status"])
       : "programado",
+    ticket_url: ticket_url || null,
   };
 }
 

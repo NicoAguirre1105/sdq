@@ -25,6 +25,7 @@ type MatchValues = {
   score_home: number | null;
   score_away: number | null;
   status: string;
+  ticket_url: string | null;
 };
 
 const label =
@@ -249,6 +250,23 @@ export function MatchForm({
                 <option value="suspendido">Suspendido</option>
               </select>
             </div>
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="ticket_url" className={label}>
+              Link de entradas (opcional)
+            </label>
+            <input
+              id="ticket_url"
+              name="ticket_url"
+              type="url"
+              placeholder="https://..."
+              defaultValue={match?.ticket_url ?? ""}
+              className={field}
+            />
+            <p className="mt-1 font-mono text-[9px] text-tinta/40">
+              Vacío = sin botón de &quot;Comprar entradas&quot; en Home.
+            </p>
           </div>
         </div>
       </form>

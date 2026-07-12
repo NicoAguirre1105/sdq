@@ -3,7 +3,13 @@ import { Container } from "@/components/ui/Container";
 import { formatMatchDate } from "@/lib/format";
 import type { NextMatch } from "@/lib/supabase/queries/matches";
 
-export function Hero({ nextMatch }: { nextMatch: NextMatch | null }) {
+export function Hero({
+  nextMatch,
+  headline,
+}: {
+  nextMatch: NextMatch | null;
+  headline: string;
+}) {
   if (!nextMatch || !nextMatch.homeTeam || !nextMatch.awayTeam) {
     return (
       <div className="relative flex h-[280px] items-center justify-center bg-azul-marino md:h-[430px]">
@@ -15,7 +21,6 @@ export function Hero({ nextMatch }: { nextMatch: NextMatch | null }) {
   }
 
   const { homeTeam, awayTeam } = nextMatch;
-  const headline = "la akd quiere mantener el liderato";
   const dt = formatMatchDate(nextMatch.match_date);
 
   return (
@@ -32,43 +37,56 @@ export function Hero({ nextMatch }: { nextMatch: NextMatch | null }) {
           </h1>
         </div>
 
-        <div className="flex w-full items-center justify-between gap-4 rounded-[9px] border-2 border-dorado-escudo/60 bg-[#081938]/82 px-3.5 py-3.5 backdrop-blur-md md:w-fit md:gap-6.5 md:px-5.5">
-          <div className="flex flex-col items-center gap-1.5">
-            <TeamCrest
-              name={homeTeam.name}
-              logoUrl={homeTeam.logo_url}
-              isOwnTeam={homeTeam.is_own_team}
-            />
-            <span className="font-display text-sm tracking-[0.05em] text-blanco-hueso md:text-[15px]">
-              {(homeTeam.short_name ?? homeTeam.name).toUpperCase()}
-            </span>
-          </div>
-          <div className="flex flex-col items-center">
-            {dt ? (
-              <>
-                <span className="font-mono text-[9px] tracking-[0.1em] text-dorado-escudo md:text-[11px]">
-                  {dt.day}
-                </span>
-                <span className="font-display text-[26px] leading-[0.9] text-blanco-hueso md:text-4xl">
-                  {dt.time}
-                </span>
-              </>
-            ) : (
-              <span className="font-display text-lg leading-[0.9] text-blanco-hueso md:text-2xl">
-                POR CONFIRMAR
+        <div className="flex flex-col items-start gap-2.5">
+          <div className="flex w-full items-center justify-between gap-4 rounded-[9px] border-2 border-dorado-escudo/60 bg-[#081938]/82 px-3.5 py-3.5 backdrop-blur-md md:w-fit md:gap-6.5 md:px-5.5">
+            <div className="flex flex-col items-center gap-1.5">
+              <TeamCrest
+                name={homeTeam.name}
+                logoUrl={homeTeam.logo_url}
+                isOwnTeam={homeTeam.is_own_team}
+              />
+              <span className="font-display text-sm tracking-[0.05em] text-blanco-hueso md:text-[15px]">
+                {(homeTeam.short_name ?? homeTeam.name).toUpperCase()}
               </span>
-            )}
+            </div>
+            <div className="flex flex-col items-center">
+              {dt ? (
+                <>
+                  <span className="font-mono text-[9px] tracking-[0.1em] text-dorado-escudo md:text-[11px]">
+                    {dt.day}
+                  </span>
+                  <span className="font-display text-[26px] leading-[0.9] text-blanco-hueso md:text-4xl">
+                    {dt.time}
+                  </span>
+                </>
+              ) : (
+                <span className="font-display text-lg leading-[0.9] text-blanco-hueso md:text-2xl">
+                  POR CONFIRMAR
+                </span>
+              )}
+            </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <TeamCrest
+                name={awayTeam.name}
+                logoUrl={awayTeam.logo_url}
+                isOwnTeam={awayTeam.is_own_team}
+              />
+              <span className="font-display text-sm tracking-[0.05em] text-blanco-hueso md:text-[15px]">
+                {(awayTeam.short_name ?? awayTeam.name).toUpperCase()}
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1.5">
-            <TeamCrest
-              name={awayTeam.name}
-              logoUrl={awayTeam.logo_url}
-              isOwnTeam={awayTeam.is_own_team}
-            />
-            <span className="font-display text-sm tracking-[0.05em] text-blanco-hueso md:text-[15px]">
-              {(awayTeam.short_name ?? awayTeam.name).toUpperCase()}
-            </span>
-          </div>
+
+          {nextMatch.ticket_url && (
+            <a
+              href={nextMatch.ticket_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-md bg-rojo-bandera px-4 py-2.5 font-body text-xs font-bold text-white transition-colors hover:bg-rojo-bandera-hover"
+            >
+              Comprar entradas ↗
+            </a>
+          )}
         </div>
       </Container>
     </div>

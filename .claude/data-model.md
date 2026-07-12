@@ -76,7 +76,8 @@ create table matches (
   score_home int,
   score_away int,
   status text check (status in ('programado','jugado','suspendido')) default 'programado',
-  created_at timestamptz default now() -- desempate de orden para partidos sin fecha (orden de ingreso)
+  created_at timestamptz default now(), -- desempate de orden para partidos sin fecha (orden de ingreso)
+  ticket_url text                      -- null = sin venta de entradas para este partido
 );
 
 -- vista calculada, NO se edita directamente. Solo tiene sentido para stages format='liga'
@@ -202,6 +203,19 @@ create table subscribers (
 ```
 
 **Flujo de alta (doble opt-in):** el form (`components/layout/SubscribeForm.tsx`) es de 2 pasos. Paso 1 llama a `subscriber_status(email)` (función `security definer`, devuelve `new`/`pending`/`confirmed` sin exponer lectura pública de la tabla). Si es nuevo, el paso 2 pide aceptar términos (`/terminos`) y confirmar; al enviar, `subscribeAction` agrega el correo a **Kit** (`lib/kit.ts`, que dispara el correo de verificación) y lo guarda como `confirmed = false`. Cuando el usuario confirma desde el correo, Kit dispara un webhook (`app/api/kit/webhook/route.ts`) que marca `confirmed = true` vía service role. El webhook se protege con `KIT_WEBHOOK_SECRET` en la query (`?token=`) porque Kit no firma los webhooks.
+
+## Configuración del sitio
+
+Fila única (singleton, `id boolean` fijo en `true`) para textos editables desde el admin que no justifican tabla propia — hoy solo el headline del hero de Home. Si se suman más campos editables del sitio, se agregan como columnas acá, no como tablas nuevas.
+
+```sql
+create table site_settings (
+  id boolean primary key default true check (id),
+  hero_headline text not null default 'la akd quiere mantener el liderato'
+);
+```
+
+RLS: lectura pública (el hero se muestra a cualquier visitante), escritura solo admins — mismo patrón que el resto.
 
 ## Pendiente de definir
 - Cálculo de `points`/`position` en standings: columna computada vs. cálculo en la app

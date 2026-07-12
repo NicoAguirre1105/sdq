@@ -5,8 +5,10 @@ import { Container } from "@/components/ui/Container";
 import { Pagination } from "@/components/ui/Pagination";
 import { getPublishedPosts } from "@/lib/supabase/queries/posts";
 import { getNextMatch } from "@/lib/supabase/queries/matches";
+import { getSiteSettings } from "@/lib/supabase/queries/settings";
 
 const POSTS_PER_PAGE = 9;
+const DEFAULT_HEADLINE = "la akd quiere mantener el liderato";
 
 export default async function HomePage({
   searchParams,
@@ -15,15 +17,16 @@ export default async function HomePage({
 }) {
   const { page: pageParam } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);
-  const [{ posts, total }, nextMatch] = await Promise.all([
+  const [{ posts, total }, nextMatch, settings] = await Promise.all([
     getPublishedPosts(page, POSTS_PER_PAGE),
     getNextMatch(),
+    getSiteSettings(),
   ]);
   const totalPages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
 
   return (
     <>
-      <Hero nextMatch={nextMatch} />
+      <Hero nextMatch={nextMatch} headline={settings?.hero_headline ?? DEFAULT_HEADLINE} />
 
       <section className="bg-blanco-hueso">
         <Container className="px-4.5 py-8 md:px-10 md:py-8">

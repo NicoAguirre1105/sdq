@@ -99,6 +99,13 @@ type Match = {
   score_away: number | null;
   status: "programado" | "jugado" | "suspendido";
   created_at: string;
+  ticket_url: string | null;
+};
+
+// Fila única (id siempre true) con textos editables desde el admin.
+type SiteSettings = {
+  id: true;
+  hero_headline: string;
 };
 
 export type Database = {
@@ -163,6 +170,12 @@ export type Database = {
         Row: AdminUser;
         Insert: Partial<AdminUser> & Pick<AdminUser, "id" | "full_name">;
         Update: Partial<AdminUser>;
+        Relationships: [];
+      };
+      site_settings: {
+        Row: SiteSettings;
+        Insert: Partial<SiteSettings>;
+        Update: Partial<SiteSettings>;
         Relationships: [];
       };
     };
