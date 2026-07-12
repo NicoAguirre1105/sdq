@@ -136,8 +136,8 @@ export function MatchForm({
             </div>
           </div>
 
-          <div className="mb-4 flex flex-wrap gap-4">
-            <div className="min-w-[200px] flex-[1.4]">
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row">
+            <div className="sm:min-w-[200px] sm:flex-[1.4]">
               <label htmlFor="match_date" className={label}>
                 Fecha y hora
               </label>
@@ -152,7 +152,7 @@ export function MatchForm({
                 Vacío = fecha sin confirmar.
               </p>
             </div>
-            <div className="min-w-[120px] flex-1">
+            <div className="sm:min-w-[120px] sm:flex-1">
               {stageFormat === "liga" ? (
                 <>
                   <label htmlFor="matchday" className={label}>
