@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import {
   createMatch,
@@ -53,6 +53,15 @@ export function MatchForm({
     withOfflineGuard(action),
     {}
   );
+
+  // date + time nativos por separado en vez de un solo datetime-local: en iOS
+  // Safari ese control combinado ("19 Jul 2026 at 11:05") no respeta el ancho de
+  // su caja y empuja el layout — cada input por separado es angosto de sobra.
+  // Se combinan acá para seguir mandando un solo campo match_date, así el server
+  // action no cambia.
+  const [initialDate, initialTime] = toQuitoInput(match?.match_date ?? null).split("T");
+  const [matchDate, setMatchDate] = useState(initialDate ?? "");
+  const [matchTime, setMatchTime] = useState(initialTime ?? "");
 
   return (
     <>
@@ -137,21 +146,30 @@ export function MatchForm({
           </div>
 
           <div className="mb-4 flex flex-col gap-4 sm:flex-row">
-            <div className="sm:min-w-[200px] sm:flex-[1.4]">
+            <div className="sm:min-w-[240px] sm:flex-[1.4]">
               <label htmlFor="match_date" className={label}>
                 Fecha y hora
               </label>
               <input
-                id="match_date"
+                type="hidden"
                 name="match_date"
-                type="datetime-local"
-                defaultValue={toQuitoInput(match?.match_date ?? null)}
-                // overflow-hidden: Safari en iOS no respeta width/min-width en
-                // datetime-local cuando el texto interno (agrandado por Dynamic
-                // Type) no entra — renderiza el control más ancho que su caja y
-                // empuja la fila. Esto lo recorta en vez de dejarlo romper el layout.
-                className={`${field} block w-full -webkit-appearance: none`}
+                value={matchDate && matchTime ? `${matchDate}T${matchTime}` : ""}
               />
+              <div className="flex gap-2">
+                <input
+                  id="match_date"
+                  type="date"
+                  value={matchDate}
+                  onChange={(e) => setMatchDate(e.target.value)}
+                  className={`${field} min-w-0 flex-[1.3] font-mono`}
+                />
+                <input
+                  type="time"
+                  value={matchTime}
+                  onChange={(e) => setMatchTime(e.target.value)}
+                  className={`${field} min-w-0 flex-1 font-mono`}
+                />
+              </div>
               <p className="mt-1 font-mono text-[9px] text-tinta/40">
                 Vacío = fecha sin confirmar.
               </p>
