@@ -204,6 +204,10 @@ create table subscribers (
 
 **Flujo de alta (doble opt-in):** el form (`components/layout/SubscribeForm.tsx`) es de 2 pasos. Paso 1 llama a `subscriber_status(email)` (función `security definer`, devuelve `new`/`pending`/`confirmed` sin exponer lectura pública de la tabla). Si es nuevo, el paso 2 pide aceptar términos (`/terminos`) y confirmar; al enviar, `subscribeAction` agrega el correo a **Kit** (`lib/kit.ts`, que dispara el correo de verificación) y lo guarda como `confirmed = false`. Cuando el usuario confirma desde el correo, Kit dispara un webhook (`app/api/kit/webhook/route.ts`) que marca `confirmed = true` vía service role. El webhook se protege con `KIT_WEBHOOK_SECRET` en la query (`?token=`) porque Kit no firma los webhooks.
 
+**Gestión/baja:** `/suscripcion/gestionar?email=<correo>` (sin login, el email de la URL identifica al suscriptor) permite editar `topics` o darse de baja — borra la fila y llama a `removeFromKit`. El link va en el footer de los broadcasts (`lib/kit.ts`, merge tag `{{ subscriber.email_address }}`).
+
+Kit también tiene su propio link de baja de cumplimiento (uno-clic, no reemplazable) en cada correo. `app/api/kit/webhook/route.ts` ya sabe manejar `?event=unsubscribe` (borra la fila sin volver a llamar a Kit) para cuando eso pase — pero **el plan free de Kit no tiene Automations**, así que no hay forma de registrar ese webhook desde el dashboard todavía; queda listo para el día que se suba de plan. Mientras tanto, `app/api/cron/sync-unsubscribes` (programado en `vercel.json`, corre 1 vez por día) sincroniza por polling: recorre los suscriptores de Supabase, consulta su `state` en Kit (`getKitSubscriberState`) y borra los que ya no estén `active` ahí.
+
 ## Configuración del sitio
 
 Fila única (singleton, `id boolean` fijo en `true`) para textos editables desde el admin que no justifican tabla propia — hoy el headline y el subtítulo del hero de Home. Si se suman más campos editables del sitio, se agregan como columnas acá, no como tablas nuevas.

@@ -49,3 +49,47 @@ export async function confirmSubscriber(email: string) {
     .eq("email", email.trim().toLowerCase());
   if (error) throw error;
 }
+
+// Para /suscripcion/gestionar: el link de baja/gestión identifica al suscriptor
+// solo por su email (sin sesión, como cualquier link de baja de newsletter),
+// mismo motivo de service role que confirmSubscriber.
+export async function getSubscriberByEmail(email: string) {
+  const supabase = createServiceRoleSupabaseClient();
+  const { data, error } = await supabase
+    .from("subscribers")
+    .select("*")
+    .eq("email", email.trim().toLowerCase())
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateSubscriberTopics(email: string, topics: string[]) {
+  const supabase = createServiceRoleSupabaseClient();
+  const { error } = await supabase
+    .from("subscribers")
+    .update({ topics })
+    .eq("email", email.trim().toLowerCase());
+  if (error) throw error;
+}
+
+// Borra la fila cuando Kit avisa (webhook) que alguien se dio de baja — mismo
+// efecto que la baja self-service de /suscripcion/gestionar, pero sin volver a
+// llamar a Kit (la baja ya se procesó ahí, es lo que disparó el webhook).
+export async function deleteSubscriberByEmail(email: string) {
+  const supabase = createServiceRoleSupabaseClient();
+  const { error } = await supabase
+    .from("subscribers")
+    .delete()
+    .eq("email", email.trim().toLowerCase());
+  if (error) throw error;
+}
+
+// Para el cron de sincronización de bajas (app/api/cron/sync-unsubscribes) —
+// service role porque corre sin sesión de admin.
+export async function getAllSubscriberEmails(): Promise<string[]> {
+  const supabase = createServiceRoleSupabaseClient();
+  const { data, error } = await supabase.from("subscribers").select("email");
+  if (error) throw error;
+  return (data ?? []).map((s) => s.email);
+}

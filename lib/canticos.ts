@@ -307,9 +307,43 @@ const COLORES_DE_LA_CAPITAL: CanticoLine[] = [
   { role: "llamada", text: "La gloriosa AKD," },
   { role: "coro", text: "soy de vos aunque vuelva a nacer." },
 ];
+const ACADEMIA_ERES_MI_VIDA: CanticoLine[] = [
+  { role: "llamada", text: "En las buenas y en las malas," },
+  { role: "coro", text: "siempre estoy," },
+  { role: "llamada", text: "al Quito yo no lo dejo." },
+  { role: "coro", text: "Academia eres mi vida," },
+  { role: "llamada", text: "siempre estoy," },
+  { role: "coro", text: "te sigo porque te quiero." },
+  { role: "llamada", text: "Yo te voy a acompañar" },
+  { role: "coro", text: "aunque todo vaya mal." },
+  { role: "llamada", text: "La mafia te va a alentar," },
+  { role: "coro", text: "nunca te va a abandonar." },
+  { role: "coro", text: "Solo te pido que vos" },
+  { role: "llamada", text: "dejes todo como yo" },
+  { role: "coro", text: "hasta el final." },
+];
+const MUCHACHOS: CanticoLine[] = [
+  { role: "llamada", text: "Yono abandono a mi equipo porque tengo identidad," },
+  { role: "coro", text: "porque llevo los colores y el nombre de la ciudad." },
+  { role: "llamada", text: "No te lo puedo explicar" },
+  { role: "coro", text: "porque no vas a entender." },
+  { role: "llamada", text: "Tantos años que sufrimos y a tu lado seguiré." },
+  { role: "coro", text: "No me importa si ganás," },
+  { role: "llamada", text: "no me importa si perdés," },
+  { role: "coro", text: "me pongo la camiseta y otra vez te vengo a ver." },
+  { role: "llamada", text: "Muchachos, ahora nos volvimo' a ilusionar," },
+  { role: "coro", text: "quiero volver a primera" },
+  { role: "coro", text: "y ser campeón nacional." },
+  { role: "llamada", text: "Tu hinchada" },
+  { role: "coro", text: "es la que siempre te viene a ver" },
+  { role: "llamada", text: "la que nunca te abandona" },
+  { role: "coro", text: "porque somos la más fiel." },
+];
 
 export const CANTICOS: Cantico[] = [
   { slug: "enamorado-estoy-de-vos", title: "Enamorado estoy de vos", classic: false, youtubeUrl: "", startSeconds: 0, lines:ENAMORADO_ESTOY_DE_VOS},
+  { slug: "academia-eres-mi-vida", title: "Academia eres mi vida", classic: false, youtubeUrl: "", startSeconds: 0, lines:ACADEMIA_ERES_MI_VIDA},
+  { slug: "muchachos", title: "Muchaaachos", classic: false, youtubeUrl: "https://www.youtube.com/watch?v=dRuI98WVyqk", startSeconds: 175, lines:MUCHACHOS},
   { slug: "se-viene-quito-campeon", title: "Se viene Quito campeón", classic: false, youtubeUrl: "https://www.youtube.com/watch?v=Ws-J40TX-1c", startSeconds: 56, lines: QUITO_CAMPEON },
   { slug: "los-colores-de-la-capital", title: "Los colores de la capital", classic: false, youtubeUrl: "https://www.youtube.com/watch?v=JnSn9_73A2w", startSeconds: 179, lines: COLORES_DE_LA_CAPITAL },
   { slug: "lindo-quito", title: "Lindo Quito de mi vida", classic: true, youtubeUrl: "https://www.youtube.com/watch?v=Ws-J40TX-1c", startSeconds: 148, lines: LINDO_QUITO },

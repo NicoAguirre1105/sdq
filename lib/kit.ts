@@ -1,4 +1,5 @@
 import { getSiteUrl } from "@/lib/site-url";
+import { TOPICS } from "@/lib/topics";
 
 const KIT_API = "https://api.kit.com/v4";
 
@@ -88,12 +89,20 @@ export async function broadcastNewPost(post: {
   const topic = post.category ? CATEGORY_TOPIC[post.category] : "club"; // sin categoría → novedades del club
   const url = `${getSiteUrl()}/post/${post.slug}`;
   const now = new Date().toISOString();
+  // {{ subscriber.email_address }}: merge tag de Kit, lo reemplaza por el email
+  // real de cada destinatario al enviar.
+  const manageUrl = `${getSiteUrl()}/suscripcion/gestionar?email={{ subscriber.email_address }}`;
   const content =
     `<p>Hola, hincha. Publicamos algo nuevo en Mafia Azul Grana:</p>` +
     `<h2>${escapeHtml(post.title)}</h2>` +
     (post.excerpt ? `<p>${escapeHtml(post.excerpt)}</p>` : "") +
     `<p><a href="${url}">Leer la nota completa en la web</a></p>` +
-    `<p>¡Vamos Deportivo Quito!</p>`;
+    `<p>¡Vamos Deportivo Quito!</p>` +
+    // Visible en el cuerpo (no footer gris chico) y a propósito antes de que la
+    // idea de "unsubscribe" aparezca: si alguien no quiere ESTE tipo de correo,
+    // que vea la opción de ajustar preferencias antes de ir directo a la baja
+    // total (esa sigue existiendo aparte, la pone Kit — no se puede reemplazar).
+    `<p>¿Este correo no es lo que buscabas? <a href="${manageUrl}">Elige qué quieres recibir</a> sin dejar de escuchar de nosotros del todo.</p>`;
 
   try {
     const tagId = await getTagId(topic, key);
@@ -141,5 +150,68 @@ export async function removeFromKit(email: string): Promise<void> {
   } catch {
     // ponytail: un fallo de Kit no debe bloquear el borrado en Supabase; la baja
     // en Kit se puede reconciliar a mano.
+  }
+}
+
+// Sincroniza los tags de Kit con la nueva selección de topics (agrega los que
+// faltan, saca los que se desmarcaron). Usado desde /suscripcion/gestionar.
+// ponytail: rutas /v4/tags/{id}/subscribers (POST) y /v4/tags/{id}/subscribers/{id}
+// (DELETE) inferidas de la convención REST del resto de la v4 (no verificadas
+// contra el dashboard real) — best-effort como el resto de este archivo, si el
+// endpoint difiere esto queda en no-op silencioso y se reconcilia a mano en Kit.
+export async function syncKitTopics(email: string, topics: string[]): Promise<void> {
+  const key = process.env.KIT_API_KEY;
+  if (!key) return;
+  try {
+    const lookup = await fetch(
+      `${KIT_API}/subscribers?email_address=${encodeURIComponent(email)}`,
+      { headers: { "X-Kit-Api-Key": key } }
+    );
+    if (!lookup.ok) return;
+    const data = (await lookup.json()) as { subscribers?: { id: number }[] };
+    const subscriberId = data.subscribers?.[0]?.id;
+    if (!subscriberId) return;
+
+    await Promise.all(
+      TOPICS.map(async ({ value }) => {
+        const tagId = await getTagId(value, key);
+        if (!tagId) return;
+        if (topics.includes(value)) {
+          await fetch(`${KIT_API}/tags/${tagId}/subscribers`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Kit-Api-Key": key },
+            body: JSON.stringify({ email_address: email }),
+          });
+        } else {
+          await fetch(`${KIT_API}/tags/${tagId}/subscribers/${subscriberId}`, {
+            method: "DELETE",
+            headers: { "X-Kit-Api-Key": key },
+          });
+        }
+      })
+    );
+  } catch {
+    // ponytail: mismo criterio que removeFromKit — no bloquear Supabase.
+  }
+}
+
+// Estado del subscriber en Kit ("active"/"cancelled"/"bounced"/"complained"), o
+// null si no se encuentra o falla la consulta. El plan free de Kit no tiene
+// Automations (no hay forma de que Kit nos avise por webhook cuando alguien usa
+// SU link de baja de cumplimiento) — esto lo usa el cron de polling en
+// app/api/cron/sync-unsubscribes en su lugar.
+export async function getKitSubscriberState(email: string): Promise<string | null> {
+  const key = process.env.KIT_API_KEY;
+  if (!key) return null;
+  try {
+    const res = await fetch(
+      `${KIT_API}/subscribers?email_address=${encodeURIComponent(email)}`,
+      { headers: { "X-Kit-Api-Key": key } }
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as { subscribers?: { state?: string }[] };
+    return data.subscribers?.[0]?.state ?? null;
+  } catch {
+    return null;
   }
 }

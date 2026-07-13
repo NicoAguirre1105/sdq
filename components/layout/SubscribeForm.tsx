@@ -8,12 +8,7 @@ import {
   type CheckState,
   type SubscribeState,
 } from "@/lib/actions/subscribe";
-
-const TOPICS = [
-  { value: "club", label: "Posts, noticias e información del club y MAG." },
-  { value: "tienda", label: "Contenido exclusivo, ofertas y nuevos productos en la tienda." },
-  { value: "canticos", label: "Noticias sobre cánticos nuevos." },
-];
+import { TOPICS } from "@/lib/topics";
 
 const checkInitial: CheckState = { status: "idle" };
 const subscribeInitial: SubscribeState = { status: "idle" };

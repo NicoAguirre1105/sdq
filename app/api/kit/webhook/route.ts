@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
-import { confirmSubscriber } from "@/lib/supabase/queries/subscribers";
+import { revalidatePath } from "next/cache";
+import { confirmSubscriber, deleteSubscriberByEmail } from "@/lib/supabase/queries/subscribers";
 
-// Webhook de Kit para el evento "subscriber activate" (el usuario confirmó desde
-// el correo de verificación). Marca el correo como confirmado en Supabase.
-//
-// Se protege con un token compartido en la query (?token=), porque Kit no firma
-// los webhooks. Registrar el webhook con esa URL (ver KIT_WEBHOOK_SECRET).
+// Webhook de Kit, un solo endpoint para dos automatizaciones registradas en Kit:
+//  - "Subscribes to a form" (activa) → sin ?event= (default, comportamiento original)
+//  - "Unsubscribes" → ?event=unsubscribe
+// Ambas automatizaciones apuntan a esta misma URL con el mismo ?token= compartido
+// (KIT_WEBHOOK_SECRET), porque Kit no firma los webhooks — es lo único que
+// distingue una petición legítima de una cualquiera.
 export async function POST(req: Request) {
   const url = new URL(req.url);
   const secret = process.env.KIT_WEBHOOK_SECRET;
@@ -34,10 +36,15 @@ export async function POST(req: Request) {
   }
 
   try {
-    await confirmSubscriber(email);
+    if (url.searchParams.get("event") === "unsubscribe") {
+      await deleteSubscriberByEmail(email);
+    } else {
+      await confirmSubscriber(email);
+    }
   } catch {
     return NextResponse.json({ error: "update failed" }, { status: 500 });
   }
 
+  revalidatePath("/admin/suscriptores");
   return NextResponse.json({ ok: true });
 }
