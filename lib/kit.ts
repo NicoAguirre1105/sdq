@@ -93,11 +93,11 @@ export async function broadcastNewPost(post: {
   // real de cada destinatario al enviar.
   const manageUrl = `${getSiteUrl()}/suscripcion/gestionar?email={{ subscriber.email_address }}`;
   const content =
-    `<p>Hola, hincha. Publicamos algo nuevo en Mafia Azul Grana:</p>` +
+    `<p>Hola, hincha dos corazones. Publicamos algo nuevo en el sitio web de Mafia Azul Grana:</p>` +
     `<h2>${escapeHtml(post.title)}</h2>` +
     (post.excerpt ? `<p>${escapeHtml(post.excerpt)}</p>` : "") +
     `<p><a href="${url}">Leer la nota completa en la web</a></p>` +
-    `<p>¡Vamos Deportivo Quito!</p>` +
+    `<p>¡Por el Deportivo Quito!</p>` +
     // Visible en el cuerpo (no footer gris chico) y a propósito antes de que la
     // idea de "unsubscribe" aparezca: si alguien no quiere ESTE tipo de correo,
     // que vea la opción de ajustar preferencias antes de ir directo a la baja
