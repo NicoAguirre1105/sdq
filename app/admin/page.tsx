@@ -36,9 +36,22 @@ export default async function AdminDashboard() {
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-md bg-azul-marino px-4 py-2.5 font-body text-xs font-bold text-white transition-colors hover:bg-azul-marino/90"
+          className="flex items-center gap-1.5 rounded-md bg-azul-marino px-4 py-2.5 font-body text-xs font-bold text-white transition-colors hover:bg-azul-marino/90"
         >
-          Ver sitio ↗
+          Ver sitio
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M7 17 17 7M7 7h10v10" />
+          </svg>
         </a>
       </header>
 
