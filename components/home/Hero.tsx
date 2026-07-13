@@ -32,7 +32,9 @@ export function Hero({
       <Container className="relative flex flex-col gap-8 px-4.5 py-9 md:gap-12 md:px-10 md:py-16">
         <div>
           <p className="mb-2.5 font-mono text-[10px] tracking-[0.18em] text-dorado-escudo uppercase md:mb-3 md:text-xs">
-            Próximo partido{nextMatch.matchday ? ` · Fecha ${nextMatch.matchday}` : ""}
+            Próximo partido
+            {nextMatch.matchday ? ` · Fecha ${nextMatch.matchday}` : ""}
+            {nextMatch.venue ? ` · ${nextMatch.venue}` : ""}
           </p>
           <h1 className="font-display text-[56px] leading-[0.82] text-blanco-hueso md:text-[92px]">
             {headline}

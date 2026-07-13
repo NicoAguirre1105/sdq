@@ -77,7 +77,8 @@ create table matches (
   score_away int,
   status text check (status in ('programado','jugado','suspendido')) default 'programado',
   created_at timestamptz default now(), -- desempate de orden para partidos sin fecha (orden de ingreso)
-  ticket_url text                      -- null = sin venta de entradas para este partido
+  ticket_url text,                     -- null = sin venta de entradas para este partido
+  venue text                           -- null = estadio sin confirmar
 );
 
 -- vista calculada, NO se edita directamente. Solo tiene sentido para stages format='liga'

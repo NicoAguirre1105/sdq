@@ -73,7 +73,8 @@ create table matches (
   score_away int,
   status text check (status in ('programado', 'jugado', 'suspendido')) default 'programado',
   created_at timestamptz default now(),  -- desempate de orden para partidos sin fecha
-  ticket_url text   -- null = sin venta de entradas para este partido
+  ticket_url text,  -- null = sin venta de entradas para este partido
+  venue text   -- null = estadio sin confirmar
 );
 
 create index matches_stage_id_idx on matches (stage_id);

@@ -26,6 +26,7 @@ type MatchValues = {
   score_away: number | null;
   status: string;
   ticket_url: string | null;
+  venue: string | null;
 };
 
 const label =
@@ -252,21 +253,39 @@ export function MatchForm({
             </div>
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="ticket_url" className={label}>
-              Link de entradas (opcional)
-            </label>
-            <input
-              id="ticket_url"
-              name="ticket_url"
-              type="url"
-              placeholder="https://..."
-              defaultValue={match?.ticket_url ?? ""}
-              className={field}
-            />
-            <p className="mt-1 font-mono text-[9px] text-tinta/40">
-              Vacío = sin botón de &quot;Comprar entradas&quot; en Home.
-            </p>
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row">
+            <div className="flex-1">
+              <label htmlFor="ticket_url" className={label}>
+                Link de entradas (opcional)
+              </label>
+              <input
+                id="ticket_url"
+                name="ticket_url"
+                type="url"
+                placeholder="https://..."
+                defaultValue={match?.ticket_url ?? ""}
+                className={field}
+              />
+              <p className="mt-1 font-mono text-[9px] text-tinta/40">
+                Vacío = sin botón de &quot;Comprar entradas&quot; en Home.
+              </p>
+            </div>
+            <div className="flex-1">
+              <label htmlFor="venue" className={label}>
+                Estadio (opcional)
+              </label>
+              <input
+                id="venue"
+                name="venue"
+                type="text"
+                placeholder="Est. Atahualpa"
+                defaultValue={match?.venue ?? ""}
+                className={field}
+              />
+              <p className="mt-1 font-mono text-[9px] text-tinta/40">
+                Vacío = sin estadio confirmado.
+              </p>
+            </div>
           </div>
         </div>
       </form>

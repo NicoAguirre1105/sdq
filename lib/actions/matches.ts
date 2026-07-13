@@ -22,6 +22,7 @@ type ParsedMatch = {
   score_away: number | null;
   status: (typeof STATUSES)[number];
   ticket_url: string | null;
+  venue: string | null;
 };
 
 function isValidUrl(value: string): boolean {
@@ -48,6 +49,7 @@ function parse(formData: FormData): ParsedMatch | { error: string } {
   const rawDate = String(formData.get("match_date") ?? "").trim();
   const round_name = String(formData.get("round_name") ?? "").trim();
   const ticket_url = String(formData.get("ticket_url") ?? "").trim();
+  const venue = String(formData.get("venue") ?? "").trim();
 
   if (!stage_id) return { error: "Falta el stage." };
   if (!home_team_id || !away_team_id)
@@ -71,6 +73,7 @@ function parse(formData: FormData): ParsedMatch | { error: string } {
       ? (rawStatus as ParsedMatch["status"])
       : "programado",
     ticket_url: ticket_url || null,
+    venue: venue || null,
   };
 }
 

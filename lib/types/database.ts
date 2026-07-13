@@ -100,6 +100,7 @@ type Match = {
   status: "programado" | "jugado" | "suspendido";
   created_at: string;
   ticket_url: string | null;
+  venue: string | null;
 };
 
 // Fila única (id siempre true) con textos editables desde el admin.

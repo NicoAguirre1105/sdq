@@ -3,11 +3,44 @@ import { FutbolSubnav } from "@/components/futbol/FutbolSubnav";
 import { UpcomingMatches } from "@/components/futbol/UpcomingMatches";
 import { StandingsTable } from "@/components/futbol/StandingsTable";
 import { TabbedContent } from "@/components/ui/TabbedContent";
-import { MatchListSkeleton } from "@/components/ui/MatchListSkeleton";
 import { TableSkeleton } from "@/components/ui/TableSkeleton";
 import { getUpcomingMatches } from "@/lib/supabase/queries/matches";
 import { getStandings } from "@/lib/supabase/queries/standings";
 import { getLeagueStages } from "@/lib/supabase/queries/competitions";
+
+// Placeholder de carga con la misma forma que MatchCard (estadio · 2 filas de
+// equipo · columna de hora) — un solo call site, no amerita componente propio.
+function UpcomingMatchesSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      {[0, 1].map((i) => (
+        <div
+          key={i}
+          className="flex items-stretch gap-3 rounded-lg border border-azul-marino/12 bg-white px-4 py-3"
+        >
+          <div className="w-14 shrink-0" />
+          <div className="flex min-w-0 flex-1 flex-col justify-center gap-3">
+            <div
+              className="h-5 w-32 animate-pulse rounded bg-azul-marino/10"
+              style={{ animationDelay: `${i * 80}ms` }}
+            />
+            <div
+              className="h-5 w-28 animate-pulse rounded bg-azul-marino/10"
+              style={{ animationDelay: `${i * 80 + 40}ms` }}
+            />
+          </div>
+          <div className="w-px shrink-0 self-stretch bg-azul-marino/10" />
+          <div className="flex w-24 shrink-0 items-center justify-center">
+            <div
+              className="h-5 w-12 animate-pulse rounded bg-azul-marino/10"
+              style={{ animationDelay: `${i * 80}ms` }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export const metadata = {
   title: "Fútbol | Mafia Azul Grana",
@@ -38,7 +71,7 @@ export default async function FutbolPage({
   }
 
   const [matches, standings] = selected
-    ? await Promise.all([getUpcomingMatches(selected.stageId, 3), getStandings(selected.stageId)])
+    ? await Promise.all([getUpcomingMatches(selected.stageId, 2), getStandings(selected.stageId)])
     : [[], []];
 
   const content = selected ? (
@@ -66,7 +99,7 @@ export default async function FutbolPage({
         <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
           Próximos partidos
         </h2>
-        <MatchListSkeleton rows={3} />
+        <UpcomingMatchesSkeleton />
       </div>
       <div className="min-w-0">
         <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">

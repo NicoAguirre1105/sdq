@@ -1,5 +1,5 @@
-// Skeleton para listas de partidos (UpcomingMatches, partidos del admin) — misma
-// forma de fila (fecha · L/V · rival · dato a la derecha), no una tabla.
+// Skeleton para listas de partidos del admin (fila: fecha · L/V · rival · dato a
+// la derecha) — no una tabla.
 export function MatchListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
     <ul className="divide-y divide-azul-marino/12">
