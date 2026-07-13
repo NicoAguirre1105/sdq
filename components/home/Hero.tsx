@@ -87,9 +87,22 @@ export function Hero({
               href={nextMatch.ticket_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-md bg-rojo-bandera px-4 py-2.5 font-body text-xs font-bold text-white transition-colors hover:bg-rojo-bandera-hover"
+              className="flex items-center gap-1.5 rounded-md bg-rojo-bandera px-4 py-2.5 font-body text-xs font-bold text-white transition-colors hover:bg-rojo-bandera-hover"
             >
-              Comprar entradas ↗
+              Comprar entradas
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M7 17 17 7M7 7h10v10" />
+              </svg>
             </a>
           )}
         </div>
