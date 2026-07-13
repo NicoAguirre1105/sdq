@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { getSiteUrl } from "@/lib/site-url";
+import { Clarity } from "@/components/layout/Clarity";
 import "./globals.css";
 
 // Fuentes auto-hospedadas (no dependen de fonts.googleapis.com en build/dev).
@@ -82,7 +83,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col font-body">{children}</body>
+      <body className="min-h-full flex flex-col font-body">
+        {children}
+        <Clarity />
+      </body>
     </html>
   );
 }
