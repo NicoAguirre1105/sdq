@@ -2,6 +2,10 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // ponytail: "output: standalone" se probó acá para un deploy en cPanel (build
+  // mínimo sin devDependencies, por cuota de disco ajustada) — sacado mientras ese
+  // deploy está pausado esperando a soporte del hosting. Vercel no lo necesita
+  // (arma su propio paquete). Volver a agregarlo si se retoma cPanel.
   // Hay un package-lock.json suelto en el home del usuario (C:\Users\nicof) además del
   // del proyecto; sin esto Turbopack infiere el home como root del workspace y avisa.
   turbopack: {
@@ -16,6 +20,19 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
     ],
+  },
+  // El dominio *.vercel.app queda accesible en paralelo al dominio real y
+  // Vercel no lo redirige solo — lo mandamos al dominio real para no dejar
+  // dos URLs "vivas" del mismo sitio (SEO/confusión de usuarios).
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "sdq-cyan.vercel.app" }],
+        destination: "https://www.mafiaazulgrana.org/:path*",
+        permanent: true,
+      },
+    ];
   },
 };
 
