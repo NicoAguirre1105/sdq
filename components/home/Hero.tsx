@@ -34,7 +34,6 @@ export function Hero({
           <p className="mb-2.5 font-mono text-[10px] tracking-[0.18em] text-dorado-escudo uppercase md:mb-3 md:text-xs">
             Próximo partido
             {nextMatch.matchday ? ` · Fecha ${nextMatch.matchday}` : ""}
-            {nextMatch.venue ? ` · ${nextMatch.venue}` : ""}
           </p>
           <h1 className="font-display text-[56px] leading-[0.82] text-blanco-hueso md:text-[92px]">
             {headline}
@@ -69,6 +68,11 @@ export function Hero({
               ) : (
                 <span className="font-display text-lg leading-[0.9] text-blanco-hueso md:text-2xl">
                   POR CONFIRMAR
+                </span>
+              )}
+              {nextMatch.venue && (
+                <span className="mt-1 font-mono text-[9px] text-blanco-hueso/50 uppercase md:text-[10px]">
+                  {nextMatch.venue}
                 </span>
               )}
             </div>

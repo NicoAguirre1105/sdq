@@ -56,8 +56,7 @@ export const viewport: Viewport = {
 };
 
 // JSON-LD (GEO/AEO): entidad de la hinchada para buscadores y motores de
-// respuesta con IA. sameAs queda vacío hasta que existan cuentas oficiales de
-// redes sociales — agregar ahí cuando se creen.
+// respuesta con IA.
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "SportsOrganization",
@@ -65,6 +64,10 @@ const organizationJsonLd = {
   description,
   url: siteUrl,
   logo: `${siteUrl}/img/logoSDQ_color.png`,
+  sameAs: [
+    "https://www.instagram.com/mafia_azul_grana/",
+    "https://www.facebook.com/MafiaAzulGranaQficial",
+  ],
 };
 
 export default function RootLayout({

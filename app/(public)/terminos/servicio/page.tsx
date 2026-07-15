@@ -7,8 +7,8 @@ export const metadata: Metadata = {
     "Términos y condiciones de uso del portal Mafia Azul Grana, hecho por y para la hinchada de Sociedad Deportivo Quito.",
 };
 
-const CONTACT_EMAIL = "nicofrancis2002@gmail.com";
-const UPDATED = "13 de julio de 2026";
+const CONTACT_EMAIL = "support@mafiaazulgrana.org";
+const UPDATED = "15 de julio de 2026";
 
 export default function TerminosServicioPage() {
   return (
@@ -56,7 +56,7 @@ export default function TerminosServicioPage() {
           <div>
             <h2 className="font-display text-2xl text-tinta">2. Uso aceptable</h2>
             <p className="mt-2">
-              Podés usar el sitio libremente para consultar contenido, participar de la comunidad y,
+              Puedes usar el sitio libremente para consultar contenido, participar de la comunidad y,
               si lo deseás, comprar merchandising coordinando por WhatsApp. No está permitido intentar
               vulnerar la seguridad del sitio ni usar su contenido con fines comerciales sin permiso.
             </p>
@@ -92,7 +92,7 @@ export default function TerminosServicioPage() {
           <div>
             <h2 className="font-display text-2xl text-tinta">5. Suscripción al newsletter</h2>
             <p className="mt-2">
-              Si te suscribís al boletín de novedades, aplican además los{" "}
+              Si te suscribes al boletín de novedades, aplican además los{" "}
               <a href="/terminos" className="text-azul-marino underline">
                 términos de la suscripción
               </a>

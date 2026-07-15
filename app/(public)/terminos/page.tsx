@@ -7,8 +7,8 @@ export const metadata: Metadata = {
     "Términos y condiciones de la suscripción al newsletter de la hinchada de Sociedad Deportivo Quito.",
 };
 
-const CONTACT_EMAIL = "nicofrancis2002@gmail.com";
-const UPDATED = "9 de julio de 2026";
+const CONTACT_EMAIL = "support@mafiaazulgrana.org";
+const UPDATED = "15 de julio de 2026";
 
 export default function TerminosPage() {
   return (
