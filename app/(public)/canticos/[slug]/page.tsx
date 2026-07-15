@@ -94,7 +94,16 @@ export default async function CanticoDetailPage({ params }: { params: Promise<{ 
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 rounded-md bg-rojo-bandera px-4 py-3 font-body text-xs font-bold text-white transition-colors hover:bg-rojo-bandera-hover"
             >
-              ▶ Ver en YouTube
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              Ver en YouTube
             </a>
           )}
 
