@@ -68,8 +68,8 @@ export function CanticoList({ canticos }: { canticos: Cantico[] }) {
 
   return (
     <div ref={topRef} className="scroll-mt-4">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-display text-[30px] text-tinta">
+      <div className="mb-4 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="font-display text-2xl text-tinta sm:text-[30px]">
           TODOS LOS CÁNTICOS{" "}
           <span className="font-mono text-xs text-tinta/40">· {visible.length}</span>
         </h2>

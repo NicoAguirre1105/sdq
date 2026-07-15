@@ -227,7 +227,7 @@ const GORILA_ESPERATE_UN_POQUITO: CanticoLine[] = [
   { role: "llamada", text: "Gorila esperáte un poquito más," },
   { role: "coro", text: "que ya nos vamos a encontrar." },
   { role: "llamada", text: "Los del rojo tienen miedo," },
-  { role: "coro", text: "porque saben que esta banda tiene huevos," },
+  { role: "coro", text: "porque saben que ésta banda tiene huevos," },
   { role: "llamada", text: "a los de Liga los corremos" },
   { role: "coro", text: "y a los del rojo los vamo' a correr de nuevo." },
 ];
