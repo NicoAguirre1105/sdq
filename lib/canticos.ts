@@ -369,7 +369,7 @@ const DE_PEQUEÑO_TE_SIGO: CanticoLine[] = [
   { role: "coro", text: "aguantamos 4 decadas sin copa (oh, oh)" },
   { role: "coro", text: "si la nuestra es una hinchada difenrete," },
   { role: "llamada", text: "no es amarga como los pu*** de enfrente (oh, oh)" },
-  { role: "coro", text: "afdafsd, Méndez, De la Cruz y Saritama (oh, oh)" },
+  { role: "coro", text: "puto Méndez, De la Cruz y Saritama (oh, oh)" },
   { role: "llamada", text: "se vendieron por unos cuantos centavos (oh, oh)" },
   { role: "coro", text: "Y a vos Liga de Quito yo te digo:" },
   { role: "llamada", text: "Ve, novelero, soy tu marido," },
@@ -510,7 +510,7 @@ const BORRACHO: CanticoLine[] = [
   { role: "llamada", text: "Ponga huevos Academia que tenemos que ganar," },
   { role: "coro", text: "ésta banda está re loca," },
   { role: "llamada", text: "no te deja de alentar." },
-  { role: "coro", text: "No me importa el periodismo ni efowefonefnwf," },
+  { role: "coro", text: "No me importa el periodismo ni el derecho de admisión," },
   { role: "coro", text: "yo te sigo a todos lados," },
   { role: "llamada", text: "yo te quiero ver campeón." },
   { role: "coro", text: "Borracho" },
@@ -552,9 +552,9 @@ const QUEREMOS_LA_COPA: CanticoLine[] = [
   { role: "coro", text: "quiero verte campeón, Quito." },
 ];
 const SALTO_EN_EL_TABLON: CanticoLine[] = [
-  { role: "llamada", text: "Salto en el tablón," },
-  { role: "coro", text: "Salto en el tablón," },
-  { role: "llamada", text: "Salto en el tablón" },
+  { role: "llamada", text: "Salta en el tablón," },
+  { role: "coro", text: "Salta en el tablón," },
+  { role: "llamada", text: "Salta en el tablón" },
   { role: "coro", text: "que vamo' a salir campeón." },
 ];
 
