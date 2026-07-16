@@ -1,27 +1,24 @@
 import { createServerSupabaseClient } from "@/lib/supabase/client";
 
-// Stages en formato liga de la temporada vigente. Alimenta el selector de torneo
-// y resuelve qué stage mostrar. Los stages 'eliminacion' se sumarán cuando exista
-// la UI de bracket (hoy no hay datos ni vista para ese formato).
+// Todos los stages (liga y eliminación) de todas las temporadas. Alimenta el
+// selector de torneo de /futbol — la temporada vigente aparece primero, el resto
+// queda disponible al lado para navegar temporadas anteriores.
 export async function getLeagueStages() {
   const supabase = await createServerSupabaseClient();
 
-  const { data: season } = await supabase
+  const { data: seasons, error: seasonsError } = await supabase
     .from("seasons")
-    .select("id")
-    .eq("is_current", true)
-    .maybeSingle();
+    .select("*");
+  if (seasonsError) throw seasonsError;
+  if (!seasons?.length) return [];
 
-  let competitions = supabase.from("competitions").select("*");
-  if (season) competitions = competitions.eq("season_id", season.id);
-  const { data: comps, error } = await competitions;
+  const { data: comps, error } = await supabase.from("competitions").select("*");
   if (error) throw error;
   if (!comps?.length) return [];
 
   const { data: stages, error: stagesError } = await supabase
     .from("stages")
     .select("*")
-    .eq("format", "liga")
     .in(
       "competition_id",
       comps.map((c) => c.id)
@@ -30,19 +27,30 @@ export async function getLeagueStages() {
   if (stagesError) throw stagesError;
 
   const compById = new Map(comps.map((c) => [c.id, c]));
+  const seasonById = new Map(seasons.map((s) => [s.id, s]));
   return (stages ?? [])
     .map((s) => {
       const comp = compById.get(s.competition_id)!;
+      const season = seasonById.get(comp.season_id);
       return {
         stageId: s.id,
         stageName: s.name,
+        format: s.format,
+        bracketMode: s.bracket_mode,
         competitionSlug: comp.slug,
         competitionName: comp.name,
+        seasonLabel: season?.label ?? "",
+        seasonCurrent: season?.is_current ?? false,
       };
     })
-    // ponytail: competitions no tiene campo de prioridad; orden alfabético estable.
-    // Agregar order_index a competitions si se necesita un default/orden específico.
-    .sort((a, b) => a.competitionName.localeCompare(b.competitionName));
+    // Temporada vigente primero; dentro de cada temporada, orden alfabético
+    // estable (competitions no tiene campo de prioridad propio).
+    .sort(
+      (a, b) =>
+        Number(b.seasonCurrent) - Number(a.seasonCurrent) ||
+        b.seasonLabel.localeCompare(a.seasonLabel) ||
+        a.competitionName.localeCompare(b.competitionName)
+    );
 }
 
 export type LeagueStage = Awaited<ReturnType<typeof getLeagueStages>>[number];
@@ -83,6 +91,7 @@ export async function getAdminStages() {
         stageId: s.id,
         stageName: s.name,
         format: s.format,
+        bracketMode: s.bracket_mode,
         orderIndex: s.order_index,
         competitionName: comp.name,
         seasonLabel: season?.label ?? "",

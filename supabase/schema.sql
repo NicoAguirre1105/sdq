@@ -47,7 +47,14 @@ create table stages (
   name text not null,
   slug text not null,
   format text check (format in ('liga', 'eliminacion')) not null,
-  order_index int default 0
+  order_index int default 0,
+  -- solo aplica si format = 'eliminacion': 'fijo' = el cuadro completo se conoce
+  -- de antemano (octavos a la final, equipos futuros pueden ser null); 'sorteo' =
+  -- los cruces de la siguiente ronda se cargan recién después del sorteo.
+  bracket_mode text check (bracket_mode in ('fijo', 'sorteo')),
+  -- solo aplica si bracket_mode = 'fijo': cantidad de rondas hasta la final
+  -- (incluida), usado para generar los 2^total_rounds - 1 partidos placeholder.
+  total_rounds int
 );
 
 -- on delete cascade en toda la jerarquía: borrar una temporada arrastra sus
@@ -66,6 +73,10 @@ create table matches (
   round_name text,
   tie_id uuid,
   leg int,
+  -- posición dentro de su ronda en un bracket 'fijo' generado (0-indexed); el
+  -- partido en (ronda r, slot i) alimenta a (ronda r+1, slot floor(i/2)). Null en
+  -- partidos que no vienen del generador — no participan del dibujo de líneas.
+  bracket_slot int,
   home_team_id uuid references teams(id) on delete cascade,
   away_team_id uuid references teams(id) on delete cascade,
   match_date timestamptz,   -- null = fecha sin confirmar

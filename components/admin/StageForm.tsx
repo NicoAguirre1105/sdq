@@ -26,6 +26,7 @@ export function StageForm({
     {}
   );
   const [format, setFormat] = useState<"liga" | "eliminacion">("liga");
+  const [bracketMode, setBracketMode] = useState<"fijo" | "sorteo">("sorteo");
 
   return (
     <form action={formAction}>
@@ -159,10 +160,49 @@ export function StageForm({
                 </div>
               </>
             ) : (
-              <p className="rounded-md bg-azul-marino/6 px-3 py-3 font-mono text-[11px] leading-relaxed text-azul-marino">
-                En eliminación los equipos se definen ronda a ronda al cargar cada
-                partido (no se fija una lista). No genera tabla de posiciones.
-              </p>
+              <>
+                <label htmlFor="bracket_mode" className={label}>
+                  Cómo se arma el cuadro
+                </label>
+                <select
+                  id="bracket_mode"
+                  name="bracket_mode"
+                  value={bracketMode}
+                  onChange={(e) => setBracketMode(e.target.value as "fijo" | "sorteo")}
+                  className={`${field} mb-2`}
+                >
+                  <option value="sorteo">Por sorteo (se define ronda a ronda)</option>
+                  <option value="fijo">Fijo (el cuadro completo ya se conoce)</option>
+                </select>
+                <p className="rounded-md bg-azul-marino/6 px-3 py-3 font-mono text-[11px] leading-relaxed text-azul-marino">
+                  Por sorteo: cargas los partidos de cada ronda recién cuando se
+                  sabe quién juega. Fijo: podés cargar de una todas las rondas hasta
+                  la final, dejando el equipo en blanco donde todavía no se sepa.
+                  No genera tabla de posiciones.
+                </p>
+
+                {bracketMode === "fijo" && (
+                  <div className="mt-3">
+                    <label htmlFor="total_rounds" className={label}>
+                      Número de rondas totales (hasta la final)
+                    </label>
+                    <input
+                      id="total_rounds"
+                      name="total_rounds"
+                      type="number"
+                      min={1}
+                      max={6}
+                      defaultValue={3}
+                      className={`${field} font-mono`}
+                    />
+                    <p className="mt-1 font-mono text-[9px] text-tinta/40">
+                      Ej. 4 = octavos, cuartos, semifinal, final. Genera esa cantidad
+                      de partidos "por definir" listos para ir completando — no hace
+                      falta cargarlos uno por uno.
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}

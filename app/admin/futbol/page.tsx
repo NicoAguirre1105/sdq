@@ -76,12 +76,37 @@ export default async function AdminFutbolPage({
       selected.format === "liga" ? await getStageTeams(selected.stageId) : [];
     const teams = stageTeams.length ? stageTeams : await getAllTeams();
     const existing = match !== "new" ? await getMatchById(match) : null;
+    // Candidatos de "ida" para vincular una vuelta: partidos del mismo stage con
+    // leg=1 sin una vuelta real ya enlazada. No alcanza con "tie_id nulo": un
+    // tie_id puede quedar huérfano (ver deleteMatch) sin que exista ninguna otra
+    // fila con ese mismo tie_id — en ese caso sigue siendo candidata válida.
+    const idaCandidates = await (async () => {
+      if (selected.format !== "eliminacion") return [];
+      const stageMatches = await getStageMatches(selected.stageId);
+      const tieIdCounts = new Map<string, number>();
+      stageMatches.forEach((m) => {
+        if (m.tie_id) tieIdCounts.set(m.tie_id, (tieIdCounts.get(m.tie_id) ?? 0) + 1);
+      });
+      return stageMatches
+        .filter(
+          (m) =>
+            m.leg === 1 &&
+            m.id !== existing?.id &&
+            (!m.tie_id || (tieIdCounts.get(m.tie_id) ?? 0) < 2)
+        )
+        .map((m) => ({
+          id: m.id,
+          label: `${m.round_name ?? "—"} · ${(m.homeTeam?.name ?? "?")} vs ${(m.awayTeam?.name ?? "?")}`,
+        }));
+    })();
     return (
       <MatchForm
         stageId={selected.stageId}
         stageFormat={selected.format}
+        stageBracketMode={selected.bracketMode}
         stageLabel={stageLabel(selected)}
         teams={teams}
+        idaCandidates={idaCandidates}
         backHref={backHref}
         match={existing ?? undefined}
       />

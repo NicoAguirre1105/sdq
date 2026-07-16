@@ -2,9 +2,10 @@ import { Container } from "@/components/ui/Container";
 import { FutbolSubnav } from "@/components/futbol/FutbolSubnav";
 import { UpcomingMatches } from "@/components/futbol/UpcomingMatches";
 import { StandingsTable } from "@/components/futbol/StandingsTable";
+import { Bracket } from "@/components/futbol/Bracket";
 import { TabbedContent } from "@/components/ui/TabbedContent";
 import { TableSkeleton } from "@/components/ui/TableSkeleton";
-import { getUpcomingMatches } from "@/lib/supabase/queries/matches";
+import { getUpcomingMatches, getStageMatches } from "@/lib/supabase/queries/matches";
 import { getStandings } from "@/lib/supabase/queries/standings";
 import { getLeagueStages } from "@/lib/supabase/queries/competitions";
 
@@ -42,6 +43,29 @@ function UpcomingMatchesSkeleton() {
   );
 }
 
+// Esqueleto del bracket: columnas de ronda con tarjetas del mismo alto que
+// MatchCard (104px, ver Bracket.tsx) — no sabemos todavía si el stage es fijo o
+// sorteo, ni cuántas rondas tiene, así que es una aproximación genérica, no una
+// réplica exacta del cuadro real.
+function BracketSkeleton() {
+  return (
+    <div className="no-scrollbar flex gap-4 overflow-x-auto pb-2">
+      {[0, 1, 2].map((col) => (
+        <div key={col} className="flex w-[340px] shrink-0 flex-col gap-3">
+          <div className="h-3 w-24 animate-pulse rounded bg-azul-marino/10" />
+          {[0, 1].map((row) => (
+            <div
+              key={row}
+              className="h-[104px] animate-pulse rounded-lg bg-azul-marino/10"
+              style={{ animationDelay: `${(col * 2 + row) * 60}ms` }}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export const metadata = {
   title: "Fútbol | Mafia Azul Grana",
   description: "Próximos partidos y tabla de posiciones del Deportivo Quito.",
@@ -64,31 +88,57 @@ export default async function FutbolPage({
   const selected = leagues.find((l) => l.stageId === torneo) ?? leagues[0] ?? null;
 
   // Si más de una fase comparte competición, la etiqueta suma el nombre de la fase
-  // para no mostrar el mismo texto dos veces en el selector de torneo.
+  // para no mostrar el mismo texto dos veces en el selector de torneo. Si hay más
+  // de una temporada cargada, antepone el año para poder distinguirlas.
+  const multipleSeasons = new Set(leagues.map((l) => l.seasonLabel)).size > 1;
   function stageLabel(l: (typeof leagues)[number]) {
     const siblings = leagues.filter((x) => x.competitionSlug === l.competitionSlug);
-    return siblings.length > 1 ? `${l.competitionName} · ${l.stageName}` : l.competitionName;
+    const base = siblings.length > 1 ? `${l.competitionName} · ${l.stageName}` : l.competitionName;
+    return multipleSeasons ? `${l.seasonLabel} · ${base}` : base;
   }
 
-  const [matches, standings] = selected
-    ? await Promise.all([getUpcomingMatches(selected.stageId, 2), getStandings(selected.stageId)])
-    : [[], []];
+  const isElimination = selected?.format === "eliminacion";
+
+  const [matches, standings, bracketMatches] = selected
+    ? await Promise.all([
+        getUpcomingMatches(selected.stageId, 2),
+        isElimination ? Promise.resolve([]) : getStandings(selected.stageId),
+        isElimination ? getStageMatches(selected.stageId) : Promise.resolve([]),
+      ])
+    : [[], [], []];
 
   const content = selected ? (
-    <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_1.4fr] md:gap-14">
-      <div>
-        <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
-          Próximos partidos
-        </h2>
-        <UpcomingMatches matches={matches} />
+    isElimination ? (
+      <div className="flex flex-col gap-10">
+        <div>
+          <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
+            Próximos partidos
+          </h2>
+          <UpcomingMatches matches={matches} />
+        </div>
+        <div>
+          <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
+            Llaves
+          </h2>
+          <Bracket matches={bracketMatches} mode={selected.bracketMode} />
+        </div>
       </div>
-      <div className="min-w-0">
-        <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
-          Tabla de posiciones
-        </h2>
-        <StandingsTable rows={standings} />
+    ) : (
+      <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_1.4fr] md:gap-14">
+        <div>
+          <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
+            Próximos partidos
+          </h2>
+          <UpcomingMatches matches={matches} />
+        </div>
+        <div className="min-w-0">
+          <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
+            Tabla de posiciones
+          </h2>
+          <StandingsTable rows={standings} />
+        </div>
       </div>
-    </div>
+    )
   ) : (
     <p className="font-body text-sm text-tinta/50">No hay torneos activos por el momento.</p>
   );
@@ -108,6 +158,30 @@ export default async function FutbolPage({
         <TableSkeleton rows={6} />
       </div>
     </div>
+  );
+
+  const bracketFallback = (
+    <div className="flex flex-col gap-10">
+      <div>
+        <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
+          Próximos partidos
+        </h2>
+        <UpcomingMatchesSkeleton />
+      </div>
+      <div>
+        <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
+          Llaves
+        </h2>
+        <BracketSkeleton />
+      </div>
+    </div>
+  );
+
+  // Cada pestaña usa el esqueleto de su propio formato mientras carga — sin esto,
+  // pasar a un torneo de eliminación mostraba de arranque la forma de "liga"
+  // (grilla + tabla) durante el instante de la transición.
+  const fallbackFor = Object.fromEntries(
+    leagues.map((l) => [l.stageId, l.format === "eliminacion" ? bracketFallback : fallback])
   );
 
   return (
@@ -137,6 +211,7 @@ export default async function FutbolPage({
               navClassName="mb-8 flex flex-wrap gap-2"
               ariaLabel="Torneos"
               fallback={fallback}
+              fallbackFor={fallbackFor}
               tabs={leagues.map((l) => {
                 const active = l.stageId === selected?.stageId;
                 return {

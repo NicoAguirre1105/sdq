@@ -48,24 +48,37 @@ function TeamRow({ team, score }: { team: CardTeam | null; score: number | null 
 export function MatchCard({
   match,
   topLabel,
+  note,
   highlighted = false,
 }: {
   match: CardMatch;
   topLabel?: string;
+  // Reemplaza el pill/botón de la esquina por un texto libre — usado por
+  // Bracket.tsx para avisar "Vuelta no confirmada" en una ida sin su vuelta
+  // enlazada todavía (que si no, se ve como un partido programado cualquiera).
+  note?: string;
   highlighted?: boolean;
 }) {
+  // "jugado" se decide por los goles reales, no por si SD Quito juega este
+  // partido — en el bracket hay cruces entre otros equipos (ver MatchCard bug:
+  // antes exigía que SD Quito fuera local o visitante para marcar el partido
+  // como jugado, y esos cruces neutros quedaban siempre como "por jugar").
+  const played = match.status === "jugado" && match.score_home != null && match.score_away != null;
   const ownIsHome = match.homeTeam?.is_own_team ?? false;
   const ownIsAway = match.awayTeam?.is_own_team ?? false;
   const ownScore = ownIsHome ? match.score_home : ownIsAway ? match.score_away : null;
   const oppScore = ownIsHome ? match.score_away : ownIsAway ? match.score_home : null;
-  const played = match.status === "jugado" && ownScore != null && oppScore != null;
-  const result: keyof typeof PILL | null = played
-    ? ownScore! > oppScore!
-      ? "V"
-      : ownScore === oppScore
-        ? "E"
-        : "D"
-    : null;
+  // El pill V/E/D es relativo a SD Quito — solo tiene sentido si SD Quito jugó
+  // este partido. En un cruce neutro del bracket, el marcador ya se ve en las
+  // filas de equipo; no hay "nuestro" resultado que resaltar con color.
+  const result: keyof typeof PILL | null =
+    played && (ownIsHome || ownIsAway) && ownScore != null && oppScore != null
+      ? ownScore > oppScore
+        ? "V"
+        : ownScore === oppScore
+          ? "E"
+          : "D"
+      : null;
 
   const dt = formatMatchDate(match.match_date);
 
@@ -77,7 +90,13 @@ export function MatchCard({
     >
       <div className="flex w-14 shrink-0 items-center justify-center text-center">
         {match.venue && (
-          <span className="font-mono text-[9px] leading-tight text-blanco-hueso/50 uppercase">
+          // truncate a una sola línea: la altura de la tarjeta tiene que ser
+          // determinística para que el bracket (Bracket.tsx) pueda calcular
+          // posiciones de líneas sin medir el DOM.
+          <span
+            title={match.venue}
+            className="w-full truncate font-mono text-[9px] leading-tight text-blanco-hueso/50 uppercase"
+          >
             {match.venue}
           </span>
         )}
@@ -107,7 +126,9 @@ export function MatchCard({
           )}
         </div>
 
-        {match.status === "jugado" && result ? (
+        {note ? (
+          <span className="font-mono text-[9px] text-dorado-escudo uppercase">{note}</span>
+        ) : match.status === "jugado" && result ? (
           <span
             className={`flex h-6 w-6 items-center justify-center rounded font-mono text-[11px] font-bold ${PILL[result]}`}
           >

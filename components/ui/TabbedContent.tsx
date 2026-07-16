@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 export type Tab = {
@@ -23,6 +23,7 @@ export function TabbedContent({
   prefix,
   suffix,
   fallback,
+  fallbackFor,
   children,
 }: {
   tabs: Tab[];
@@ -31,9 +32,14 @@ export function TabbedContent({
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
   fallback: React.ReactNode;
+  // Esqueleto por pestaña (clave = Tab.key) para cuando el contenido de cada una
+  // tiene una forma distinta (ej. tabla vs. bracket) — si la pestaña clickeada no
+  // tiene una entrada acá, cae al `fallback` genérico.
+  fallbackFor?: Record<string, React.ReactNode>;
   children: React.ReactNode;
 }) {
   const [isPending, startTransition] = useTransition();
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
   const router = useRouter();
 
   return (
@@ -46,7 +52,10 @@ export function TabbedContent({
             type="button"
             disabled={isPending}
             aria-current={t.active ? "page" : undefined}
-            onClick={() => startTransition(() => router.push(t.href))}
+            onClick={() => {
+              setPendingKey(t.key);
+              startTransition(() => router.push(t.href));
+            }}
             className={`${t.className} disabled:cursor-wait`}
           >
             {t.label}
@@ -54,7 +63,7 @@ export function TabbedContent({
         ))}
         {suffix}
       </nav>
-      {isPending ? fallback : children}
+      {isPending ? ((pendingKey && fallbackFor?.[pendingKey]) ?? fallback) : children}
     </>
   );
 }

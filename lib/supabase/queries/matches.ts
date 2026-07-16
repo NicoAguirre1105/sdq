@@ -13,18 +13,23 @@ async function getOwnTeamId(supabase: ServerClient): Promise<string | null> {
 }
 
 // Adjunta homeTeam/awayTeam a una lista de partidos con una sola consulta a teams.
-async function withTeams<T extends { home_team_id: string; away_team_id: string }>(
-  supabase: ServerClient,
-  matches: T[]
-) {
-  const ids = [...new Set(matches.flatMap((m) => [m.home_team_id, m.away_team_id]))];
-  const { data: teams, error } = await supabase.from("teams").select("*").in("id", ids);
+// Tolera equipos null (partidos "por definir" de brackets en modo fijo).
+async function withTeams<
+  T extends { home_team_id: string | null; away_team_id: string | null },
+>(supabase: ServerClient, matches: T[]) {
+  const ids = [...new Set(matches.flatMap((m) => [m.home_team_id, m.away_team_id]))].filter(
+    (id): id is string => id != null
+  );
+  // "" nunca matchea un uuid real — evita mandar .in() vacío cuando todos los
+  // equipos son null (bracket en modo fijo sin definir todavía) sin perder el
+  // tipo inferido de la fila de teams.
+  const { data: teams, error } = await supabase.from("teams").select("*").in("id", ids.length ? ids : [""]);
   if (error) throw error;
   const byId = new Map(teams?.map((t) => [t.id, t]));
   return matches.map((m) => ({
     ...m,
-    homeTeam: byId.get(m.home_team_id) ?? null,
-    awayTeam: byId.get(m.away_team_id) ?? null,
+    homeTeam: m.home_team_id ? (byId.get(m.home_team_id) ?? null) : null,
+    awayTeam: m.away_team_id ? (byId.get(m.away_team_id) ?? null) : null,
   }));
 }
 
@@ -113,7 +118,8 @@ export async function getOwnTeamMatches() {
 
 export type OwnTeamMatch = Awaited<ReturnType<typeof getOwnTeamMatches>>[number];
 
-// Admin: todos los partidos de un stage (de todos los equipos), para gestión.
+// Todos los partidos de un stage (de todos los equipos). Usada en el admin para
+// gestión, y en público para armar el bracket de stages 'eliminacion'.
 export async function getStageMatches(stageId: string) {
   const supabase = await createServerSupabaseClient();
   const { data: matches, error } = await supabase

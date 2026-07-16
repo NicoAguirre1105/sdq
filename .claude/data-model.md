@@ -53,7 +53,15 @@ create table stages (
   name text not null,                  -- "Fase 1", "Grupo A", "Octavos de Final"
   slug text not null,
   format text check (format in ('liga', 'eliminacion')) not null,
-  order_index int default 0
+  order_index int default 0,
+  -- solo aplica si format = 'eliminacion': 'fijo' = el cuadro completo (octavos a
+  -- la final) se conoce de antemano, equipos de rondas futuras pueden quedar en
+  -- null hasta saberse; 'sorteo' = los cruces de la siguiente ronda se cargan
+  -- recién después del sorteo de la ronda anterior.
+  bracket_mode text check (bracket_mode in ('fijo', 'sorteo')),
+  -- solo aplica si bracket_mode = 'fijo': cantidad de rondas hasta la final
+  -- (incluida), usado para generar los 2^total_rounds - 1 partidos placeholder.
+  total_rounds int
 );
 
 -- solo aplica si stage.format = 'liga'
@@ -70,6 +78,7 @@ create table matches (
   round_name text,                     -- usado si format = 'eliminacion' (ej. "Semifinal")
   tie_id uuid,                         -- agrupa ida/vuelta de la misma llave (null si partido único)
   leg int,                             -- 1 = ida, 2 = vuelta (null si partido único)
+  bracket_slot int,                    -- posición dentro de su ronda en un bracket 'fijo' generado (0-indexed)
   home_team_id uuid references teams(id) on delete cascade,
   away_team_id uuid references teams(id) on delete cascade,
   match_date timestamptz,              -- null = fecha sin confirmar

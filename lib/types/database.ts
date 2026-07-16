@@ -63,6 +63,8 @@ type Stage = {
   slug: string;
   format: "liga" | "eliminacion";
   order_index: number;
+  bracket_mode: "fijo" | "sorteo" | null;
+  total_rounds: number | null;
 };
 
 // Fila de la vista calculada `standings` (ver supabase/schema.sql). Los conteos
@@ -92,8 +94,11 @@ type Match = {
   round_name: string | null;
   tie_id: string | null;
   leg: number | null;
-  home_team_id: string;
-  away_team_id: string;
+  bracket_slot: number | null;
+  // Nullable a nivel de Postgres desde siempre (no hacía falta ALTER): un cuadro
+  // de eliminación "fijo" puede cargar rondas futuras sin saber los equipos todavía.
+  home_team_id: string | null;
+  away_team_id: string | null;
   match_date: string | null;
   score_home: number | null;
   score_away: number | null;
