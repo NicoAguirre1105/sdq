@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Container } from "@/components/ui/Container";
+import { HeroBackground } from "@/components/ui/HeroBackground";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
 import { VITRINA, TIMELINE, PRESIDENTES, BARRAS, type TimelineDot } from "@/lib/historia";
 
@@ -46,7 +47,7 @@ export function HistoriaContent() {
       </nav>
 
       <section className="relative overflow-hidden bg-[#081f49] px-4.5 py-8 md:px-0 md:py-10">
-        <div className="absolute inset-0 bg-[url('/img/hero_2.jpg')] bg-cover bg-center md:bg-[url('/img/hero.jpg')]" />
+        <HeroBackground />
         <div className="absolute inset-0 bg-[#081f49]/80" />
         <Container className="relative px-0 md:px-10">
           {tab === "club" ? (

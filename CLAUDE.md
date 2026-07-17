@@ -108,7 +108,9 @@ Para fotos de contenido (partidos, jugadores, tienda) todavía no hay assets rea
 
 ### Patrón de hero con foto
 
-Los hero de sección (Home, Cánticos) sí tienen foto real: `public/img/hero.jpg` (desktop) y `public/img/hero_2.jpg` (mobile), como background-image responsive vía Tailwind (`bg-[url('/img/hero_2.jpg')] ... md:bg-[url('/img/hero.jpg')]`), con una capa sólida encima para oscurecer (`bg-[#081f49]/80`) y legibilidad del texto. Aplicar el mismo patrón a los heroes que falten (Historia, Fútbol, Tienda, etc.) en vez de volver a `PhotoPlaceholder` ahí — son las únicas dos imágenes de foto real que existen hoy en el repo.
+Los hero de sección (Home, Cánticos, Fútbol, Calendario, Plantilla, Historia) tienen foto real: `public/img/hero.jpg` (desktop) y `public/img/hero_2.jpg` (mobile), vía `<HeroBackground />` (`components/ui/HeroBackground.tsx`) con una capa sólida encima para oscurecer (`bg-[#081f49]/80`) y legibilidad del texto. Aplicar el mismo componente a los heroes que falten (Tienda, etc.) en vez de volver a `PhotoPlaceholder` ahí — son las únicas dos imágenes de foto real que existen hoy en el repo.
+
+`HeroBackground` usa `<picture>` + `<source media>` (no `background-image` por CSS): el preload scanner del navegador descubre `<img>`/`<picture>` en el HTML al instante, mientras que un `background-image` en una clase Tailwind recién se descubre después de parsear el CSS — con esta imagen siendo casi siempre el elemento LCP de la página, ese retraso de descubrimiento le pegaba directo al Largest Contentful Paint. `fetchPriority="high"` + `loading="eager"` la priorizan explícitamente.
 
 ### Fuentes auto-hospedadas
 

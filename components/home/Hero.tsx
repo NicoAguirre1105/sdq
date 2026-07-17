@@ -1,5 +1,6 @@
 import { TeamCrest } from "@/components/ui/TeamCrest";
 import { Container } from "@/components/ui/Container";
+import { HeroBackground } from "@/components/ui/HeroBackground";
 import { formatMatchDate } from "@/lib/format";
 import type { NextMatch } from "@/lib/supabase/queries/matches";
 
@@ -27,7 +28,7 @@ export function Hero({
 
   return (
     <div className="relative overflow-hidden bg-[#081f49]">
-      <div className="absolute inset-0 bg-[url('/img/hero_2.jpg')] bg-cover bg-center md:bg-[url('/img/hero.jpg')]" />
+      <HeroBackground />
       <div className="absolute inset-0 bg-[#081f49]/75" />
       <Container className="relative flex flex-col gap-8 px-4.5 py-9 md:gap-12 md:px-10 md:py-16">
         <div>
