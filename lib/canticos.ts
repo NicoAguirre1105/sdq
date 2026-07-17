@@ -15,9 +15,14 @@ export type Cantico = {
   order_index: number;
 };
 
-// Extrae el ID de video de una URL de YouTube (watch o youtu.be). El embed lo arma
-// el componente cliente `YouTubeEmbed` vía la IFrame API (para poder apagar los
-// subtítulos, que no se pueden desactivar solo con params de URL).
+// Extrae el ID de video de una URL de YouTube (watch, youtu.be o shorts). El embed
+// lo arma el componente cliente `YouTubeEmbed` vía la IFrame API (para poder apagar
+// los subtítulos, que no se pueden desactivar solo con params de URL).
 export function youtubeId(url: string): string | null {
-  return url.match(/[?&]v=([^&]+)/)?.[1] ?? url.match(/youtu\.be\/([^?]+)/)?.[1] ?? null;
+  return (
+    url.match(/[?&]v=([^&]+)/)?.[1] ??
+    url.match(/youtu\.be\/([^?]+)/)?.[1] ??
+    url.match(/\/shorts\/([^?]+)/)?.[1] ??
+    null
+  );
 }
