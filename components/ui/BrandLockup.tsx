@@ -5,7 +5,7 @@ export function BrandLockup({
   magWidth,
   magHeight,
   logoClassName = "h-7 md:h-9",
-  magClassName = "h-5 md:h-6",
+  magClassName = "h-7 md:h-9",
   className = "",
 }: {
   magSrc: string;

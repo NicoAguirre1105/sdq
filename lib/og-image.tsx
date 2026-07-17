@@ -7,8 +7,14 @@ import { join } from "node:path";
 export const OG_IMAGE_SIZE = { width: 1200, height: 630 };
 export const OG_IMAGE_CONTENT_TYPE = "image/png";
 
+// Logo blanco centrado sobre el azul de marca: mismo tratamiento que
+// favicon/apple-icon/android-chrome (ver .tmp/gen-icons.mjs), solo cambia el
+// tamaño del lienzo.
+const LOGO_HEIGHT = 340;
+const LOGO_WIDTH = Math.round((LOGO_HEIGHT * 589) / 687);
+
 export async function renderOgImage() {
-  const logo = await readFile(join(process.cwd(), "public/img/logoSDQ_color.png"));
+  const logo = await readFile(join(process.cwd(), "public/logo_mag.png"));
   const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
 
   return new ImageResponse(
@@ -18,19 +24,12 @@ export async function renderOgImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#0B2E6B",
         }}
       >
-        <img src={logoSrc} alt="" width={220} height={280} style={{ objectFit: "contain" }} />
-        <div style={{ fontSize: 60, fontWeight: 700, color: "#F7F5F0", marginTop: 32 }}>
-          MAFIA AZUL GRANA
-        </div>
-        <div style={{ fontSize: 28, color: "#C81D25", marginTop: 12 }}>
-          HINCHADA DE SOCIEDAD DEPORTIVO QUITO
-        </div>
+        <img src={logoSrc} alt="" width={LOGO_WIDTH} height={LOGO_HEIGHT} style={{ objectFit: "contain" }} />
       </div>
     ),
     OG_IMAGE_SIZE,
