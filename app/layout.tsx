@@ -68,6 +68,7 @@ const organizationJsonLd = {
   sameAs: [
     "https://www.instagram.com/mafia_azul_grana/",
     "https://www.facebook.com/MafiaAzulGranaQficial",
+    "https://www.tiktok.com/@mafiaazulgranaoficial",
   ],
 };
 
