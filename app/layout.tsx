@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { getSiteUrl } from "@/lib/site-url";
 import { Clarity } from "@/components/layout/Clarity";
 import "./globals.css";
@@ -92,6 +93,7 @@ export default function RootLayout({
         {children}
         <Clarity />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
