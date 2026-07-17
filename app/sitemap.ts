@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site-url";
 import { getPublishedPosts } from "@/lib/supabase/queries/posts";
-import { CANTICOS } from "@/lib/canticos";
+import { getPublishedCanticos } from "@/lib/supabase/queries/canticos";
 
 const STATIC_ROUTES = ["", "/historia", "/futbol", "/futbol/calendario", "/canticos", "/plantilla", "/terminos"];
 
@@ -24,7 +24,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  const canticoEntries: MetadataRoute.Sitemap = CANTICOS.map((c) => ({
+  const canticos = await getPublishedCanticos();
+  const canticoEntries: MetadataRoute.Sitemap = canticos.map((c) => ({
     url: `${siteUrl}/canticos/${c.slug}`,
     changeFrequency: "yearly",
     priority: 0.5,

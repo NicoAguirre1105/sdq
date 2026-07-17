@@ -1,8 +1,10 @@
-import { CANTICOS } from "@/lib/canticos";
+import { getPublishedCanticos } from "@/lib/supabase/queries/canticos";
 import { getSiteUrl } from "@/lib/site-url";
 import { QrPdfForm } from "@/components/admin/QrPdfForm";
 
-export default function AdminQrPage() {
+export default async function AdminQrPage() {
+  const canticos = await getPublishedCanticos();
+
   return (
     <>
       <header className="border-b border-azul-marino/10 bg-white px-6 py-4">
@@ -14,7 +16,7 @@ export default function AdminQrPage() {
 
       <div className="px-6 py-6">
         <QrPdfForm
-          canticos={CANTICOS.map((c) => ({ slug: c.slug, title: c.title }))}
+          canticos={canticos.map((c) => ({ slug: c.slug, title: c.title }))}
           siteUrl={getSiteUrl()}
         />
       </div>

@@ -1,28 +1,26 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CANTICOS, getCantico, youtubeId } from "@/lib/canticos";
+import { youtubeId } from "@/lib/canticos";
+import { getPublishedCanticos, getCanticoBySlugPublic } from "@/lib/supabase/queries/canticos";
 import { YouTubeEmbed } from "@/components/canticos/YouTubeEmbed";
-
-export function generateStaticParams() {
-  return CANTICOS.map((c) => ({ slug: c.slug }));
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const cantico = getCantico(slug);
+  const cantico = await getCanticoBySlugPublic(slug);
   return { title: cantico ? `${cantico.title} — Cánticos` : "Cántico no encontrado" };
 }
 
 export default async function CanticoDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const cantico = getCantico(slug);
+  const cantico = await getCanticoBySlugPublic(slug);
   if (!cantico) notFound();
 
-  const others = CANTICOS.filter((c) => c.slug !== cantico.slug).slice(0, 4);
-  const videoId = cantico.youtubeUrl ? youtubeId(cantico.youtubeUrl) : null;
+  const allCanticos = await getPublishedCanticos();
+  const others = allCanticos.filter((c) => c.slug !== cantico.slug).slice(0, 4);
+  const videoId = cantico.youtube_url ? youtubeId(cantico.youtube_url) : null;
   const watchUrl =
-    cantico.youtubeUrl &&
-    `${cantico.youtubeUrl}${cantico.startSeconds ? `&t=${cantico.startSeconds}s` : ""}`;
+    cantico.youtube_url &&
+    `${cantico.youtube_url}${cantico.start_seconds ? `&t=${cantico.start_seconds}s` : ""}`;
 
   return (
     <div className="bg-azul-marino">
@@ -75,7 +73,7 @@ export default async function CanticoDetailPage({ params }: { params: Promise<{ 
           {videoId ? (
             <YouTubeEmbed
               videoId={videoId}
-              start={cantico.startSeconds}
+              start={cantico.start_seconds}
               title={`${cantico.title} — YouTube`}
               className="mb-4 aspect-video w-full overflow-hidden rounded-lg bg-black/20"
             />

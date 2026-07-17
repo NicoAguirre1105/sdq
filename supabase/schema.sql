@@ -18,6 +18,21 @@ create table posts (
 
 create index posts_published_at_idx on posts (published_at desc);
 
+create table canticos (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  slug text unique not null,
+  classic boolean not null default false,
+  youtube_url text,
+  start_seconds int not null default 0,
+  lines jsonb not null default '[]',   -- [{ "role": "llamada"|"coro", "text": "..." }]
+  published boolean not null default false,
+  order_index int not null default 0,   -- orden de aparición pública, reordenable desde el admin
+  created_at timestamptz default now()  -- desempate de orden para filas con el mismo order_index
+);
+
+create index canticos_order_idx on canticos (order_index asc);
+
 -- ============ Fútbol ============
 
 create table teams (
@@ -213,6 +228,7 @@ create table admin_users (
 -- ============ RLS ============
 
 alter table posts enable row level security;
+alter table canticos enable row level security;
 alter table teams enable row level security;
 alter table seasons enable row level security;
 alter table competitions enable row level security;
@@ -229,6 +245,7 @@ alter table site_settings enable row level security;
 
 -- lectura pública donde corresponde
 create policy "public read published posts" on posts for select using (published_at <= now());
+create policy "public read published canticos" on canticos for select using (published = true);
 create policy "public read teams" on teams for select using (true);
 create policy "public read seasons" on seasons for select using (true);
 create policy "public read competitions" on competitions for select using (true);
@@ -244,6 +261,7 @@ create policy "anyone can subscribe" on subscribers for insert with check (true)
 
 -- escritura solo para admins (allowlist)
 create policy "admins manage posts" on posts for all using (exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins manage canticos" on canticos for all using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins manage teams" on teams for all using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins manage seasons" on seasons for all using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins manage competitions" on competitions for all using (exists (select 1 from admin_users where id = auth.uid()));

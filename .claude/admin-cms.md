@@ -18,7 +18,7 @@ Criterio usado para clasificar cada dato:
 | **Fútbol** (tabla de posiciones) | — (calculado) | vista `standings` sobre `matches` | No se edita directamente, se calcula |
 | **Fútbol** (próximos partidos) | — (derivado) | `matches WHERE status = 'programado'` | Mismo query que calendario, filtrado |
 | **Calendario** | — (derivado) | todos los `matches` de la `stage` activa | Una sola fuente para calendario + próximos + standings |
-| **Cánticos** | A | MDX + video de youtube embed/`/public` | Estático, confirmado |
+| **Cánticos** | C | tabla `canticos` | CRUD + publicar/despublicar + reordenar |
 | **Tienda** (listado productos) | C | tabla `products` | CRUD + control de stock |
 | **Detalle de producto** | — (derivado) | vista de `products` por slug | No es dato a gestionar aparte |
 | **Carrito de compras** | — (transaccional) | `cart_items` / `orders`, estado de sesión | Lógica de e-commerce, no CMS |
@@ -93,8 +93,13 @@ Layout real: pantalla única (`/admin/futbol`) con selector de stage arriba → 
 - CRUD de jugadores reusando el patrón de posts/teams: nombre, posición (select con las 4 claves de `SquadGrid`), dorsal, bio markdown.
 - **Foto opcional** subida al bucket `player_photos` (jpg/png/webp, ≤2 MB); sin foto la grilla pública usa `PhotoPlaceholder`.
 
-### 6. QR→PDF — no es contenido CMS (utilidad) — **IMPLEMENTADO** (`/admin/qr`)
-- No gestiona datos: genera al vuelo un PDF con QR hacia `/canticos` o hacia un cántico puntual, para imprimir/repartir. Sin tabla propia — lee `CANTICOS` de `lib/canticos.ts`.
+### 6. Cánticos — nivel C — **IMPLEMENTADO** (`/admin/canticos`)
+- CRUD reusando el patrón de posts/teams: título, slug, clásico (bool), YouTube URL + segundo de inicio, publicado/borrador.
+- **Versos** (`lines`, jsonb): editor de líneas con color por verso (rojo = llamada, blanco = coro), sin alternancia forzada.
+- **Reordenar**: botones ↑/↓ en la lista (`order_index`, swap entre vecinos) — sin drag & drop.
+
+### 7. QR→PDF — no es contenido CMS (utilidad) — **IMPLEMENTADO** (`/admin/qr`)
+- No gestiona datos: genera al vuelo un PDF con QR hacia `/canticos` o hacia un cántico puntual, para imprimir/repartir. Sin tabla propia — el selector de "cántico específico" lee `getPublishedCanticos()` (tabla `canticos`), mismo orden que la página pública.
 
 ---
 

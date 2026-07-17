@@ -15,6 +15,20 @@ type Post = {
   published_at: string | null; // null = borrador (oculto para el público por RLS)
 };
 
+type CanticoLine = { role: "llamada" | "coro"; text: string };
+
+type Cantico = {
+  id: string;
+  title: string;
+  slug: string;
+  classic: boolean;
+  youtube_url: string | null;
+  start_seconds: number;
+  lines: CanticoLine[];
+  published: boolean;
+  order_index: number;
+};
+
 type Player = {
   id: string;
   full_name: string;
@@ -122,6 +136,12 @@ export type Database = {
         Row: Post;
         Insert: Partial<Post> & Pick<Post, "title" | "slug" | "content_md">;
         Update: Partial<Post>;
+        Relationships: [];
+      };
+      canticos: {
+        Row: Cantico;
+        Insert: Partial<Cantico> & Pick<Cantico, "title" | "slug">;
+        Update: Partial<Cantico>;
         Relationships: [];
       };
       players: {

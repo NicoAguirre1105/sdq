@@ -1,13 +1,15 @@
 import { Container } from "@/components/ui/Container";
 import { CanticoList } from "@/components/canticos/CanticoList";
-import { CANTICOS } from "@/lib/canticos";
+import { getPublishedCanticos } from "@/lib/supabase/queries/canticos";
 
 export const metadata = {
   title: "Cánticos | Mafia Azul Grana",
   description: "Los cantos que hacen temblar el Atahualpa. Aprende la letra y cántalos con la barra.",
 };
 
-export default function CanticosPage() {
+export default async function CanticosPage() {
+  const canticos = await getPublishedCanticos();
+
   return (
     <>
       <section className="relative overflow-hidden bg-[#081f49] px-4.5 py-8 md:px-0 md:py-10">
@@ -28,7 +30,7 @@ export default function CanticosPage() {
 
       <section className="bg-blanco-hueso">
         <Container className="px-4.5 py-6 md:px-10 md:py-8">
-          <CanticoList canticos={CANTICOS} />
+          <CanticoList canticos={canticos} />
         </Container>
       </section>
     </>

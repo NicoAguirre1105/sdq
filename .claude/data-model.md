@@ -1,7 +1,7 @@
 # Modelo de datos — Supabase
 
 ## Principio general
-Fútbol/calendario/standings comparten una sola fuente de verdad (`matches`, con todos los equipos del torneo, no solo SD Quito), para poder calcular la tabla de posiciones en vez de ingresarla a mano. Contenido estático (Historia, Cánticos) vive en MDX en el repo, no en estas tablas.
+Fútbol/calendario/standings comparten una sola fuente de verdad (`matches`, con todos los equipos del torneo, no solo SD Quito), para poder calcular la tabla de posiciones en vez de ingresarla a mano. Contenido estático (Historia) vive en MDX en el repo, no en estas tablas.
 
 ---
 
@@ -19,6 +19,25 @@ create table posts (
   published_at timestamptz default now()
 );
 ```
+
+## Cánticos
+
+```sql
+create table canticos (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  slug text unique not null,
+  classic boolean not null default false,
+  youtube_url text,             -- null hasta tener el video oficial
+  start_seconds int not null default 0,
+  lines jsonb not null default '[]',   -- [{ "role": "llamada"|"coro", "text": "..." }], rojo/blanco
+  published boolean not null default false,
+  order_index int not null default 0,   -- orden de aparición pública, reordenable desde el admin
+  created_at timestamptz default now()  -- desempate de orden para filas con el mismo order_index
+);
+```
+
+Se ordena por `order_index asc, created_at asc`. `role: "llamada"` se muestra en rojo, `"coro"` en blanco (ver `app/(public)/canticos/[slug]/page.tsx`); no hay alternancia forzada a nivel de datos, el admin elige el color de cada verso libremente.
 
 ## Fútbol
 

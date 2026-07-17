@@ -5,7 +5,7 @@ import sharp from "sharp";
 import fontkit from "@pdf-lib/fontkit";
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { requireAdmin } from "@/lib/auth";
-import { getCantico } from "@/lib/canticos";
+import { getCanticoBySlugPublic } from "@/lib/supabase/queries/canticos";
 import { getSiteUrl } from "@/lib/site-url";
 
 const AZUL_MARINO = rgb(0x0b / 255, 0x2e / 255, 0x6b / 255);
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
   let filename: string;
 
   if (target === "cantico") {
-    const cantico = slug ? getCantico(slug) : undefined;
+    const cantico = slug ? await getCanticoBySlugPublic(slug) : undefined;
     if (!cantico) return new Response("Cántico no encontrado", { status: 404 });
     url = `${getSiteUrl()}/canticos/${cantico.slug}`;
     title = cantico.title.toUpperCase();
