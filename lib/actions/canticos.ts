@@ -124,30 +124,26 @@ export async function deleteCantico(formData: FormData) {
   redirect("/admin/canticos");
 }
 
-// Swap de order_index con el vecino inmediato (arriba/abajo) en la lista ordenada.
-export async function moveCantico(formData: FormData) {
+// Mueve el cántico a la posición ingresada (1-indexed) y reacomoda el
+// order_index de toda la lista para que quede consecutiva.
+export async function setCanticoPosition(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
-  const direction = String(formData.get("direction") ?? "");
-  if (!id || (direction !== "up" && direction !== "down")) return;
+  const position = Number(formData.get("position"));
+  if (!id || !Number.isFinite(position)) return;
 
   const canticos = await getAllCanticos();
-  const index = canticos.findIndex((c) => c.id === id);
-  const neighborIndex = direction === "up" ? index - 1 : index + 1;
-  if (index === -1 || neighborIndex < 0 || neighborIndex >= canticos.length) return;
+  const fromIndex = canticos.findIndex((c) => c.id === id);
+  if (fromIndex === -1) return;
 
-  const current = canticos[index];
-  const neighbor = canticos[neighborIndex];
+  const toIndex = Math.min(Math.max(Math.round(position) - 1, 0), canticos.length - 1);
+  const [moved] = canticos.splice(fromIndex, 1);
+  canticos.splice(toIndex, 0, moved);
 
   const supabase = await createServerSupabaseClient();
-  await supabase
-    .from("canticos")
-    .update({ order_index: neighbor.order_index })
-    .eq("id", current.id);
-  await supabase
-    .from("canticos")
-    .update({ order_index: current.order_index })
-    .eq("id", neighbor.id);
+  await Promise.all(
+    canticos.map((c, i) => supabase.from("canticos").update({ order_index: i }).eq("id", c.id)),
+  );
 
   revalidatePath("/admin/canticos");
   revalidatePath("/canticos");

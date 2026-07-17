@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getAllCanticos } from "@/lib/supabase/queries/canticos";
-import { moveCantico } from "@/lib/actions/canticos";
+import { setCanticoPosition } from "@/lib/actions/canticos";
 
 export default async function AdminCanticosPage() {
   const canticos = await getAllCanticos();
@@ -35,30 +35,23 @@ export default async function AdminCanticosPage() {
                 key={cantico.id}
                 className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-azul-marino/8 px-4 py-3 first:border-t-0"
               >
-                <div className="flex flex-none flex-col">
-                  <form action={moveCantico}>
-                    <input type="hidden" name="id" value={cantico.id} />
-                    <input type="hidden" name="direction" value="up" />
-                    <button
-                      type="submit"
-                      disabled={i === 0}
-                      className="font-mono text-xs text-tinta/40 hover:text-tinta disabled:opacity-25"
-                    >
-                      ↑
-                    </button>
-                  </form>
-                  <form action={moveCantico}>
-                    <input type="hidden" name="id" value={cantico.id} />
-                    <input type="hidden" name="direction" value="down" />
-                    <button
-                      type="submit"
-                      disabled={i === canticos.length - 1}
-                      className="font-mono text-xs text-tinta/40 hover:text-tinta disabled:opacity-25"
-                    >
-                      ↓
-                    </button>
-                  </form>
-                </div>
+                <form action={setCanticoPosition} className="flex flex-none items-center gap-1">
+                  <input type="hidden" name="id" value={cantico.id} />
+                  <input
+                    type="number"
+                    name="position"
+                    defaultValue={i + 1}
+                    min={1}
+                    max={canticos.length}
+                    className="w-12 rounded border border-azul-marino/20 px-1.5 py-1 text-center font-mono text-xs text-tinta"
+                  />
+                  <button
+                    type="submit"
+                    className="font-mono text-[10px] font-semibold text-azul-marino hover:underline"
+                  >
+                    IR
+                  </button>
+                </form>
 
                 <Link
                   href={`/admin/canticos/${cantico.id}/edit`}

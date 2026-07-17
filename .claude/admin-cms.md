@@ -96,7 +96,7 @@ Layout real: pantalla única (`/admin/futbol`) con selector de stage arriba → 
 ### 6. Cánticos — nivel C — **IMPLEMENTADO** (`/admin/canticos`)
 - CRUD reusando el patrón de posts/teams: título, slug, clásico (bool), YouTube URL + segundo de inicio, publicado/borrador.
 - **Versos** (`lines`, jsonb): editor de líneas con color por verso (rojo = llamada, blanco = coro), sin alternancia forzada.
-- **Reordenar**: botones ↑/↓ en la lista (`order_index`, swap entre vecinos) — sin drag & drop.
+- **Reordenar**: input de posición (1-indexed) por fila en la lista — mueve el cántico a esa posición y reacomoda `order_index` de toda la lista (`setCanticoPosition`). Sin drag & drop.
 
 ### 7. QR→PDF — no es contenido CMS (utilidad) — **IMPLEMENTADO** (`/admin/qr`)
 - No gestiona datos: genera al vuelo un PDF con QR hacia `/canticos` o hacia un cántico puntual, para imprimir/repartir. Sin tabla propia — el selector de "cántico específico" lee `getPublishedCanticos()` (tabla `canticos`), mismo orden que la página pública.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   createCantico,
@@ -49,11 +49,27 @@ export function CanticoForm({ cantico }: { cantico?: CanticoValues }) {
     cantico?.lines ?? [{ role: "llamada", text: "" }]
   );
 
-  function addLine() {
-    setLines((prev) => [
-      ...prev,
-      { role: prev.length ? opposite(prev[prev.length - 1].role) : "llamada", text: "" },
-    ]);
+  // Refs de los inputs de texto de cada verso, para poder enfocar el nuevo al
+  // agregarlo con Enter (focusIndexRef guarda el índice pendiente hasta que el
+  // effect corre después del re-render).
+  const lineRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const focusIndexRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (focusIndexRef.current === null) return;
+    lineRefs.current[focusIndexRef.current]?.focus();
+    focusIndexRef.current = null;
+  }, [lines]);
+
+  function addLine(focusNew = false) {
+    setLines((prev) => {
+      const next = [
+        ...prev,
+        { role: prev.length ? opposite(prev[prev.length - 1].role) : "llamada", text: "" },
+      ];
+      if (focusNew) focusIndexRef.current = next.length - 1;
+      return next;
+    });
   }
 
   function removeLine(i: number) {
@@ -203,7 +219,7 @@ export function CanticoForm({ cantico }: { cantico?: CanticoValues }) {
             <span className={label}>Versos</span>
             <button
               type="button"
-              onClick={addLine}
+              onClick={() => addLine(true)}
               className="font-mono text-[10px] font-semibold text-azul-marino hover:underline"
             >
               + AGREGAR VERSO
@@ -226,8 +242,16 @@ export function CanticoForm({ cantico }: { cantico?: CanticoValues }) {
                   {line.role === "llamada" ? "ROJO" : "BLANCO"}
                 </button>
                 <input
+                  ref={(el) => {
+                    lineRefs.current[i] = el;
+                  }}
                   value={line.text}
                   onChange={(e) => setText(i, e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key !== "Enter") return;
+                    e.preventDefault();
+                    addLine(true);
+                  }}
                   placeholder="Texto del verso"
                   className="w-full rounded-md border border-azul-marino/20 bg-white px-3 py-2.5 font-body text-sm text-tinta outline-none focus:border-azul-marino"
                 />
