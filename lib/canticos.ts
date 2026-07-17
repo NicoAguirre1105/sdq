@@ -369,7 +369,7 @@ const DE_PEQUEÑO_TE_SIGO: CanticoLine[] = [
   { role: "coro", text: "aguantamos 4 decadas sin copa (oh, oh)" },
   { role: "coro", text: "si la nuestra es una hinchada difenrete," },
   { role: "llamada", text: "no es amarga como los pu*** de enfrente (oh, oh)" },
-  { role: "coro", text: "puto Méndez, De la Cruz y Saritama (oh, oh)" },
+  { role: "coro", text: "pu** Méndez, De la Cruz y Saritama (oh, oh)" },
   { role: "llamada", text: "se vendieron por unos cuantos centavos (oh, oh)" },
   { role: "coro", text: "Y a vos Liga de Quito yo te digo:" },
   { role: "llamada", text: "Ve, novelero, soy tu marido," },
