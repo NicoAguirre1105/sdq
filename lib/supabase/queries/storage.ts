@@ -4,6 +4,11 @@ import type { Database } from "@/lib/types/database";
 // Sube un archivo a un bucket público y devuelve su URL pública. RLS de storage.objects
 // permite escribir solo a admins (ver policies en supabase/schema.sql). El nombre se
 // randomiza para evitar colisiones; no se sobreescribe (upsert:false).
+//
+// ponytail: reintenta 1 vez tras un blip transitorio de red hacia Storage (síntoma
+// reportado: falla intermitente, la misma imagen sube bien al reintentar sin cambiar
+// nada — no un error de datos). Si el segundo intento también falla, se deja que
+// falle de verdad; no hay backoff exponencial porque no vale la pena para 2 intentos.
 async function uploadToBucket(
   supabase: SupabaseClient<Database>,
   bucket: string,
@@ -12,13 +17,18 @@ async function uploadToBucket(
   const ext = (file.name.split(".").pop() || "bin").toLowerCase();
   const path = `${crypto.randomUUID()}.${ext}`;
 
-  const { error } = await supabase.storage
-    .from(bucket)
-    .upload(path, file, { contentType: file.type, upsert: false });
-  if (error) throw error;
-
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
+  let lastError: { message: string } | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const { error } = await supabase.storage
+      .from(bucket)
+      .upload(path, file, { contentType: file.type, upsert: false });
+    if (!error) {
+      const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+      return data.publicUrl;
+    }
+    lastError = error;
+  }
+  throw lastError;
 }
 
 // Borra el objeto del bucket a partir de su URL pública. Ignora URLs que no sean de

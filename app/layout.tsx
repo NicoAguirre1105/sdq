@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import { getSiteUrl } from "@/lib/site-url";
 import { Clarity } from "@/components/layout/Clarity";
 import "./globals.css";
@@ -89,6 +90,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-body">
         {children}
         <Clarity />
+        <Analytics />
       </body>
     </html>
   );

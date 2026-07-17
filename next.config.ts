@@ -2,6 +2,18 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Default de Next.js es 1MB para el body de una Server Action — menor que los
+  // 2MB que la app valida para fotos de jugador/logos/imágenes de post. Sin esto,
+  // un archivo entre 1-2MB pasa la validación propia pero el framework rechaza el
+  // request antes de que el código de la action llegue a correr (500 intermitente,
+  // "no se pudo conectar con el servidor" — el form pierde los campos de texto
+  // pero la imagen ya elegida queda en el input porque el fallo es del transporte,
+  // no de la lógica de subida).
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "3mb",
+    },
+  },
   // ponytail: "output: standalone" se probó acá para un deploy en cPanel (build
   // mínimo sin devDependencies, por cuota de disco ajustada) — sacado mientras ese
   // deploy está pausado esperando a soporte del hosting. Vercel no lo necesita
