@@ -23,15 +23,15 @@ export type TimelineEvent = {
 export const TIMELINE: TimelineEvent[] = [
   {
     year: "1940",
-    title: "Fundación de S.D Argentina",
+    title: "Fundación de S.D. Argentina",
     description:
-      "9 de Julio de 1940 nace S.D Argentina con su gloriosa camiseta albiceleste, claramente con fuertes influencias del fútbol argentino.",
+      "El 9 de julio de 1940 nace S.D. Argentina con su gloriosa camiseta albiceleste, con fuertes influencias del fútbol argentino.",
     dot: "dorado",
   },
   {
     year: "1955",
     title: "Nacimiento del equipo de la ciudad",
-    description: "27 de Febrero de 1955, se refunda el club como Sociedad Deportivo Quito. Los colores que lo identifican son el azul y el rojo, los cuales representan un homenaje a la ciudad.",
+    description: "El 27 de febrero de 1955 se refunda el club como Sociedad Deportivo Quito. Los colores que lo identifican son el azul y el rojo, los cuales representan un homenaje a la ciudad.",
     dot: "dorado",
   },
   {
@@ -43,13 +43,13 @@ export const TIMELINE: TimelineEvent[] = [
   {
     year: "1968",
     title: "Segundo campeonato nacional",
-    description: "El domingo 29 de diciembre, la AKD empató sin goles con el Nacional para coronarse campeón del Campeonato Ecuatoriano de Fútbol 1968 y alcanzar su segunda estrella nacional. ",
+    description: "El domingo 29 de diciembre, la AKD empató sin goles con el Nacional para coronarse campeón del Campeonato Ecuatoriano de Fútbol 1968 y alcanzar su segunda estrella nacional.",
     dot: "azul",
   },
   {
     year: "2008",
     title: "40 años de espera",
-    description: 'Un miércoles 3 de diciembre en el estadio de "La Cocha", Latacunga. Deportivo Quito ganaba a Macará 2x1 y se coronaba campeón del Campeonato Ecuatoriano de Fútbol 2008 terminando una sequía de 40 años.',
+    description: 'Un miércoles 3 de diciembre, en el estadio de "La Cocha" (Latacunga), Deportivo Quito ganaba a Macará 2x1 y se coronaba campeón del Campeonato Ecuatoriano de Fútbol 2008, terminando una sequía de 40 años.',
     dot: "dorado",
   },
   {
@@ -67,12 +67,12 @@ export const TIMELINE: TimelineEvent[] = [
   {
     year: "2015-2018",
     title: "La crisis",
-    description: 'Sumido en una crisis económica, pese a un buen redimiento en cancha, las sanciones de puntos impuestas por FIFA y FEF terminaron decediendo al Deportivo Quito a Serie B, luego a Segunda Categoría y finalmente (a pesar de haber quedado puntero absoluto en cancha) a Categoría Amateur en 2018.',
+    description: 'Sumido en una crisis económica, pese a un buen rendimiento en cancha, las sanciones de puntos impuestas por FIFA y FEF terminaron descendiendo al Deportivo Quito a Serie B, luego a Segunda Categoría y finalmente (a pesar de haber quedado puntero absoluto en cancha) a Categoría Amateur en 2018.',
     dot: "rojo",
   },
   {
     year: "2019",
-    title: "Inicio de la ruta al acenso",
+    title: "Inicio de la ruta al ascenso",
     description: 'Se consolidó la dirigencia y empieza nuevamente la ruta de ascenso. De esta manera se ubica entre los mejores del Campeonato Amateur de Quito y clasifica a la Copa Pichincha 2020.',
     dot: "azul",
   },
@@ -85,7 +85,7 @@ export const TIMELINE: TimelineEvent[] = [
   {
     year: "2021-HOY",
     title: "El infierno de Segunda Categoría",
-    description: "Un torneo que penaliza mucho y, a pesar de actuaciones memorables como 2024 quedando a pocos partidos del ascenso, ha sido un gran obstáculo para el club. Seguros que con la hinchada más fiel del Ecuador, el objetivo tarde o temprano se cumplirá.",
+    description: "Un torneo que penaliza mucho y, a pesar de actuaciones memorables como la de 2024, cuando quedó a pocos partidos del ascenso, ha sido un gran obstáculo para el club. Seguros de que, con la hinchada más fiel del Ecuador, el objetivo tarde o temprano se cumplirá.",
     dot: "dorado",
   },
 ];
