@@ -12,6 +12,17 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
+  // Ruido de in-app browsers (Instagram/Facebook/TikTok) en Android: su script
+  // "navigation_performance_logger_android" intenta avisarle a la app nativa
+  // vía postMessage() cuando el usuario navega, y falla si la Activity ya se
+  // destruyó (usuario cierra el in-app browser a mitad de navegación). No es
+  // código nuestro — el stack trace nunca pisa nuestro bundle. denyUrls corta
+  // por el pseudo-protocolo "app://" que usan estos scripts inyectados
+  // (ninguna URL real de nuestro sitio empieza así); ignoreErrors es un
+  // respaldo por si el frame con esa URL no queda primero en el stack.
+  denyUrls: [/^app:\/\//],
+  ignoreErrors: ["Error invoking postMessage: Java object is gone"],
+
   dataCollection: {
     // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
     // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
