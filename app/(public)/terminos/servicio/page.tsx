@@ -56,8 +56,8 @@ export default function TerminosServicioPage() {
           <div>
             <h2 className="font-display text-2xl text-tinta">2. Uso aceptable</h2>
             <p className="mt-2">
-              Puedes usar el sitio libremente para consultar contenido, participar de la comunidad y,
-              si lo deseás, comprar merchandising coordinando por WhatsApp. No está permitido intentar
+              Puedes usar el sitio libremente para consultar contenido, participar en la comunidad y,
+              si lo deseas, comprar merchandising coordinando por WhatsApp. No está permitido intentar
               vulnerar la seguridad del sitio ni usar su contenido con fines comerciales sin permiso.
             </p>
           </div>
@@ -114,7 +114,7 @@ export default function TerminosServicioPage() {
             <p className="mt-2">
               Podemos actualizar estos términos cuando sea necesario. La versión vigente siempre
               estará publicada en esta página, con su fecha de última actualización. Para consultas,
-              escribinos a{" "}
+              escríbenos a{" "}
               <a href={`mailto:${CONTACT_EMAIL}`} className="text-azul-marino underline">
                 {CONTACT_EMAIL}
               </a>

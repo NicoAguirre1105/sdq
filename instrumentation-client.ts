@@ -12,16 +12,23 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
-  // Ruido de in-app browsers (Instagram/Facebook/TikTok) en Android: su script
-  // "navigation_performance_logger_android" intenta avisarle a la app nativa
-  // vía postMessage() cuando el usuario navega, y falla si la Activity ya se
-  // destruyó (usuario cierra el in-app browser a mitad de navegación). No es
-  // código nuestro — el stack trace nunca pisa nuestro bundle. denyUrls corta
-  // por el pseudo-protocolo "app://" que usan estos scripts inyectados
-  // (ninguna URL real de nuestro sitio empieza así); ignoreErrors es un
-  // respaldo por si el frame con esa URL no queda primero en el stack.
-  denyUrls: [/^app:\/\//],
-  ignoreErrors: ["Error invoking postMessage: Java object is gone"],
+  // Ruido de in-app browsers (Instagram/Facebook/TikTok, Android y iOS): sus
+  // scripts nativos de tracking intentan avisarle a la app host vía
+  // postMessage()/window.webkit.messageHandlers cuando el usuario navega, y
+  // fallan si la Activity/WKWebView ya se destruyó (usuario cierra el in-app
+  // browser a mitad de navegación). No es código nuestro — todos los frames
+  // del stack quedan en el pseudo-protocolo "app://" (nunca en nuestro
+  // dominio/bundle), pero el mensaje exacto varía según plataforma ("Java
+  // object is gone" en Android, "window.webkit.messageHandlers" en iOS) y
+  // `denyUrls` no lo filtró de forma confiable para la variante iOS pese a
+  // estar desplegado — por eso acá se decide con lógica propia en vez de
+  // depender de la heurística interna de Sentry para extraer la URL.
+  beforeSend(event) {
+    const frames = event.exception?.values?.[0]?.stacktrace?.frames ?? [];
+    const isInAppBrowserBridgeNoise =
+      frames.length > 0 && frames.every((frame) => (frame.filename ?? "").startsWith("app://"));
+    return isInAppBrowserBridgeNoise ? null : event;
+  },
 
   dataCollection: {
     // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
