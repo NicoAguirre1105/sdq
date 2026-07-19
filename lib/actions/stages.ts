@@ -114,3 +114,16 @@ export async function deleteStage(formData: FormData) {
   revalidatePath("/futbol");
   redirect("/admin/futbol");
 }
+
+// Toggle simple: no amerita un form de edición completo de stage (ver comentario
+// arriba, editar/borrar stages es raro) — un botón que invierte is_finished alcanza.
+export async function toggleStageFinished(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const next = String(formData.get("next") ?? "") === "true";
+  if (!id) return;
+  const supabase = await createServerSupabaseClient();
+  await supabase.from("stages").update({ is_finished: next }).eq("id", id);
+  revalidatePath("/admin/futbol");
+  revalidatePath("/futbol");
+}

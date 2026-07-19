@@ -79,6 +79,7 @@ type Stage = {
   order_index: number;
   bracket_mode: "fijo" | "sorteo" | null;
   total_rounds: number | null;
+  is_finished: boolean;
 };
 
 // Fila de la vista calculada `standings` (ver supabase/schema.sql). Los conteos

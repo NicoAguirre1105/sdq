@@ -100,9 +100,11 @@ export default async function FutbolPage({
 
   const isElimination = selected?.format === "eliminacion";
 
+  // Stage finalizado: no tiene sentido sugerir "próximos partidos" aunque haya
+  // quedado alguna fila 'programado' suelta sin actualizar — se salta la query.
   const [matches, standings, bracketMatches] = selected
     ? await Promise.all([
-        getUpcomingMatches(selected.stageId, 2),
+        selected.isFinished ? Promise.resolve([]) : getUpcomingMatches(selected.stageId, 2),
         isElimination ? Promise.resolve([]) : getStandings(selected.stageId),
         isElimination ? getStageMatches(selected.stageId) : Promise.resolve([]),
       ])
@@ -115,7 +117,7 @@ export default async function FutbolPage({
           <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
             Próximos partidos
           </h2>
-          <UpcomingMatches matches={matches} />
+          <UpcomingMatches matches={matches} finished={selected.isFinished} />
         </div>
         <div>
           <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
@@ -130,7 +132,7 @@ export default async function FutbolPage({
           <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">
             Próximos partidos
           </h2>
-          <UpcomingMatches matches={matches} />
+          <UpcomingMatches matches={matches} finished={selected.isFinished} />
         </div>
         <div className="min-w-0">
           <h2 className="mb-4 font-mono text-[11px] tracking-[0.14em] text-azul-marino uppercase">

@@ -6,7 +6,7 @@ import { getAllTeams, getStageTeams } from "@/lib/supabase/queries/teams";
 import { formatMatchDate } from "@/lib/format";
 import { MatchForm } from "@/components/admin/MatchForm";
 import { DeleteButton } from "@/components/admin/DeleteButton";
-import { deleteStage } from "@/lib/actions/stages";
+import { deleteStage, toggleStageFinished } from "@/lib/actions/stages";
 import { TabbedContent } from "@/components/ui/TabbedContent";
 import { MatchListSkeleton } from "@/components/ui/MatchListSkeleton";
 import { TableSkeleton } from "@/components/ui/TableSkeleton";
@@ -164,13 +164,29 @@ export default async function AdminFutbolPage({
             </span>
           }
           suffix={
-            <DeleteButton
-              action={deleteStage}
-              id={selected.stageId}
-              label="Eliminar este stage"
-              message={`¿Eliminar "${stageLabel(selected)}"? Se borran también sus partidos y su tabla. No se puede deshacer.`}
-              className="ml-auto font-mono text-[10px] font-bold text-rojo-bandera hover:underline"
-            />
+            <div className="ml-auto flex items-center gap-3">
+              <form action={toggleStageFinished}>
+                <input type="hidden" name="id" value={selected.stageId} />
+                <input type="hidden" name="next" value={String(!selected.isFinished)} />
+                <button
+                  type="submit"
+                  className={`rounded-md border px-3 py-1.5 font-mono text-[10px] font-bold uppercase transition-colors ${
+                    selected.isFinished
+                      ? "border-[#1E8A5B]/40 bg-[#1E8A5B]/10 text-[#1E8A5B]"
+                      : "border-azul-marino/16 text-tinta/60 hover:border-azul-marino/40"
+                  }`}
+                >
+                  {selected.isFinished ? "✓ Finalizado" : "Marcar como finalizado"}
+                </button>
+              </form>
+              <DeleteButton
+                action={deleteStage}
+                id={selected.stageId}
+                label="Eliminar este stage"
+                message={`¿Eliminar "${stageLabel(selected)}"? Se borran también sus partidos y su tabla. No se puede deshacer.`}
+                className="font-mono text-[10px] font-bold text-rojo-bandera hover:underline"
+              />
+            </div>
           }
           fallback={<AdminFutbolFallback />}
           tabs={stages.map((s) => {

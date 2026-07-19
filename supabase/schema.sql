@@ -69,7 +69,12 @@ create table stages (
   bracket_mode text check (bracket_mode in ('fijo', 'sorteo')),
   -- solo aplica si bracket_mode = 'fijo': cantidad de rondas hasta la final
   -- (incluida), usado para generar los 2^total_rounds - 1 partidos placeholder.
-  total_rounds int
+  total_rounds int,
+  -- true = el torneo ya terminó: la UI pública deja de sugerir "próximos
+  -- partidos" para este stage y explica que ya finalizó, en vez de mostrar un
+  -- estado vacío ambiguo. No afecta tabla de posiciones ni bracket (siguen
+  -- mostrando el resultado final).
+  is_finished boolean not null default false
 );
 
 -- on delete cascade en toda la jerarquía: borrar una temporada arrastra sus
