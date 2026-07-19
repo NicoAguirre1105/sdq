@@ -2,12 +2,15 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { confirmSubscriber, deleteSubscriberByEmail } from "@/lib/supabase/queries/subscribers";
 
-// Webhook de Kit, un solo endpoint para dos automatizaciones registradas en Kit:
-//  - "Subscribes to a form" (activa) → sin ?event= (default, comportamiento original)
-//  - "Unsubscribes" → ?event=unsubscribe
-// Ambas automatizaciones apuntan a esta misma URL con el mismo ?token= compartido
-// (KIT_WEBHOOK_SECRET), porque Kit no firma los webhooks — es lo único que
-// distingue una petición legítima de una cualquiera.
+// Webhook de Kit, pensado para dos automatizaciones ("Subscribes to a form" sin
+// ?event=, "Unsubscribes" con ?event=unsubscribe) que compartirían esta misma URL
+// y el mismo ?token= (KIT_WEBHOOK_SECRET, porque Kit no firma los webhooks).
+//
+// En la práctica NINGUNA de las dos está registrada: el plan free de Kit no tiene
+// Automations, no hay forma de darle esa acción desde el dashboard. Este endpoint
+// queda listo para el día que se suba de plan — mientras tanto, la sincronización
+// real (confirmar y borrar) la hace app/api/cron/sync-subscribers por polling
+// una vez al día.
 export async function POST(req: Request) {
   const url = new URL(req.url);
   const secret = process.env.KIT_WEBHOOK_SECRET;

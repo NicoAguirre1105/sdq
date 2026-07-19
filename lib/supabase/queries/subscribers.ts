@@ -85,11 +85,13 @@ export async function deleteSubscriberByEmail(email: string) {
   if (error) throw error;
 }
 
-// Para el cron de sincronización de bajas (app/api/cron/sync-unsubscribes) —
-// service role porque corre sin sesión de admin.
-export async function getAllSubscriberEmails(): Promise<string[]> {
+// Para el cron de sincronización con Kit (app/api/cron/sync-subscribers) — service
+// role porque corre sin sesión de admin. Trae `confirmed` además del email para que
+// el cron pueda confirmar/borrar en una sola pasada por suscriptor (un solo fetch a
+// Kit por email, no dos cron jobs pisándose la misma fila).
+export async function getSubscribersForSync(): Promise<{ email: string; confirmed: boolean }[]> {
   const supabase = createServiceRoleSupabaseClient();
-  const { data, error } = await supabase.from("subscribers").select("email");
+  const { data, error } = await supabase.from("subscribers").select("email, confirmed");
   if (error) throw error;
-  return (data ?? []).map((s) => s.email);
+  return data ?? [];
 }

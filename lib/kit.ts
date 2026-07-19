@@ -197,9 +197,9 @@ export async function syncKitTopics(email: string, topics: string[]): Promise<vo
 
 // Estado del subscriber en Kit ("active"/"cancelled"/"bounced"/"complained"), o
 // null si no se encuentra o falla la consulta. El plan free de Kit no tiene
-// Automations (no hay forma de que Kit nos avise por webhook cuando alguien usa
-// SU link de baja de cumplimiento) — esto lo usa el cron de polling en
-// app/api/cron/sync-unsubscribes en su lugar.
+// Automations (no hay forma de que Kit nos avise por webhook ni de que confirme un
+// alta ni de que alguien use SU link de baja de cumplimiento) — esto lo usa el cron
+// de polling en app/api/cron/sync-subscribers en su lugar.
 export async function getKitSubscriberState(email: string): Promise<string | null> {
   const key = process.env.KIT_API_KEY;
   if (!key) return null;
