@@ -117,7 +117,7 @@ export function Footer() {
             Nicolas Aguirre
           </a>
         </p>
-        <p>v1.1.1</p>
+        <p>v1.2.0</p>
       </Container>
     </footer>
   );
