@@ -37,15 +37,68 @@ export default function SuscripcionConfirmadaPage() {
           <p className="font-body text-[15px] leading-relaxed text-tinta/85">
             Mientras tanto, síguenos en redes para no perderte nada de la barra:
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 font-mono text-sm text-azul-marino">
-            <a href="https://www.instagram.com/mafia_azul_grana/" className="underline">
-              Instagram
+          <div className="flex items-center justify-center gap-6 text-azul-marino">
+            <a
+              href="https://www.instagram.com/mafia_azul_grana/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="transition-opacity hover:opacity-70"
+            >
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
             </a>
-            <a href="https://www.facebook.com/MafiaAzulGranaQficial" className="underline">
-              Facebook
+            <a
+              href="https://www.facebook.com/MafiaAzulGranaQficial"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="transition-opacity hover:opacity-70"
+            >
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+              </svg>
             </a>
-            <a href="https://www.tiktok.com/@mafiaazulgranaoficial?_r=1" className="underline">
-              TikTok
+            <a
+              href="https://www.tiktok.com/@mafiaazulgranaoficial?_r=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+              className="transition-opacity hover:opacity-70"
+            >
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 7.917v4.034a9.948 9.948 0 0 1 -5 -1.951v6.5a6.5 6.5 0 1 1 -8 -6.326v4.326a2.5 2.5 0 1 0 4 2v-11.5h4.083a6.005 6.005 0 0 0 4.917 4.917z" />
+              </svg>
             </a>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 font-body text-sm text-tinta/60">
