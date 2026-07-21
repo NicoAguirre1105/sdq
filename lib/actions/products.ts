@@ -45,6 +45,8 @@ type ParsedProduct = {
   price: number;
   category: string | null;
   sizes: string[] | null;
+  stock: number | null;
+  lead_time_message: string | null;
   published: boolean;
 };
 
@@ -55,6 +57,8 @@ function parse(formData: FormData): ParsedProduct | { error: string } {
   const rawPrice = String(formData.get("price") ?? "").trim();
   const category = String(formData.get("category") ?? "").trim();
   const rawSizes = String(formData.get("sizes") ?? "").trim();
+  const rawStock = String(formData.get("stock") ?? "").trim();
+  const lead_time_message = String(formData.get("lead_time_message") ?? "").trim();
 
   if (!name) return { error: "El nombre es obligatorio." };
   if (!slug) return { error: "El slug no puede quedar vacío." };
@@ -62,6 +66,13 @@ function parse(formData: FormData): ParsedProduct | { error: string } {
   const price = Number(rawPrice);
   if (!rawPrice || !Number.isFinite(price) || price < 0)
     return { error: "El precio debe ser un número válido." };
+
+  let stock: number | null = null;
+  if (rawStock) {
+    stock = Number(rawStock);
+    if (!Number.isInteger(stock) || stock < 0)
+      return { error: "El stock debe ser un número entero mayor o igual a 0." };
+  }
 
   const sizes = rawSizes
     ? rawSizes.split(",").map((s) => s.trim()).filter(Boolean)
@@ -74,6 +85,8 @@ function parse(formData: FormData): ParsedProduct | { error: string } {
     price,
     category: category || null,
     sizes: sizes.length > 0 ? sizes : null,
+    stock,
+    lead_time_message: lead_time_message || null,
     published: formData.get("published") === "on",
   };
 }

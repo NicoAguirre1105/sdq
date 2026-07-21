@@ -1,5 +1,32 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/client";
 import type { CartItem } from "@/lib/types/cart";
+import type { Database } from "@/lib/types/database";
+
+// Baja el stock de los productos con stock trackeado (no null) según lo pedido, sin
+// bajar de 0. Los productos "bajo pedido" (stock null) no se tocan: no tienen límite.
+// No bloquea el pedido si algo falla acá — el log de la orden ya quedó guardado, y el
+// admin puede ajustar el stock a mano si algo no cuadra.
+async function decrementStock(supabase: SupabaseClient<Database>, cart: CartItem[]) {
+  const ids = cart.map((item) => item.productId);
+  const { data: products, error } = await supabase
+    .from("products")
+    .select("id, stock")
+    .in("id", ids);
+  if (error || !products) return;
+
+  const stockById = new Map(products.map((p) => [p.id, p.stock]));
+  await Promise.all(
+    cart.map((item) => {
+      const stock = stockById.get(item.productId);
+      if (stock == null) return null;
+      return supabase
+        .from("products")
+        .update({ stock: Math.max(0, stock - item.quantity) })
+        .eq("id", item.productId);
+    })
+  );
+}
 
 // orders es un log inmutable: un insert por pedido enviado, sin estado ni edición
 // posterior. Los ítems se guardan como snapshot jsonb en la misma fila.
@@ -19,6 +46,9 @@ export async function createOrder(cart: CartItem[], contact: { name: string; pho
     .select()
     .single();
   if (error) throw error;
+
+  await decrementStock(supabase, cart);
+
   return data;
 }
 

@@ -22,6 +22,8 @@ type ProductValues = {
   images: string[];
   category: string | null;
   sizes: string[] | null;
+  stock: number | null;
+  lead_time_message: string | null;
   published: boolean;
 };
 
@@ -150,6 +152,41 @@ export function ProductForm({ product }: { product?: ProductValues }) {
           />
           <p className="mb-4 font-mono text-[9px] text-tinta/40">
             Dejar vacío para productos de talla única u objetos sin talla.
+          </p>
+
+          <div className="mb-4 flex flex-wrap gap-4">
+            <div className="flex-1">
+              <label htmlFor="stock" className={label}>
+                Stock (opcional)
+              </label>
+              <input
+                id="stock"
+                name="stock"
+                type="number"
+                min={0}
+                step="1"
+                defaultValue={product?.stock ?? ""}
+                className={`${field} font-mono`}
+              />
+              <p className="mt-1 font-mono text-[9px] text-tinta/40">
+                Vacío = bajo pedido, sin límite. Se descuenta solo con cada pedido enviado.
+              </p>
+            </div>
+          </div>
+
+          <label htmlFor="lead_time_message" className={label}>
+            Mensaje del detalle (opcional)
+          </label>
+          <textarea
+            id="lead_time_message"
+            name="lead_time_message"
+            defaultValue={product?.lead_time_message ?? ""}
+            rows={3}
+            placeholder="Ej: Este producto es bajo pedido, demora entre 2 y 3 semanas en llegar."
+            className={`${field} mb-1.5 resize-y`}
+          />
+          <p className="mb-4 font-mono text-[9px] text-tinta/40">
+            Se muestra solo en el detalle del producto, nunca en la card del catálogo.
           </p>
 
           <span className={label}>Estado</span>

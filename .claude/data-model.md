@@ -157,7 +157,11 @@ create table players (
 
 **No hay checkout ni pagos en el sitio.** El carrito es solo estado del cliente (React Context + `localStorage`, ver `components/tienda/CartProvider.tsx`). Al enviar el pedido se abre un link `wa.me` con el resumen y se guarda el pedido como log — el pago y la coordinación real ocurren en WhatsApp, fuera del sitio.
 
-**Sin variantes ni stock.** Colores distintos son productos distintos (cada uno su propio `slug`), no una variante del mismo producto. `sizes` es solo texto libre para armar el selector del detalle y el mensaje de WhatsApp — no hay control de stock por talla ni en general; lo único que decide si un producto se ve es `published`.
+**Sin variantes.** Colores distintos son productos distintos (cada uno su propio `slug`), no una variante del mismo producto. `sizes` es solo texto libre para armar el selector del detalle y el mensaje de WhatsApp — no hay stock por talla, el stock es a nivel de producto.
+
+**Stock opcional (`stock` nullable).** `null` = bajo pedido: sin límite, siempre se puede agregar al carrito, no se descuenta. Un número = stock trackeado: se descuenta al enviar un pedido (`createOrder`, sin bajar de 0) y limita la cantidad máxima en el selector del detalle; en 0 se muestra "Agotado" y no se puede agregar. Editable a mano en el admin en cualquier momento (ajuste manual sobre lo que descontó el sistema).
+
+**`lead_time_message`:** texto libre opcional, editable en el admin, visible **solo en el detalle del producto** (nunca en la card del catálogo) — pensado para el tiempo de espera de productos bajo pedido, pero el admin puede usarlo en cualquier producto para info extra relevante.
 
 ```sql
 create table products (
@@ -169,6 +173,8 @@ create table products (
   images text[] default '{}',
   category text,               -- libre, sin enum — el filtro del catálogo lee valores distintos existentes
   sizes text[],                 -- null/'{}' = sin talla (talla única u objeto); ej. {S,M,L,XL}
+  stock int,                    -- null = bajo pedido (sin límite); número = stock trackeado
+  lead_time_message text,       -- mensaje libre, solo visible en el detalle
   published boolean not null default true,
   created_at timestamptz default now()
 );

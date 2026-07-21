@@ -51,6 +51,17 @@ export default async function AdminTiendaPage() {
                 </span>
                 <span
                   className={`font-mono text-[9px] font-bold uppercase ${
+                    p.stock === null
+                      ? "text-tinta/40"
+                      : p.stock === 0
+                        ? "text-rojo-bandera"
+                        : "text-[#1E8A5B]"
+                  }`}
+                >
+                  {p.stock === null ? "Bajo pedido" : p.stock === 0 ? "Agotado" : `Stock: ${p.stock}`}
+                </span>
+                <span
+                  className={`font-mono text-[9px] font-bold uppercase ${
                     p.published ? "text-[#1E8A5B]" : "text-tinta/35"
                   }`}
                 >

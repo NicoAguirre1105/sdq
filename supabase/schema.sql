@@ -159,6 +159,8 @@ create table products (
   images text[] default '{}',
   category text,
   sizes text[],                -- null/'{}' = sin talla (talla única u objeto); ej. {S,M,L,XL}
+  stock int,                   -- null = bajo pedido (sin límite, no se descuenta); número = stock trackeado
+  lead_time_message text,      -- mensaje libre (tiempo de espera / info extra), visible solo en el detalle
   published boolean not null default true,
   created_at timestamptz default now()
 );

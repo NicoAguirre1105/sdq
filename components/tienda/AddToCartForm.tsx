@@ -10,14 +10,33 @@ type Product = {
   price: number;
   images: string[];
   sizes: string[] | null;
+  stock: number | null;
+  lead_time_message: string | null;
 };
 
 export function AddToCartForm({ product }: { product: Product }) {
   const { addItem } = useCart();
   const hasSizes = !!product.sizes && product.sizes.length > 0;
   const [size, setSize] = useState<string | null>(hasSizes ? product.sizes![0] : null);
-  const [quantity, setQuantity] = useState(1);
+  const trackedStock = product.stock; // null = bajo pedido, sin límite
+  const outOfStock = trackedStock === 0;
+  const [quantity, setQuantity] = useState(outOfStock ? 0 : 1);
   const [added, setAdded] = useState(false);
+
+  if (outOfStock) {
+    return (
+      <div>
+        <p className="mb-4 inline-block rounded-md bg-tinta/8 px-3.5 py-2 font-mono text-xs font-bold text-tinta/60 uppercase">
+          Agotado
+        </p>
+        {product.lead_time_message && (
+          <p className="rounded-md border border-azul-marino/15 bg-[#eeece5] px-3.5 py-2.5 font-body text-xs leading-relaxed text-tinta/70">
+            {product.lead_time_message}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -60,13 +79,24 @@ export function AddToCartForm({ product }: { product: Product }) {
           <span className="w-8 text-center font-mono text-sm text-tinta">{quantity}</span>
           <button
             type="button"
-            onClick={() => setQuantity((q) => q + 1)}
+            onClick={() =>
+              setQuantity((q) => (trackedStock != null ? Math.min(trackedStock, q + 1) : q + 1))
+            }
             className="px-3 py-2 font-mono text-sm font-bold text-tinta/70 hover:text-tinta"
           >
             +
           </button>
         </div>
+        {trackedStock != null && (
+          <span className="font-mono text-[10px] text-tinta/45">Quedan {trackedStock}</span>
+        )}
       </div>
+
+      {product.lead_time_message && (
+        <p className="mb-5 rounded-md border border-azul-marino/15 bg-[#eeece5] px-3.5 py-2.5 font-body text-xs leading-relaxed text-tinta/70">
+          {product.lead_time_message}
+        </p>
+      )}
 
       <button
         type="button"

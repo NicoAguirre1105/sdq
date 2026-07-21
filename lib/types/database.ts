@@ -139,6 +139,8 @@ type Product = {
   images: string[];
   category: string | null;
   sizes: string[] | null; // null/[] = sin talla (talla única u objeto)
+  stock: number | null; // null = bajo pedido (sin límite); número = stock trackeado
+  lead_time_message: string | null; // texto libre, visible solo en el detalle
   published: boolean;
   created_at: string;
 };
