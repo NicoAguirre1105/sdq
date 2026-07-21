@@ -8,11 +8,13 @@ import { Container } from "@/components/ui/Container";
 import { SubscribeModal } from "@/components/layout/SubscribeModal";
 import { NAV_LINKS } from "@/lib/nav-links";
 import { useEnterExit } from "@/lib/use-enter-exit";
+import { useCart } from "@/components/tienda/CartProvider";
 
 export function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
+  const { count } = useCart();
 
   // Auto-abre la ventana de suscripción a los 30s de navegación, una sola vez
   // (no vuelve a aparecer sola en visitas futuras). Navbar solo vive en
@@ -53,24 +55,56 @@ export function Navbar() {
             })}
           </nav>
 
-          <button
-            type="button"
-            onClick={() => setSubscribeOpen(true)}
-            className="hidden rounded bg-rojo-bandera px-4.5 py-2.5 font-body text-xs font-bold text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-rojo-bandera-hover active:scale-[0.97] md:block"
-          >
-            Suscríbete
-          </button>
+          <div className="hidden items-center gap-3 md:flex">
+            <Link
+              href="/tienda/carrito"
+              aria-label="Carrito"
+              className="relative flex items-center text-blanco-hueso/70 transition-colors hover:text-blanco-hueso"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              {count > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 flex size-4 items-center justify-center rounded-full bg-rojo-bandera font-mono text-[9px] font-bold text-white">
+                  {count}
+                </span>
+              )}
+            </Link>
+            <button
+              type="button"
+              onClick={() => setSubscribeOpen(true)}
+              className="rounded bg-rojo-bandera px-4.5 py-2.5 font-body text-xs font-bold text-white transition-[background-color,transform] duration-150 ease-out-strong hover:bg-rojo-bandera-hover active:scale-[0.97]"
+            >
+              Suscríbete
+            </button>
+          </div>
 
-          <button
-            type="button"
-            aria-label="Abrir menú"
-            onClick={() => setMenuOpen(true)}
-            className="flex flex-col gap-1 transition-transform active:scale-90 md:hidden"
-          >
-            <span className="h-0.5 w-5 bg-blanco-hueso" />
-            <span className="h-0.5 w-5 bg-blanco-hueso" />
-            <span className="h-0.5 w-5 bg-rojo-bandera" />
-          </button>
+          <div className="flex items-center gap-4 md:hidden">
+            <Link href="/tienda/carrito" aria-label="Carrito" className="relative flex items-center text-blanco-hueso">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              {count > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 flex size-4 items-center justify-center rounded-full bg-rojo-bandera font-mono text-[9px] font-bold text-white">
+                  {count}
+                </span>
+              )}
+            </Link>
+            <button
+              type="button"
+              aria-label="Abrir menú"
+              onClick={() => setMenuOpen(true)}
+              className="flex flex-col gap-1 transition-transform active:scale-90"
+            >
+              <span className="h-0.5 w-5 bg-blanco-hueso" />
+              <span className="h-0.5 w-5 bg-blanco-hueso" />
+              <span className="h-0.5 w-5 bg-rojo-bandera" />
+            </button>
+          </div>
         </Container>
       </header>
 

@@ -155,7 +155,9 @@ create table players (
 
 ## Tienda
 
-**No hay checkout ni pagos en el sitio.** El carrito es solo estado del cliente (React state + `localStorage`). Al enviar el pedido, se genera un link `wa.me` con el resumen y se persiste un registro de la intención de compra (para historial y control de stock) — el pago y la coordinación real ocurren en WhatsApp, fuera del sitio.
+**No hay checkout ni pagos en el sitio.** El carrito es solo estado del cliente (React Context + `localStorage`, ver `components/tienda/CartProvider.tsx`). Al enviar el pedido se abre un link `wa.me` con el resumen y se guarda el pedido como log — el pago y la coordinación real ocurren en WhatsApp, fuera del sitio.
+
+**Sin variantes ni stock.** Colores distintos son productos distintos (cada uno su propio `slug`), no una variante del mismo producto. `sizes` es solo texto libre para armar el selector del detalle y el mensaje de WhatsApp — no hay control de stock por talla ni en general; lo único que decide si un producto se ve es `published`.
 
 ```sql
 create table products (
@@ -164,31 +166,28 @@ create table products (
   slug text unique not null,
   description_md text,
   price numeric not null,
-  stock int default 0,
-  images text[],
-  category text
+  images text[] default '{}',
+  category text,               -- libre, sin enum — el filtro del catálogo lee valores distintos existentes
+  sizes text[],                 -- null/'{}' = sin talla (talla única u objeto); ej. {S,M,L,XL}
+  published boolean not null default true,
+  created_at timestamptz default now()
 );
 
 create table orders (
   id uuid primary key default gen_random_uuid(),
-  contact_name text,
-  contact_phone text,
-  status text check (status in ('enviado','confirmado','entregado','cancelado')) default 'enviado',
+  contact_name text not null,
+  contact_phone text not null,
+  items jsonb not null,         -- snapshot: [{ product_name, size, quantity, unit_price }]
+  total numeric not null,
   created_at timestamptz default now()
-);
-
-create table order_items (
-  id uuid primary key default gen_random_uuid(),
-  order_id uuid references orders(id),
-  product_id uuid references products(id),
-  quantity int not null,
-  unit_price numeric not null   -- precio al momento del pedido
 );
 ```
 
-**Flujo:** usuario arma el carrito (client-side) → botón "Enviar pedido por WhatsApp" → se crea `order` + `order_items` en Supabase con status `enviado` → se abre `https://wa.me/<numero>?text=<resumen>` → la venta se coordina y paga por WhatsApp → el admin actualiza el `status` manualmente desde `/admin` a medida que avanza (`confirmado`, `entregado`, o `cancelado`).
+**`orders` es un log inmutable, no un pipeline.** Un insert por pedido enviado, sin `status` ni acciones de confirmar/actualizar — el admin solo lo lista (`/admin/tienda/pedidos`) para tener historial de lo que se mandó a WhatsApp. Los ítems se guardan como snapshot `jsonb` en la misma fila (no hay tabla `order_items`: nunca se edita un ítem suelto, solo se lista el pedido completo).
 
-**Stock:** no se descuenta automáticamente al enviar el pedido (no hay pago confirmado todavía) — el admin lo ajusta manualmente al confirmar la venta, para evitar descontar stock de pedidos que no se concretan.
+**Flujo:** usuario arma el carrito (client-side) → botón "Enviar pedido por WhatsApp" → Server Action inserta la fila en `orders` → se abre `https://wa.me/<WHATSAPP_ORDERS_NUMBER>?text=<resumen>` → la venta se coordina y paga por WhatsApp.
+
+**RLS:** `products` lectura pública solo `published = true`, escritura solo admins. `orders` **insert público** (cualquier visitante sin sesión puede crear un pedido, igual que el alta de `subscribers`) pero **select solo admins** — nunca lectura pública, sin policy de update/delete.
 
 ## Auth / Admin
 
@@ -259,4 +258,4 @@ RLS: lectura pública (el hero se muestra a cualquier visitante), escritura solo
 
 ## Pendiente de definir
 - Cálculo de `points`/`position` en standings: columna computada vs. cálculo en la app
-- Número(s) de WhatsApp de destino y formato exacto del mensaje generado desde el carrito
+- Valor de `WHATSAPP_ORDERS_NUMBER` en `.env.local` (formato E.164, ej. `593999999999`) — sin él no se arma el link `wa.me` del checkout

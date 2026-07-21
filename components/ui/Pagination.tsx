@@ -27,7 +27,8 @@ export function Pagination({
   const control = (target: number, label: string, isDisabled: boolean) => {
     if (isDisabled) return <span className={`${base} ${disabled}`}>{label}</span>;
     if (basePath) {
-      const href = target <= 1 ? basePath : `${basePath}?page=${target}`;
+      const separator = basePath.includes("?") ? "&" : "?";
+      const href = target <= 1 ? basePath : `${basePath}${separator}page=${target}`;
       return (
         <Link href={href} scroll={false} className={`${base} ${enabled}`}>
           {label}

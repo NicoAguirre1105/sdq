@@ -3,5 +3,5 @@ export const NAV_LINKS = [
   { href: "/historia", label: "Historia" },
   { href: "/futbol", label: "Fútbol" },
   { href: "/canticos", label: "Cánticos" },
-  // { href: "/tienda", label: "Tienda" },
+  { href: "/tienda", label: "Tienda" },
 ];

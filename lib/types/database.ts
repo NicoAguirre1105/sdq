@@ -130,6 +130,31 @@ type SiteSettings = {
   hero_subtitle: string;
 };
 
+type Product = {
+  id: string;
+  name: string;
+  slug: string;
+  description_md: string | null;
+  price: number;
+  images: string[];
+  category: string | null;
+  sizes: string[] | null; // null/[] = sin talla (talla única u objeto)
+  published: boolean;
+  created_at: string;
+};
+
+type OrderItem = { product_name: string; size: string | null; quantity: number; unit_price: number };
+
+// Log inmutable de pedidos enviados por WhatsApp — sin estado, no se edita.
+type Order = {
+  id: string;
+  contact_name: string;
+  contact_phone: string;
+  items: OrderItem[];
+  total: number;
+  created_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -204,6 +229,18 @@ export type Database = {
         Row: SiteSettings;
         Insert: Partial<SiteSettings>;
         Update: Partial<SiteSettings>;
+        Relationships: [];
+      };
+      products: {
+        Row: Product;
+        Insert: Partial<Product> & Pick<Product, "name" | "slug" | "price">;
+        Update: Partial<Product>;
+        Relationships: [];
+      };
+      orders: {
+        Row: Order;
+        Insert: Partial<Order> & Pick<Order, "contact_name" | "contact_phone" | "items" | "total">;
+        Update: Partial<Order>;
         Relationships: [];
       };
     };

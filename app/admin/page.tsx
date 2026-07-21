@@ -3,6 +3,7 @@ import { getPublishedPosts } from "@/lib/supabase/queries/posts";
 import { getAllSubscribers } from "@/lib/supabase/queries/subscribers";
 import { getNextMatch } from "@/lib/supabase/queries/matches";
 import { getSiteSettings } from "@/lib/supabase/queries/settings";
+import { getOrders } from "@/lib/supabase/queries/orders";
 import { HeroContentForm } from "@/components/admin/HeroContentForm";
 import { formatMatchDate } from "@/lib/format";
 import { DEFAULT_HERO_HEADLINE, DEFAULT_HERO_SUBTITLE } from "@/lib/hero-defaults";
@@ -15,12 +16,14 @@ function todayLabel() {
 }
 
 export default async function AdminDashboard() {
-  const [{ total: postsTotal }, subscribers, nextMatch, settings] = await Promise.all([
-    getPublishedPosts(1, 1),
-    getAllSubscribers(),
-    getNextMatch(),
-    getSiteSettings(),
-  ]);
+  const [{ total: postsTotal }, subscribers, nextMatch, settings, { total: ordersTotal }] =
+    await Promise.all([
+      getPublishedPosts(1, 1),
+      getAllSubscribers(),
+      getNextMatch(),
+      getSiteSettings(),
+      getOrders(1, 1),
+    ]);
   const confirmedCount = subscribers.filter((s) => s.confirmed).length;
   const dt = nextMatch ? formatMatchDate(nextMatch.match_date) : null;
   const hasNextMatch = nextMatch?.homeTeam && nextMatch?.awayTeam;
@@ -56,7 +59,7 @@ export default async function AdminDashboard() {
       </header>
 
       <div className="flex flex-col gap-5 px-6 py-6">
-        <div className="grid grid-cols-2 gap-3.5 md:max-w-md">
+        <div className="grid grid-cols-3 gap-3.5 md:max-w-2xl">
           <div className="rounded-lg border border-azul-marino/12 bg-white p-4">
             <p className="font-mono text-[10px] tracking-[0.08em] text-tinta/50 uppercase">
               Posts publicados
@@ -71,6 +74,12 @@ export default async function AdminDashboard() {
             <p className="mt-0.5 font-mono text-[10px] text-[#1E8A5B]">
               {confirmedCount} confirmados
             </p>
+          </div>
+          <div className="rounded-lg border border-azul-marino/12 bg-white p-4">
+            <p className="font-mono text-[10px] tracking-[0.08em] text-tinta/50 uppercase">
+              Pedidos
+            </p>
+            <p className="mt-1.5 font-display text-4xl text-azul-marino">{ordersTotal}</p>
           </div>
         </div>
 

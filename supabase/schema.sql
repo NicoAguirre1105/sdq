@@ -146,6 +146,9 @@ create table players (
 );
 
 -- ============ Tienda ============
+-- Sin variantes ni stock: colores distintos son productos distintos; `sizes` es
+-- solo texto para el selector del detalle y el mensaje de WhatsApp. `orders` es
+-- un log inmutable (sin estado), un insert por pedido enviado, ítems como snapshot.
 
 create table products (
   id uuid primary key default gen_random_uuid(),
@@ -153,27 +156,22 @@ create table products (
   slug text unique not null,
   description_md text,
   price numeric not null,
-  stock int default 0,
-  images text[],
-  category text
+  images text[] default '{}',
+  category text,
+  sizes text[],                -- null/'{}' = sin talla (talla única u objeto); ej. {S,M,L,XL}
+  published boolean not null default true,
+  created_at timestamptz default now()
 );
 
 create index products_category_idx on products (category);
 
 create table orders (
   id uuid primary key default gen_random_uuid(),
-  contact_name text,
-  contact_phone text,
-  status text check (status in ('enviado', 'confirmado', 'entregado', 'cancelado')) default 'enviado',
+  contact_name text not null,
+  contact_phone text not null,
+  items jsonb not null,        -- snapshot: [{ product_name, size, quantity, unit_price }]
+  total numeric not null,
   created_at timestamptz default now()
-);
-
-create table order_items (
-  id uuid primary key default gen_random_uuid(),
-  order_id uuid references orders(id),
-  product_id uuid references products(id),
-  quantity int not null,
-  unit_price numeric not null
 );
 
 -- ============ Newsletter ============
@@ -243,7 +241,6 @@ alter table matches enable row level security;
 alter table players enable row level security;
 alter table products enable row level security;
 alter table orders enable row level security;
-alter table order_items enable row level security;
 alter table subscribers enable row level security;
 alter table admin_users enable row level security;
 alter table site_settings enable row level security;
@@ -258,11 +255,14 @@ create policy "public read stages" on stages for select using (true);
 create policy "public read stage_teams" on stage_teams for select using (true);
 create policy "public read matches" on matches for select using (true);
 create policy "public read players" on players for select using (true);
-create policy "public read products" on products for select using (true);
+create policy "public read published products" on products for select using (published = true);
 create policy "public read site_settings" on site_settings for select using (true);
 
 -- alta pública de newsletter: cualquiera puede insertar, nadie lee desde el cliente
 create policy "anyone can subscribe" on subscribers for insert with check (true);
+-- envío público de pedidos: cualquiera puede insertar (no hay login en el carrito),
+-- nadie lee desde el cliente — orders es un log de solo lectura para admins
+create policy "anyone can submit an order" on orders for insert with check (true);
 
 -- escritura solo para admins (allowlist)
 create policy "admins manage posts" on posts for all using (exists (select 1 from admin_users where id = auth.uid()));
@@ -275,8 +275,8 @@ create policy "admins manage stage_teams" on stage_teams for all using (exists (
 create policy "admins manage matches" on matches for all using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins manage players" on players for all using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins manage products" on products for all using (exists (select 1 from admin_users where id = auth.uid()));
-create policy "admins manage orders" on orders for all using (exists (select 1 from admin_users where id = auth.uid()));
-create policy "admins manage order_items" on order_items for all using (exists (select 1 from admin_users where id = auth.uid()));
+-- orders es un log inmutable: admins solo leen, nadie actualiza/borra
+create policy "admins read orders" on orders for select using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins manage subscribers" on subscribers for select using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins update subscribers" on subscribers for update using (exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins delete subscribers" on subscribers for delete using (exists (select 1 from admin_users where id = auth.uid()));
@@ -334,3 +334,19 @@ create policy "admins delete player_photos" on storage.objects for delete
   using (bucket_id = 'player_photos' and exists (select 1 from admin_users where id = auth.uid()));
 create policy "admins read player_photos" on storage.objects for select
   using (bucket_id = 'player_photos' and exists (select 1 from admin_users where id = auth.uid()));
+
+-- Bucket público para imágenes de productos. Imagen rasterizada (jpg/png/webp), hasta 2 MB.
+-- Mismas 4 policies de admin que el resto de los buckets.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('product_images', 'product_images', true, 2097152,
+        array['image/jpeg', 'image/png', 'image/webp'])
+on conflict (id) do nothing;
+
+create policy "admins upload product_images" on storage.objects for insert
+  with check (bucket_id = 'product_images' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins update product_images" on storage.objects for update
+  using (bucket_id = 'product_images' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins delete product_images" on storage.objects for delete
+  using (bucket_id = 'product_images' and exists (select 1 from admin_users where id = auth.uid()));
+create policy "admins read product_images" on storage.objects for select
+  using (bucket_id = 'product_images' and exists (select 1 from admin_users where id = auth.uid()));

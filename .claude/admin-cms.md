@@ -19,9 +19,9 @@ Criterio usado para clasificar cada dato:
 | **Fútbol** (próximos partidos) | — (derivado) | `matches WHERE status = 'programado'` | Mismo query que calendario, filtrado |
 | **Calendario** | — (derivado) | todos los `matches` de la `stage` activa | Una sola fuente para calendario + próximos + standings |
 | **Cánticos** | C | tabla `canticos` | CRUD + publicar/despublicar + reordenar |
-| **Tienda** (listado productos) | C | tabla `products` | CRUD + control de stock |
+| **Tienda** (listado productos) | C | tabla `products` | CRUD, sin stock — solo `published` |
 | **Detalle de producto** | — (derivado) | vista de `products` por slug | No es dato a gestionar aparte |
-| **Carrito de compras** | — (transaccional) | `cart_items` / `orders`, estado de sesión | Lógica de e-commerce, no CMS |
+| **Carrito de compras** | — (transaccional) | Context + `localStorage`, log en `orders` al enviar | Lógica de e-commerce, no CMS |
 | **Gestión de suscripción** (newsletter, pública) | — | tabla `subscribers` | Formulario de alta; gestión real vive en admin |
 | **Not found** | A | código | — |
 | **Plantilla** | B | tabla `players` | Cambia ~2 veces/año, se edita en Supabase Studio |
@@ -82,8 +82,8 @@ seasons
 Layout real: pantalla única (`/admin/futbol`) con selector de stage arriba → partidos editables + standings al costado (solo `liga`); el editor de partido se abre con `?match=new|<id>` sobre la misma ruta.
 
 ### 3. Tienda — nivel C
-- CRUD de productos: nombre, descripción, precio, stock, imágenes, categoría
-- Vista de pedidos (`orders`): consulta/estado, no creación manual
+- CRUD de productos: nombre, descripción, precio, imágenes, categoría, tallas (texto libre, solo para el selector/mensaje), publicado/despublicado. Sin stock.
+- Listado de pedidos (`orders`): **solo lectura**, log de lo enviado por WhatsApp — sin estado ni acciones (confirmar/editar), la coordinación real pasa por WhatsApp
 
 ### 4. Suscriptores (newsletter) — nivel C, panel ligero
 - Listar, exportar CSV, eliminar
@@ -105,4 +105,4 @@ Layout real: pantalla única (`/admin/futbol`) con selector de stage arriba → 
 
 ## Pendiente por definir
 
-- Schema completo de Supabase con tipos y relaciones (`teams`, `competitions`, `stages`, `matches`, `products`, `orders`, `cart_items`, `subscribers`, `players`)
+- Tienda: implementar `/tienda` público y `/admin/tienda` (ver `data-model.md` para el schema)
